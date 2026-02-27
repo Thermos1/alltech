@@ -40,12 +40,17 @@ const modules = [
   },
   {
     title: 'Панель администратора',
-    description: 'Просмотр и управление заказами, смена статусов, обзор товаров.',
+    description: 'Просмотр и управление заказами, смена статусов, обзор товаров. Добавление товаров и управление остатками — через базу данных.',
     status: 'live' as const,
   },
   {
     title: 'Подтверждение email',
     description: 'Верификация почты при регистрации. Отключено в пилоте для удобства тестирования.',
+    status: 'next' as const,
+  },
+  {
+    title: 'Полноценная админка (CRUD)',
+    description: 'Добавление, редактирование, удаление товаров и управление остатками прямо из интерфейса — без работы с базой.',
     status: 'next' as const,
   },
   {
@@ -55,7 +60,7 @@ const modules = [
   },
   {
     title: 'SIPmind — голосовой AI',
-    description: 'Клиент звонит — AI-ассистент принимает, находит товар и оформляет заказ автоматически.',
+    description: 'Клиент звонит — AI-ассистент принимает, находит товар и оформляет заказ автоматически. Интегрируется бесплатно в рамках пилота.',
     status: 'next' as const,
   },
   {
@@ -205,7 +210,7 @@ export default function AboutPage() {
       {/* Перспективные интеграции */}
       <section className="mb-10 md:mb-14">
         <h2 className="font-display text-xs uppercase tracking-wider text-text-muted mb-4">
-          Перспективные интеграции
+          Ближайшие интеграции
         </h2>
         <div className="grid gap-3 md:grid-cols-3">
           <div className="rounded-xl border border-accent-cyan/20 bg-accent-cyan/5 p-5">
@@ -214,6 +219,7 @@ export default function AboutPage() {
               Клиент звонит на номер компании. AI-ассистент принимает звонок, уточняет
               потребность, находит товар в каталоге и оформляет заказ — без участия менеджера.
             </p>
+            <p className="text-[10px] text-accent-cyan mt-2">Бесплатно в рамках пилота</p>
           </div>
           <div className="rounded-xl border border-accent-cyan/20 bg-accent-cyan/5 p-5">
             <h3 className="text-sm font-semibold text-accent-cyan mb-2">WhatsApp-заказы</h3>
@@ -229,6 +235,29 @@ export default function AboutPage() {
               Автоматическое подтверждение через webhook.
             </p>
           </div>
+        </div>
+      </section>
+
+      {/* Дополнительные интеграции */}
+      <section className="mb-10 md:mb-14">
+        <h2 className="font-display text-xs uppercase tracking-wider text-text-muted mb-4">
+          Дополнительные интеграции
+        </h2>
+        <p className="text-xs text-text-muted mb-4">
+          За пределами текущей разработки. Подключаются по необходимости.
+        </p>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            { name: '1С', desc: 'Синхронизация остатков, цен и заказов с учётной системой' },
+            { name: 'AmoCRM', desc: 'Управление клиентской базой, воронки продаж, аналитика' },
+            { name: 'Битрикс24', desc: 'CRM, задачи, коммуникации, автоматизация процессов' },
+            { name: 'МойСклад', desc: 'Складской учёт, приход/расход, инвентаризация' },
+          ].map((item) => (
+            <div key={item.name} className="rounded-xl border border-border-subtle bg-bg-card p-4">
+              <h3 className="text-xs font-semibold text-text-primary mb-1">{item.name}</h3>
+              <p className="text-[11px] text-text-muted leading-relaxed">{item.desc}</p>
+            </div>
+          ))}
         </div>
       </section>
 
