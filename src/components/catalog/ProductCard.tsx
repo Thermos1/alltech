@@ -1,6 +1,7 @@
 'use client';
 
-import Link from 'next/link';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { cn, formatPriceShort } from '@/lib/utils';
 import { OIL_BASE_TYPES } from '@/lib/constants';
@@ -23,7 +24,9 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
+  const router = useRouter();
   const addItem = useCartStore((s) => s.addItem);
+  const [added, setAdded] = useState(false);
 
   const baseTypeLabel = product.base_type
     ? OIL_BASE_TYPES[product.base_type as keyof typeof OIL_BASE_TYPES]
@@ -44,8 +47,11 @@ export default function ProductCard({ product }: ProductCardProps) {
     ?.slice()
     .sort((a, b) => a.price - b.price)[0];
 
+  function handleCardClick() {
+    router.push(`/product/${product.slug}`);
+  }
+
   function handleAddToCart(e: React.MouseEvent) {
-    e.preventDefault();
     e.stopPropagation();
     if (!cheapestVariant) return;
 
@@ -57,18 +63,21 @@ export default function ProductCard({ product }: ProductCardProps) {
       price: cheapestVariant.price,
       imageUrl: product.image_url ?? undefined,
     });
+
+    setAdded(true);
+    setTimeout(() => setAdded(false), 1200);
   }
 
   return (
-    <Link
-      href={`/product/${product.slug}`}
+    <div
+      onClick={handleCardClick}
       className={cn(
-        'group flex flex-col rounded-xl border border-border-subtle',
+        'group flex flex-col rounded-xl border border-border-subtle cursor-pointer',
         'bg-bg-card overflow-hidden transition-all duration-300',
         'glow-border-yellow hover:bg-bg-card-hover'
       )}
     >
-      {/* Image placeholder */}
+      {/* Image */}
       <div className="relative aspect-square bg-bg-secondary flex items-center justify-center overflow-hidden">
         {product.image_url ? (
           <Image
@@ -126,39 +135,62 @@ export default function ProductCard({ product }: ProductCardProps) {
         <div className="flex-1" />
 
         {/* Price */}
-        {product.min_price_per_liter != null && (
+        {cheapestVariant && (
           <p className="text-text-primary text-sm font-semibold mt-1">
-            от {formatPriceShort(product.min_price_per_liter)}{' '}
-            <span className="text-text-muted text-xs font-normal">за литр</span>
+            {formatPriceShort(cheapestVariant.price)}{' '}
+            <span className="text-text-muted text-xs font-normal">
+              / {cheapestVariant.volume} {cheapestVariant.unit}
+            </span>
           </p>
         )}
 
         {/* Cart button */}
         <button
           onClick={handleAddToCart}
+          disabled={!cheapestVariant}
           className={cn(
-            'mt-2 w-full rounded-lg py-2 text-xs font-semibold transition-colors',
-            'bg-accent-yellow text-bg-primary hover:brightness-110',
-            'active:scale-[0.97]'
+            'mt-2 w-full rounded-lg py-2.5 text-xs font-semibold transition-all',
+            added
+              ? 'bg-green-500 text-white scale-[0.97]'
+              : 'bg-accent-yellow text-bg-primary hover:brightness-110 active:scale-[0.97]',
+            !cheapestVariant && 'opacity-50 cursor-not-allowed'
           )}
         >
-          {/* Cart icon */}
-          <svg
-            className="inline-block w-3.5 h-3.5 mr-1 -mt-0.5"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={2.5}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <circle cx="9" cy="21" r="1" />
-            <circle cx="20" cy="21" r="1" />
-            <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6" />
-          </svg>
-          В корзину
+          {added ? (
+            <>
+              <svg
+                className="inline-block w-3.5 h-3.5 mr-1 -mt-0.5"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2.5}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M20 6L9 17l-5-5" />
+              </svg>
+              Добавлено!
+            </>
+          ) : (
+            <>
+              <svg
+                className="inline-block w-3.5 h-3.5 mr-1 -mt-0.5"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2.5}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <circle cx="9" cy="21" r="1" />
+                <circle cx="20" cy="21" r="1" />
+                <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6" />
+              </svg>
+              В корзину
+            </>
+          )}
         </button>
       </div>
-    </Link>
+    </div>
   );
 }

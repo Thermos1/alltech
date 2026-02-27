@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useCartStore, useCartHydrated } from '@/stores/cart-store';
@@ -14,15 +15,28 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 w-full bg-bg-primary/80 backdrop-blur-xl border-b border-border-subtle">
       <div className="mx-auto flex h-14 max-w-[var(--container-max)] items-center justify-between px-[var(--container-padding)] md:h-16">
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-2">
-          <span className="font-display text-xl tracking-wide text-accent-yellow neon-yellow md:text-2xl">
-            АЛТЕХ
-          </span>
-          <span className="hidden text-xs text-text-muted sm:inline">
-            Родом из Якутии
-          </span>
-        </Link>
+        {/* Logo + phone */}
+        <div className="flex items-center gap-4">
+          <Link href="/" className="flex items-center">
+            <Image
+              src="/images/logo-white-full.png"
+              alt="АЛТЕХ"
+              width={120}
+              height={32}
+              className="h-8 w-auto md:h-9"
+              priority
+            />
+          </Link>
+          <a
+            href="tel:+79241716122"
+            className="hidden lg:flex items-center gap-1.5 text-sm text-text-secondary hover:text-accent-yellow transition-colors"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z" />
+            </svg>
+            +7 (924) 171-61-22
+          </a>
+        </div>
 
         {/* Desktop nav */}
         <nav className="hidden items-center gap-6 md:flex">
@@ -217,8 +231,20 @@ export default function Header() {
               onClick={() => setMenuOpen(false)}
               className="rounded-lg px-3 py-2.5 text-sm text-text-secondary transition-colors hover:bg-bg-card hover:text-text-primary"
             >
-              Корзина
+              Корзина {cartHydrated && itemCount > 0 && `(${itemCount})`}
             </Link>
+
+            <div className="border-t border-border-subtle mt-1 pt-2">
+              <a
+                href="tel:+79241716122"
+                className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm text-accent-yellow"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z" />
+                </svg>
+                +7 (924) 171-61-22
+              </a>
+            </div>
           </div>
         </nav>
       )}

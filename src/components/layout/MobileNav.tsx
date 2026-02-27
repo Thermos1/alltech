@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
+import { useCartStore, useCartHydrated } from '@/stores/cart-store';
 
 const navItems = [
   {
@@ -49,6 +50,7 @@ const navItems = [
   {
     href: '/cart',
     label: 'Корзина',
+    isCart: true,
     icon: (
       <svg
         width="22"
@@ -65,11 +67,9 @@ const navItems = [
         <path d="M16 10a4 4 0 01-8 0" />
       </svg>
     ),
-    hasBadge: true,
   },
 ];
 
-// Profile item defined separately so we can dynamically set href
 const profileIcon = (
   <svg
     width="22"
@@ -89,8 +89,9 @@ const profileIcon = (
 export default function MobileNav() {
   const pathname = usePathname();
   const { user, loading } = useAuth();
+  const cartHydrated = useCartHydrated();
+  const itemCount = useCartStore((s) => s.getItemCount());
 
-  // Profile links to /cabinet if logged in, /login if not
   const profileHref = !loading && user ? '/cabinet' : '/login';
   const profileLabel = !loading && user ? 'Профиль' : 'Войти';
 
@@ -116,12 +117,9 @@ export default function MobileNav() {
             >
               <span className="relative">
                 {item.icon}
-                {item.hasBadge && (
-                  <span
-                    id="mobile-cart-badge"
-                    className="absolute -right-1.5 -top-1 hidden h-3.5 min-w-3.5 items-center justify-center rounded-full bg-accent-yellow px-0.5 text-[8px] font-bold text-bg-primary"
-                  >
-                    0
+                {item.isCart && cartHydrated && itemCount > 0 && (
+                  <span className="absolute -right-1.5 -top-1 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-accent-yellow px-0.5 text-[8px] font-bold text-bg-primary">
+                    {itemCount}
                   </span>
                 )}
               </span>
@@ -130,7 +128,7 @@ export default function MobileNav() {
           );
         })}
 
-        {/* Profile / Login - dynamic based on auth state */}
+        {/* Profile / Login */}
         <Link
           href={profileHref}
           className={cn(
