@@ -105,7 +105,7 @@ export default function Header() {
               ) : (
                 <Link
                   href="/login"
-                  className="text-sm text-text-secondary transition-colors hover:text-accent-yellow"
+                  className="rounded-lg bg-accent-yellow px-4 py-1.5 text-sm font-semibold text-bg-primary transition-all hover:brightness-110"
                 >
                   Войти
                 </Link>

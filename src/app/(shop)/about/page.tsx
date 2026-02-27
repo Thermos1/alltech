@@ -70,7 +70,7 @@ const stack = [
   { label: 'Бэкенд и БД', value: 'Supabase (PostgreSQL), REST API, Row Level Security' },
   { label: 'Авторизация', value: 'Supabase Auth (email/пароль, JWT-токены)' },
   { label: 'Хранилище', value: 'Supabase Storage (изображения товаров, WebP-оптимизация)' },
-  { label: 'Хостинг', value: 'TouchDub — VPS + Docker, автодеплой при обновлении кода' },
+  { label: 'Хостинг', value: 'TechDab (сервера исполнителя) — VPS + Docker, автодеплой при обновлении кода' },
   { label: 'Оптимизация', value: 'SSR, ленивая загрузка, адаптивные изображения' },
 ];
 
