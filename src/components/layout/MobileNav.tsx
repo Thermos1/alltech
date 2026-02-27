@@ -2,9 +2,10 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
-import { useCartStore, useCartHydrated } from '@/stores/cart-store';
+import { useCartStore } from '@/stores/cart-store';
 
 const navItems = [
   {
@@ -89,8 +90,12 @@ const profileIcon = (
 export default function MobileNav() {
   const pathname = usePathname();
   const { user, loading } = useAuth();
-  const cartHydrated = useCartHydrated();
+  const [mounted, setMounted] = useState(false);
   const itemCount = useCartStore((s) => s.getItemCount());
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const profileHref = !loading && user ? '/cabinet' : '/login';
   const profileLabel = !loading && user ? 'Профиль' : 'Войти';
@@ -117,7 +122,7 @@ export default function MobileNav() {
             >
               <span className="relative">
                 {item.icon}
-                {item.isCart && cartHydrated && itemCount > 0 && (
+                {item.isCart && mounted && itemCount > 0 && (
                   <span className="absolute -right-1.5 -top-1 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-accent-yellow px-0.5 text-[8px] font-bold text-bg-primary">
                     {itemCount}
                   </span>

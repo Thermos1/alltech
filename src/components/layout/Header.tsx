@@ -2,15 +2,19 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-import { useCartStore, useCartHydrated } from '@/stores/cart-store';
+import { useCartStore } from '@/stores/cart-store';
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const { user, loading, signOut } = useAuth();
-  const cartHydrated = useCartHydrated();
   const itemCount = useCartStore((s) => s.getItemCount());
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <header className="sticky top-0 z-50 w-full bg-bg-primary/80 backdrop-blur-xl border-b border-border-subtle">
@@ -134,8 +138,8 @@ export default function Header() {
               <path d="M16 10a4 4 0 01-8 0" />
             </svg>
             {/* Dynamic cart badge */}
-            {cartHydrated && itemCount > 0 && (
-              <span className="absolute -right-0.5 -top-0.5 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-accent-yellow px-1 text-[10px] font-bold text-bg-primary">
+            {mounted && itemCount > 0 && (
+              <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-accent-yellow px-1 text-[11px] font-bold text-bg-primary shadow-lg">
                 {itemCount}
               </span>
             )}
@@ -231,7 +235,7 @@ export default function Header() {
               onClick={() => setMenuOpen(false)}
               className="rounded-lg px-3 py-2.5 text-sm text-text-secondary transition-colors hover:bg-bg-card hover:text-text-primary"
             >
-              Корзина {cartHydrated && itemCount > 0 && `(${itemCount})`}
+              Корзина {mounted && itemCount > 0 && `(${itemCount})`}
             </Link>
 
             <div className="border-t border-border-subtle mt-1 pt-2">
