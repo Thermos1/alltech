@@ -2,9 +2,11 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { user, loading, signOut } = useAuth();
 
   return (
     <header className="sticky top-0 z-50 w-full bg-bg-primary/80 backdrop-blur-xl border-b border-border-subtle">
@@ -33,12 +35,62 @@ export default function Header() {
           >
             Фильтры
           </Link>
-          <Link
-            href="/cabinet"
-            className="text-sm text-text-secondary transition-colors hover:text-text-primary"
-          >
-            Кабинет
-          </Link>
+
+          {/* Auth-dependent nav items */}
+          {!loading && (
+            <>
+              {user ? (
+                <div className="flex items-center gap-4">
+                  <Link
+                    href="/cabinet"
+                    className="flex items-center gap-1.5 text-sm text-text-secondary transition-colors hover:text-text-primary"
+                  >
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+                      <circle cx="12" cy="7" r="4" />
+                    </svg>
+                    Кабинет
+                  </Link>
+                  <button
+                    onClick={signOut}
+                    className="text-sm text-text-muted transition-colors hover:text-accent-magenta"
+                    title="Выйти"
+                  >
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
+                      <polyline points="16 17 21 12 16 7" />
+                      <line x1="21" y1="12" x2="9" y2="12" />
+                    </svg>
+                  </button>
+                </div>
+              ) : (
+                <Link
+                  href="/login"
+                  className="text-sm text-text-secondary transition-colors hover:text-accent-yellow"
+                >
+                  Войти
+                </Link>
+              )}
+            </>
+          )}
         </nav>
 
         {/* Right side: cart + hamburger */}
@@ -124,13 +176,40 @@ export default function Header() {
             >
               Фильтрующие элементы
             </Link>
-            <Link
-              href="/cabinet"
-              onClick={() => setMenuOpen(false)}
-              className="rounded-lg px-3 py-2.5 text-sm text-text-secondary transition-colors hover:bg-bg-card hover:text-text-primary"
-            >
-              Личный кабинет
-            </Link>
+
+            {!loading && (
+              <>
+                {user ? (
+                  <>
+                    <Link
+                      href="/cabinet"
+                      onClick={() => setMenuOpen(false)}
+                      className="rounded-lg px-3 py-2.5 text-sm text-text-secondary transition-colors hover:bg-bg-card hover:text-text-primary"
+                    >
+                      Личный кабинет
+                    </Link>
+                    <button
+                      onClick={() => {
+                        setMenuOpen(false)
+                        signOut()
+                      }}
+                      className="rounded-lg px-3 py-2.5 text-left text-sm text-text-muted transition-colors hover:bg-bg-card hover:text-accent-magenta"
+                    >
+                      Выйти
+                    </button>
+                  </>
+                ) : (
+                  <Link
+                    href="/login"
+                    onClick={() => setMenuOpen(false)}
+                    className="rounded-lg px-3 py-2.5 text-sm text-accent-yellow transition-colors hover:bg-bg-card hover:text-accent-yellow"
+                  >
+                    Войти
+                  </Link>
+                )}
+              </>
+            )}
+
             <Link
               href="/cart"
               onClick={() => setMenuOpen(false)}

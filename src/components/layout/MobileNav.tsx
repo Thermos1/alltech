@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/hooks/useAuth';
 
 const navItems = [
   {
@@ -66,29 +67,32 @@ const navItems = [
     ),
     hasBadge: true,
   },
-  {
-    href: '/cabinet',
-    label: 'Профиль',
-    icon: (
-      <svg
-        width="22"
-        height="22"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
-        <circle cx="12" cy="7" r="4" />
-      </svg>
-    ),
-  },
 ];
+
+// Profile item defined separately so we can dynamically set href
+const profileIcon = (
+  <svg
+    width="22"
+    height="22"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.8"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+    <circle cx="12" cy="7" r="4" />
+  </svg>
+);
 
 export default function MobileNav() {
   const pathname = usePathname();
+  const { user, loading } = useAuth();
+
+  // Profile links to /cabinet if logged in, /login if not
+  const profileHref = !loading && user ? '/cabinet' : '/login';
+  const profileLabel = !loading && user ? 'Профиль' : 'Войти';
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-border-subtle bg-bg-primary/90 backdrop-blur-xl md:hidden">
@@ -125,6 +129,20 @@ export default function MobileNav() {
             </Link>
           );
         })}
+
+        {/* Profile / Login - dynamic based on auth state */}
+        <Link
+          href={profileHref}
+          className={cn(
+            'relative flex flex-col items-center gap-0.5 px-3 py-1.5 text-[10px] transition-colors',
+            pathname.startsWith('/cabinet') || pathname === '/login'
+              ? 'text-accent-yellow'
+              : 'text-text-muted hover:text-text-secondary'
+          )}
+        >
+          <span className="relative">{profileIcon}</span>
+          <span>{profileLabel}</span>
+        </Link>
       </div>
     </nav>
   );
