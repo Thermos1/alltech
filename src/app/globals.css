@@ -1,26 +1,143 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Backgrounds */
+  --bg-primary: #0A0A0F;
+  --bg-secondary: #12121A;
+  --bg-card: #1A1A25;
+  --bg-card-hover: #222233;
+
+  /* Accents */
+  --accent-yellow: #FFD600;
+  --accent-yellow-dim: rgba(255, 214, 0, 0.15);
+  --accent-cyan: #00E5FF;
+  --accent-cyan-dim: rgba(0, 229, 255, 0.15);
+  --accent-magenta: #FF2D78;
+  --accent-magenta-dim: rgba(255, 45, 120, 0.15);
+
+  /* Text */
+  --text-primary: #F0F0F5;
+  --text-secondary: #8888AA;
+  --text-muted: #555570;
+
+  /* Borders */
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-accent: rgba(255, 214, 0, 0.3);
+
+  /* Glows */
+  --glow-yellow: 0 0 10px rgba(255, 214, 0, 0.4), 0 0 40px rgba(255, 214, 0, 0.15);
+  --glow-cyan: 0 0 10px rgba(0, 229, 255, 0.4), 0 0 40px rgba(0, 229, 255, 0.15);
+  --glow-magenta: 0 0 10px rgba(255, 45, 120, 0.4), 0 0 40px rgba(255, 45, 120, 0.15);
+
+  /* Fonts */
+  --font-display: var(--font-dela-gothic), 'Arial Black', sans-serif;
+  --font-body: var(--font-golos), 'Segoe UI', sans-serif;
+
+  /* Spacing */
+  --container-max: 1280px;
+  --container-padding: 16px;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-bg-primary: var(--bg-primary);
+  --color-bg-secondary: var(--bg-secondary);
+  --color-bg-card: var(--bg-card);
+  --color-bg-card-hover: var(--bg-card-hover);
+  --color-accent-yellow: var(--accent-yellow);
+  --color-accent-yellow-dim: var(--accent-yellow-dim);
+  --color-accent-cyan: var(--accent-cyan);
+  --color-accent-cyan-dim: var(--accent-cyan-dim);
+  --color-accent-magenta: var(--accent-magenta);
+  --color-accent-magenta-dim: var(--accent-magenta-dim);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-border-subtle: var(--border-subtle);
+  --color-border-accent: var(--border-accent);
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+/* Base */
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--text-muted);
+  border-radius: 3px;
+}
+
+/* Neon text glow utility */
+.neon-yellow {
+  text-shadow: 0 0 7px rgba(255, 214, 0, 0.6), 0 0 20px rgba(255, 214, 0, 0.3), 0 0 40px rgba(255, 214, 0, 0.15);
+}
+.neon-cyan {
+  text-shadow: 0 0 7px rgba(0, 229, 255, 0.6), 0 0 20px rgba(0, 229, 255, 0.3), 0 0 40px rgba(0, 229, 255, 0.15);
+}
+
+/* Neon border glow on hover */
+.glow-border-yellow {
+  transition: box-shadow 0.3s ease;
+}
+.glow-border-yellow:hover {
+  box-shadow: var(--glow-yellow);
+}
+
+/* Scan line overlay effect */
+.scan-lines::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.03) 2px,
+    rgba(0, 0, 0, 0.03) 4px
+  );
+  z-index: 1;
+}
+
+/* Grid pattern background */
+.grid-pattern {
+  background-image:
+    linear-gradient(rgba(255, 214, 0, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 214, 0, 0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+/* Hide scrollbar but keep scrollable */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Gradient fade edges for carousels */
+.carousel-fade-left {
+  mask-image: linear-gradient(to right, transparent 0%, black 40px);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 40px);
+}
+.carousel-fade-right {
+  mask-image: linear-gradient(to left, transparent 0%, black 40px);
+  -webkit-mask-image: linear-gradient(to left, transparent 0%, black 40px);
+}
+.carousel-fade-both {
+  mask-image: linear-gradient(to right, transparent 0%, black 40px, black calc(100% - 40px), transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 40px, black calc(100% - 40px), transparent 100%);
 }
