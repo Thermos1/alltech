@@ -57,65 +57,50 @@ export default function Header() {
             Фильтры
           </Link>
 
-          {/* Auth-dependent nav items */}
+        </nav>
+
+        {/* Right side: auth + cart + hamburger */}
+        <div className="flex items-center gap-2">
+          {/* Auth — desktop only */}
           {!loading && (
-            <>
+            <div className="hidden md:flex items-center gap-2">
               {user ? (
-                <div className="flex items-center gap-4">
+                <>
                   <Link
                     href="/cabinet"
-                    className="flex items-center gap-1.5 text-sm text-text-secondary transition-colors hover:text-text-primary"
+                    className="flex h-10 w-10 items-center justify-center rounded-lg transition-colors hover:bg-bg-card"
+                    aria-label="Кабинет"
+                    title="Личный кабинет"
                   >
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-text-primary">
                       <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
                       <circle cx="12" cy="7" r="4" />
                     </svg>
-                    Кабинет
                   </Link>
                   <button
                     onClick={signOut}
-                    className="text-sm text-text-muted transition-colors hover:text-accent-magenta"
+                    className="flex h-10 w-10 items-center justify-center rounded-lg transition-colors hover:bg-bg-card"
+                    aria-label="Выйти"
                     title="Выйти"
                   >
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-text-muted hover:text-accent-magenta">
                       <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
                       <polyline points="16 17 21 12 16 7" />
                       <line x1="21" y1="12" x2="9" y2="12" />
                     </svg>
                   </button>
-                </div>
+                </>
               ) : (
                 <Link
                   href="/login"
-                  className="rounded-lg bg-accent-yellow px-4 py-1.5 text-sm font-semibold text-bg-primary transition-all hover:brightness-110"
+                  className="rounded-lg bg-accent-yellow px-4 py-2 text-sm font-semibold text-bg-primary transition-all hover:brightness-110"
                 >
                   Войти
                 </Link>
               )}
-            </>
+            </div>
           )}
-        </nav>
 
-        {/* Right side: cart + hamburger */}
-        <div className="flex items-center gap-3">
           {/* Cart */}
           <Link
             href="/cart"
@@ -137,7 +122,6 @@ export default function Header() {
               <line x1="3" y1="6" x2="21" y2="6" />
               <path d="M16 10a4 4 0 01-8 0" />
             </svg>
-            {/* Dynamic cart badge */}
             {mounted && itemCount > 0 && (
               <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-accent-yellow px-1 text-[11px] font-bold text-bg-primary shadow-lg">
                 {itemCount}
