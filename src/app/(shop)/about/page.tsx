@@ -308,17 +308,18 @@ export default function AboutPage() {
       {/* Дополнительные интеграции */}
       <section className="mb-12 md:mb-16">
         <h2 className="font-display text-xs uppercase tracking-wider text-text-muted mb-4">
-          Дополнительные интеграции
+          Перспективные интеграции
         </h2>
-        <p className="text-xs text-text-muted mb-4">
-          Подключаются по мере необходимости. Архитектура готова к интеграции.
+        <p className="text-xs text-text-secondary mb-4 max-w-2xl">
+          Не входят в текущий объём разработки. Могут быть реализованы в рамках
+          отдельного этапа по мере необходимости бизнеса.
         </p>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {[
-            { name: '1С', desc: 'Синхронизация остатков, цен и заказов с учётной системой' },
-            { name: 'AmoCRM', desc: 'Управление клиентской базой, воронки продаж, аналитика' },
-            { name: 'Битрикс24', desc: 'CRM, задачи, коммуникации, автоматизация процессов' },
-            { name: 'МойСклад', desc: 'Складской учёт, приход/расход, инвентаризация' },
+            { name: '1С', desc: 'Двусторонняя синхронизация остатков, цен и заказов с учётной системой' },
+            { name: 'AmoCRM', desc: 'Управление клиентской базой, воронки продаж, аналитика конверсий' },
+            { name: 'Битрикс24', desc: 'CRM, внутренние задачи, коммуникации, автоматизация процессов' },
+            { name: 'МойСклад', desc: 'Складской учёт, приход/расход, инвентаризация, документооборот' },
           ].map((item) => (
             <div key={item.name} className="rounded-xl border border-border-subtle bg-bg-card p-4">
               <h3 className="text-xs font-semibold text-text-primary mb-1">{item.name}</h3>
