@@ -8,6 +8,7 @@ export default function MockPayForm() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [processing, setProcessing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const orderId = searchParams.get('order_id');
   const paymentId = searchParams.get('payment_id');
@@ -15,6 +16,7 @@ export default function MockPayForm() {
 
   async function handleAction(action: 'pay' | 'cancel') {
     setProcessing(true);
+    setError(null);
 
     try {
       const res = await fetch('/api/payment/webhook', {
@@ -25,12 +27,22 @@ export default function MockPayForm() {
 
       const data = await res.json();
 
+      if (!res.ok) {
+        setError(data.error || 'Ошибка обработки платежа');
+        setProcessing(false);
+        return;
+      }
+
       if (action === 'pay' && data.success) {
         router.push(`/checkout/success?order=${data.orderNumber}`);
       } else if (action === 'cancel') {
         router.push('/cart');
+      } else {
+        setError('Не удалось обработать платёж');
+        setProcessing(false);
       }
     } catch {
+      setError('Ошибка соединения. Попробуйте ещё раз.');
       setProcessing(false);
     }
   }
@@ -96,6 +108,13 @@ export default function MockPayForm() {
             </div>
           </div>
         </div>
+
+        {/* Error */}
+        {error && (
+          <div className="mb-4 rounded-lg bg-red-50 border border-red-200 p-3 text-red-700 text-sm">
+            {error}
+          </div>
+        )}
 
         {/* Actions */}
         <div className="space-y-3">

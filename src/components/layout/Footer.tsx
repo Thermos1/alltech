@@ -158,11 +158,17 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Copyright */}
+        {/* Company details */}
         <div className="mt-6 border-t border-border-subtle pt-6">
-          <p className="text-center text-xs text-text-muted">
-            &copy; 2026 АЛТЕХ. Все права защищены.
-          </p>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+            <div className="text-[11px] text-text-muted leading-relaxed">
+              <p>ООО &laquo;АЛТЕХ&raquo; &middot; ОГРН 1221400010182 &middot; ИНН 1400013380 &middot; КПП 140001001</p>
+              <p>Респ. Саха (Якутия), г. Якутск, ул. Феликса Кона, д. 1а, кв. 90</p>
+            </div>
+            <p className="text-[11px] text-text-muted whitespace-nowrap">
+              &copy; 2022&ndash;2026 АЛТЕХ
+            </p>
+          </div>
         </div>
       </div>
     </footer>

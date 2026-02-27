@@ -52,8 +52,7 @@ export async function POST(request: NextRequest) {
 
     // In real ЮKassa: create payment via API, return confirmation URL
     // For demo: redirect to mock payment page
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-    const paymentUrl = `${appUrl}/checkout/mock-pay?order_id=${orderId}&payment_id=${mockPaymentId}&amount=${order.total}`;
+    const paymentUrl = `/checkout/mock-pay?order_id=${orderId}&payment_id=${mockPaymentId}&amount=${order.total}`;
 
     return NextResponse.json({
       paymentUrl,
