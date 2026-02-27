@@ -295,6 +295,23 @@ export default function AboutPage() {
           Войти в аккаунт
         </Link>
       </section>
+
+      {/* Footer credits */}
+      <div className="border-t border-border-subtle mt-4 pt-6 pb-2 flex flex-col sm:flex-row items-center justify-center gap-x-4 gap-y-1 text-[10px] text-text-muted">
+        <span>
+          Built by{' '}
+          <a href="https://techdab.net" target="_blank" rel="noopener noreferrer" className="text-text-secondary hover:text-accent-yellow transition-colors">
+            techdab.net
+          </a>
+        </span>
+        <span className="hidden sm:inline">·</span>
+        <span>
+          Powered by{' '}
+          <a href="https://sipmind.net" target="_blank" rel="noopener noreferrer" className="text-text-secondary hover:text-accent-yellow transition-colors">
+            sipmind.net
+          </a>
+        </span>
+      </div>
     </div>
   );
 }
