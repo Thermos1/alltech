@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { OIL_BASE_TYPES } from '@/lib/constants';
@@ -83,10 +84,14 @@ export default async function ProductPage({ params }: PageProps) {
           {/* Product image */}
           <div className="aspect-square rounded-xl bg-bg-secondary border border-border-subtle flex items-center justify-center overflow-hidden">
             {product.image_url ? (
-              <img
+              <Image
                 src={product.image_url}
                 alt={product.name}
+                width={600}
+                height={600}
                 className="h-full w-full object-cover"
+                priority
+                sizes="(max-width: 768px) 100vw, 50vw"
               />
             ) : (
               <span className="text-6xl font-display text-text-muted select-none">

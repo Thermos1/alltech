@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useCartStore } from '@/stores/cart-store';
 import { cn, formatPriceShort } from '@/lib/utils';
 
@@ -87,10 +88,13 @@ export default function CartDrawer() {
             {/* Image */}
             <div className="w-16 h-16 shrink-0 rounded-lg bg-bg-secondary flex items-center justify-center overflow-hidden">
               {item.imageUrl ? (
-                <img
+                <Image
                   src={item.imageUrl}
                   alt={item.productName}
+                  width={64}
+                  height={64}
                   className="h-full w-full object-cover"
+                  sizes="64px"
                 />
               ) : (
                 <span className="text-xs font-display text-text-muted">

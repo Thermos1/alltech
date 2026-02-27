@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { createClient } from '@/lib/supabase/server';
 import { formatPriceShort } from '@/lib/utils';
 
@@ -71,10 +72,13 @@ export default async function AdminProductsPage() {
                       <td className="px-4 py-3">
                         <div className="w-10 h-10 rounded-lg bg-bg-secondary border border-border-subtle overflow-hidden flex items-center justify-center">
                           {product.image_url ? (
-                            <img
+                            <Image
                               src={product.image_url}
                               alt={product.name}
+                              width={40}
+                              height={40}
                               className="w-full h-full object-contain"
+                              sizes="40px"
                             />
                           ) : (
                             <span className="text-text-muted text-xs">--</span>

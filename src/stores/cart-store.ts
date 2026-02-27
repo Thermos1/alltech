@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { useState, useEffect } from 'react';
 
 export interface CartItem {
   variantId: string;
@@ -13,6 +14,7 @@ export interface CartItem {
 
 interface CartState {
   items: CartItem[];
+  _hydrated: boolean;
   addItem: (item: Omit<CartItem, 'quantity'>) => void;
   removeItem: (variantId: string) => void;
   updateQuantity: (variantId: string, quantity: number) => void;
@@ -25,6 +27,7 @@ export const useCartStore = create<CartState>()(
   persist(
     (set, get) => ({
       items: [],
+      _hydrated: false,
 
       addItem: (item) => {
         set((state) => {
@@ -79,6 +82,28 @@ export const useCartStore = create<CartState>()(
     }),
     {
       name: 'altech-cart',
+      onRehydrateStorage: () => () => {
+        useCartStore.setState({ _hydrated: true });
+      },
     }
   )
 );
+
+/**
+ * Hook that returns true only after Zustand has rehydrated from localStorage.
+ * Use this to avoid SSR/client hydration mismatches.
+ */
+export function useCartHydrated() {
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => {
+    const unsub = useCartStore.persist.onFinishHydration(() => {
+      setHydrated(true);
+    });
+    // If already hydrated (fast path)
+    if (useCartStore.getState()._hydrated) {
+      setHydrated(true);
+    }
+    return unsub;
+  }, []);
+  return hydrated;
+}

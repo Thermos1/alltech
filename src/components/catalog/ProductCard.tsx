@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { cn, formatPriceShort } from '@/lib/utils';
 import { OIL_BASE_TYPES } from '@/lib/constants';
 import { useCartStore } from '@/stores/cart-store';
@@ -70,10 +71,14 @@ export default function ProductCard({ product }: ProductCardProps) {
       {/* Image placeholder */}
       <div className="relative aspect-square bg-bg-secondary flex items-center justify-center overflow-hidden">
         {product.image_url ? (
-          <img
+          <Image
             src={product.image_url}
             alt={product.name}
+            width={400}
+            height={400}
             className="h-full w-full object-cover"
+            loading="lazy"
+            sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
           />
         ) : (
           <span className="text-3xl font-display text-text-muted select-none">
