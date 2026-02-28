@@ -14,7 +14,7 @@ export default function Header() {
   const [searchQuery, setSearchQuery] = useState('');
   const [mounted, setMounted] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
-  const { user, loading, signOut } = useAuth();
+  const { user, isStaff, loading, signOut } = useAuth();
   const itemCount = useCartStore((s) => s.getItemCount());
 
   useEffect(() => {
@@ -71,6 +71,18 @@ export default function Header() {
             <div className="hidden md:flex items-center gap-2">
               {user ? (
                 <>
+                  {isStaff && (
+                    <Link
+                      href="/admin"
+                      className="flex h-10 items-center gap-1.5 rounded-lg px-3 text-sm font-medium text-accent-yellow transition-colors hover:bg-bg-card"
+                      title="Панель управления"
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                      </svg>
+                      Панель
+                    </Link>
+                  )}
                   <Link
                     href="/cabinet"
                     className="flex h-10 w-10 items-center justify-center rounded-lg transition-colors hover:bg-bg-card"
@@ -239,6 +251,15 @@ export default function Header() {
               <>
                 {user ? (
                   <>
+                    {isStaff && (
+                      <Link
+                        href="/admin"
+                        onClick={() => setMenuOpen(false)}
+                        className="rounded-lg px-3 py-2.5 text-sm text-accent-yellow transition-colors hover:bg-bg-card"
+                      >
+                        Панель управления
+                      </Link>
+                    )}
                     <Link
                       href="/cabinet"
                       onClick={() => setMenuOpen(false)}

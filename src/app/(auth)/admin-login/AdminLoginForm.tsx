@@ -46,8 +46,8 @@ export default function AdminLoginForm() {
       return
     }
 
-    router.push('/admin')
-    router.refresh()
+    // Hard redirect to ensure SSR picks up the new session cookies
+    window.location.href = '/admin'
   }
 
   const inputClass = 'w-full bg-bg-secondary border border-border-subtle rounded-lg px-4 py-3 text-text-primary placeholder:text-text-muted focus:border-accent-yellow focus:outline-none transition-colors'
