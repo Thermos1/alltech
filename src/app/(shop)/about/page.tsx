@@ -10,17 +10,22 @@ export const metadata: Metadata = {
 const modules = [
   {
     title: 'Каталог товаров',
-    description: 'Категоризация по типам ГСМ, фильтры по бренду и вязкости. Карточки с вариантами фасовок, ценами и изображениями.',
+    description: 'Категоризация по типам ГСМ, фильтры по бренду и вязкости. Карточки с допусками, вариантами фасовок и ценами. Розлив масла с шагом 5 литров.',
     status: 'live' as const,
   },
   {
-    title: 'Корзина',
-    description: 'Добавление в один клик, редактирование количества, автопересчёт. Персистентное хранение между сессиями.',
+    title: 'Поиск по каталогу',
+    description: 'Мгновенный поиск по названию, бренду, вязкости и допускам. Доступен из шапки на любой странице.',
     status: 'live' as const,
   },
   {
-    title: 'Авторизация',
-    description: 'Регистрация и вход по email. Защищённые маршруты, JWT-сессии, автоматическое создание профиля.',
+    title: 'Корзина и повтор заказа',
+    description: 'Добавление в один клик, редактирование количества, автопересчёт. Повтор предыдущего заказа одной кнопкой. Персистентное хранение.',
+    status: 'live' as const,
+  },
+  {
+    title: 'SMS-авторизация',
+    description: 'Вход и регистрация по номеру телефона + SMS-код. Единый flow: ввёл номер → получил код → вошёл или зарегистрировался автоматически.',
     status: 'live' as const,
   },
   {
@@ -30,12 +35,12 @@ const modules = [
   },
   {
     title: 'Личный кабинет',
-    description: 'История заказов со статусами, бонусный баланс, реферальный код, редактирование профиля.',
+    description: 'История заказов со статусами, бонусный уровень с прогресс-баром, реферальный код, повтор заказа, профиль.',
     status: 'live' as const,
   },
   {
-    title: 'Бонусная программа',
-    description: 'Кэшбэк 5% бонусами за каждую покупку. Списание при оформлении (до 30% от суммы). Реферальная программа.',
+    title: 'Тиерная бонусная программа',
+    description: 'Растущий кэшбэк: Старт 3% → Бронза 5% → Серебро 7% → Золото 10% → Платина 15%. Уровень растёт с накоплением покупок.',
     status: 'live' as const,
   },
   {
@@ -44,8 +49,13 @@ const modules = [
     status: 'live' as const,
   },
   {
+    title: 'Мини-CRM для менеджеров',
+    description: 'Привязка клиентов к менеджерам, автоматическая комиссия с продаж, детекция «остывающих» клиентов. Управление ролями и ставками из админки.',
+    status: 'live' as const,
+  },
+  {
     title: 'Панель администратора',
-    description: 'Управление заказами, смена статусов, просмотр каталога. Ролевой доступ с RLS-политиками.',
+    description: 'Управление заказами, клиентами, менеджерами и товарами. Назначение ролей, настройка комиссий, смена статусов.',
     status: 'live' as const,
   },
   {
@@ -73,7 +83,7 @@ const modules = [
 const stack = [
   { label: 'Фронтенд', value: 'Next.js 16, React 19, TypeScript 5, Tailwind CSS 4' },
   { label: 'Бэкенд и БД', value: 'Supabase (PostgreSQL 15), REST API, Row Level Security' },
-  { label: 'Авторизация', value: 'Supabase Auth — JWT-токены, refresh, cookie-сессии' },
+  { label: 'Авторизация', value: 'SMS OTP (SMS.ru) + Supabase Auth — JWT-токены, refresh, cookie-сессии' },
   { label: 'Хранилище', value: 'Supabase Storage — CDN, оптимизация изображений через next/image' },
   { label: 'Тестирование', value: 'Vitest, React Testing Library — unit и интеграционные тесты' },
   { label: 'Валидация', value: 'Zod — строгая типизация входных данных на клиенте и сервере' },
@@ -116,7 +126,7 @@ const architecture = [
   },
   {
     title: 'Покрытие тестами',
-    desc: 'Критическая бизнес-логика покрыта unit-тестами: оплата, бонусы, валидация, корзина, API.',
+    desc: '93 unit-теста. Покрыта критическая логика: оплата, бонусные тиеры, SMS OTP, роли менеджеров, валидация, корзина, API.',
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
@@ -396,7 +406,7 @@ export default function AboutPage() {
         <h2 className="font-display text-xs uppercase tracking-wider text-text-muted mb-4">
           Тестовые аккаунты
         </h2>
-        <div className="grid gap-3 md:grid-cols-2">
+        <div className="grid gap-3 md:grid-cols-3">
           <div className="rounded-xl border border-accent-yellow/20 bg-accent-yellow/5 p-5">
             <div className="flex items-center gap-2 mb-3">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-accent-yellow">
@@ -407,16 +417,33 @@ export default function AboutPage() {
             </div>
             <div className="space-y-1.5 text-sm">
               <div className="flex items-center justify-between">
-                <span className="text-text-muted">Email:</span>
-                <CopyButton text="demo@altech-store.ru" />
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-text-muted">Пароль:</span>
-                <CopyButton text="demo2025" />
+                <span className="text-text-muted">Телефон:</span>
+                <CopyButton text="+7 900 111-11-11" />
               </div>
             </div>
             <p className="text-xs text-text-muted mt-3">
-              Каталог, корзина, оформление, личный кабинет, бонусы
+              Каталог, корзина, оформление, кабинет, бонусы, повтор заказа
+            </p>
+          </div>
+
+          <div className="rounded-xl border border-accent-cyan/20 bg-accent-cyan/5 p-5">
+            <div className="flex items-center gap-2 mb-3">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-accent-cyan">
+                <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+                <circle cx="9" cy="7" r="4" />
+                <path d="M23 21v-2a4 4 0 00-3-3.87" />
+                <path d="M16 3.13a4 4 0 010 7.75" />
+              </svg>
+              <h3 className="text-sm font-semibold text-accent-cyan">Менеджер</h3>
+            </div>
+            <div className="space-y-1.5 text-sm">
+              <div className="flex items-center justify-between">
+                <span className="text-text-muted">Телефон:</span>
+                <CopyButton text="+7 900 222-22-22" />
+              </div>
+            </div>
+            <p className="text-xs text-text-muted mt-3">
+              CRM: свои клиенты, их заказы, комиссии
             </p>
           </div>
 
@@ -429,21 +456,17 @@ export default function AboutPage() {
             </div>
             <div className="space-y-1.5 text-sm">
               <div className="flex items-center justify-between">
-                <span className="text-text-muted">Email:</span>
-                <CopyButton text="admin@altech-store.ru" />
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-text-muted">Пароль:</span>
-                <CopyButton text="admin2025" />
+                <span className="text-text-muted">Телефон:</span>
+                <CopyButton text="+7 900 333-33-33" />
               </div>
             </div>
             <p className="text-xs text-text-muted mt-3">
-              Полный доступ + панель управления заказами: /admin
+              Полный доступ: заказы, клиенты, менеджеры, товары
             </p>
           </div>
         </div>
         <p className="text-xs text-text-muted mt-3">
-          Также можно зарегистрировать новый аккаунт — подтверждение email в пилоте отключено.
+          Вход по SMS-коду. В тестовом режиме код отображается на экране (SMS_RU_API_KEY не подключен).
         </p>
       </section>
 
