@@ -568,11 +568,9 @@ export default function AboutPage() {
             <p className="text-xs text-text-muted mt-3">
               Введите любой номер — SMS-код показывается на экране (демо-режим). Каталог, корзина, оформление, кабинет, бонусы, повтор заказа.
             </p>
-            <div className="mt-2 text-[11px] space-y-0.5">
-              <span className="text-text-muted">Вход → </span>
-              <CopyButton text="/login" />
-              <span className="text-text-muted"> | Кабинет → </span>
-              <CopyButton text="/cabinet" />
+            <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-[11px]">
+              <Link href="/login" className="text-accent-cyan hover:text-accent-yellow transition-colors">Вход →</Link>
+              <Link href="/cabinet" className="text-accent-cyan hover:text-accent-yellow transition-colors">Кабинет →</Link>
             </div>
           </div>
 
@@ -599,11 +597,9 @@ export default function AboutPage() {
             <p className="text-xs text-text-muted mt-3">
               CRM: свои клиенты, их заказы, комиссия, прогноз замены масла
             </p>
-            <div className="mt-2 text-[11px] space-y-0.5">
-              <span className="text-text-muted">Вход → </span>
-              <CopyButton text="/admin-login" />
-              <span className="text-text-muted"> | Панель → </span>
-              <CopyButton text="/admin" />
+            <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-[11px]">
+              <Link href="/admin-login" className="text-accent-cyan hover:text-accent-yellow transition-colors">Вход →</Link>
+              <Link href="/admin" className="text-accent-cyan hover:text-accent-yellow transition-colors">Панель →</Link>
             </div>
           </div>
 
@@ -627,11 +623,9 @@ export default function AboutPage() {
             <p className="text-xs text-text-muted mt-3">
               Полный доступ: заказы, клиенты, назначение менеджеров, статусы
             </p>
-            <div className="mt-2 text-[11px] space-y-0.5">
-              <span className="text-text-muted">Вход → </span>
-              <CopyButton text="/admin-login" />
-              <span className="text-text-muted"> | Панель → </span>
-              <CopyButton text="/admin" />
+            <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-[11px]">
+              <Link href="/admin-login" className="text-accent-cyan hover:text-accent-yellow transition-colors">Вход →</Link>
+              <Link href="/admin" className="text-accent-cyan hover:text-accent-yellow transition-colors">Панель →</Link>
             </div>
           </div>
         </div>
