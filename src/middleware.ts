@@ -39,26 +39,26 @@ export async function middleware(request: NextRequest) {
 
   const { pathname } = request.nextUrl
 
-  // Protected routes: redirect to /login if not authenticated
-  const protectedPrefixes = ['/cabinet', '/checkout', '/admin']
-  const isProtected = protectedPrefixes.some((prefix) =>
+  // Protected routes: redirect to login if not authenticated
+  const isAdminRoute = pathname.startsWith('/admin') && pathname !== '/admin-login'
+  const isProtected = ['/cabinet', '/checkout'].some((prefix) =>
     pathname.startsWith(prefix)
-  )
+  ) || isAdminRoute
 
   if (isProtected && !user) {
     const url = request.nextUrl.clone()
-    url.pathname = '/login'
-    url.searchParams.set('next', pathname)
+    url.pathname = isAdminRoute ? '/admin-login' : '/login'
+    if (!isAdminRoute) url.searchParams.set('next', pathname)
     return NextResponse.redirect(url)
   }
 
-  // Auth routes: redirect to /cabinet if already authenticated
-  const authRoutes = ['/login', '/register']
+  // Auth routes: redirect authenticated users appropriately
+  const authRoutes = ['/login', '/register', '/admin-login']
   const isAuthRoute = authRoutes.includes(pathname)
 
   if (isAuthRoute && user) {
     const url = request.nextUrl.clone()
-    url.pathname = '/cabinet'
+    url.pathname = pathname === '/admin-login' ? '/admin' : '/cabinet'
     return NextResponse.redirect(url)
   }
 
@@ -77,5 +77,6 @@ export const config = {
     '/admin/:path*',
     '/login',
     '/register',
+    '/admin-login',
   ],
 }

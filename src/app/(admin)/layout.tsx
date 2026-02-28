@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import AdminLogoutButton from './AdminLogoutButton';
 
 const adminNavItems = [
   { href: '/admin', label: 'Дашборд' },
@@ -24,7 +25,7 @@ export default async function AdminLayout({
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect('/login?redirect=/admin');
+    redirect('/admin-login');
   }
 
   const { data: profile } = await supabase
@@ -62,7 +63,7 @@ export default async function AdminLayout({
           ))}
         </nav>
 
-        <div className="px-3 py-4 border-t border-border-subtle">
+        <div className="px-3 py-4 border-t border-border-subtle space-y-1">
           <Link
             href="/"
             className="flex items-center rounded-lg px-3 py-2.5 text-sm text-text-muted hover:text-accent-cyan transition-colors"
@@ -72,6 +73,7 @@ export default async function AdminLayout({
             </svg>
             В магазин
           </Link>
+          <AdminLogoutButton />
         </div>
       </aside>
 
@@ -81,12 +83,15 @@ export default async function AdminLayout({
           <Link href="/admin" className="font-display text-lg text-accent-yellow neon-yellow">
             АЛТЕХ Admin
           </Link>
-          <Link
-            href="/"
-            className="text-xs text-text-muted hover:text-accent-cyan transition-colors"
-          >
-            В магазин
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link
+              href="/"
+              className="text-xs text-text-muted hover:text-accent-cyan transition-colors"
+            >
+              В магазин
+            </Link>
+            <AdminLogoutButton />
+          </div>
         </div>
         <nav className="flex gap-1 overflow-x-auto no-scrollbar px-4 pb-3">
           {navItems.map((item) => (
