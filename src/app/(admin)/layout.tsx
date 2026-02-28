@@ -43,6 +43,7 @@ export default async function AdminLayout({
 
   const isAdmin = profile.role === 'admin';
   const navItems = isAdmin ? adminNavItems : managerNavItems;
+  const panelTitle = isAdmin ? 'АЛТЕХ Admin' : 'АЛТЕХ Менеджер';
 
   return (
     <div className="min-h-screen bg-bg-primary flex">
@@ -50,7 +51,7 @@ export default async function AdminLayout({
       <aside className="hidden md:flex md:w-60 md:flex-col md:fixed md:inset-y-0 border-r border-border-subtle bg-bg-secondary">
         <div className="flex h-14 items-center px-5 border-b border-border-subtle">
           <Link href="/admin" className="font-display text-lg text-accent-yellow neon-yellow">
-            АЛТЕХ Admin
+            {panelTitle}
           </Link>
         </div>
 
@@ -84,7 +85,7 @@ export default async function AdminLayout({
       <div className="md:hidden fixed top-0 left-0 right-0 z-50 bg-bg-primary/80 backdrop-blur-xl border-b border-border-subtle">
         <div className="flex h-14 items-center justify-between px-4">
           <Link href="/admin" className="font-display text-lg text-accent-yellow neon-yellow">
-            АЛТЕХ Admin
+            {panelTitle}
           </Link>
           <div className="flex items-center gap-3">
             <Link
