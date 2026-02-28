@@ -36,10 +36,11 @@ export default function LoginForm() {
     setLoading(true)
 
     try {
+      const fullPhone = '+7' + phone.replace(/[\s\-()]/g, '')
       const res = await fetch('/api/auth/send-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone }),
+        body: JSON.stringify({ phone: fullPhone }),
       })
 
       const data = await res.json()
@@ -69,10 +70,11 @@ export default function LoginForm() {
     setLoading(true)
 
     try {
+      const fullPhone = '+7' + phone.replace(/[\s\-()]/g, '')
       const res = await fetch('/api/auth/verify-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone, code }),
+        body: JSON.stringify({ phone: fullPhone, code }),
       })
 
       const data = await res.json()
@@ -125,16 +127,21 @@ export default function LoginForm() {
             <label htmlFor="phone" className="text-text-secondary text-sm font-medium block">
               Номер телефона
             </label>
-            <input
-              id="phone"
-              type="tel"
-              required
-              autoComplete="tel"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              placeholder="+7 (924) 171-61-22"
-              className={inputClass}
-            />
+            <div className="flex">
+              <span className="flex items-center bg-bg-secondary border border-r-0 border-border-subtle rounded-l-lg px-3 text-text-muted text-sm font-medium select-none">
+                +7
+              </span>
+              <input
+                id="phone"
+                type="tel"
+                required
+                autoComplete="tel"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value.replace(/[^\d\s\-()]/g, ''))}
+                placeholder="924 171-61-22"
+                className={`${inputClass} rounded-l-none`}
+              />
+            </div>
           </div>
 
           {error && <p className="text-accent-magenta text-sm">{error}</p>}
@@ -150,7 +157,7 @@ export default function LoginForm() {
       ) : (
         <form onSubmit={handleVerifyCode} className="space-y-4">
           <div className="bg-bg-secondary rounded-lg px-4 py-3 flex items-center justify-between">
-            <span className="text-text-secondary text-sm">{phone}</span>
+            <span className="text-text-secondary text-sm">+7 {phone}</span>
             <button
               type="button"
               onClick={() => { setStep('phone'); setCode(''); setError(null); setDevCode(null) }}
