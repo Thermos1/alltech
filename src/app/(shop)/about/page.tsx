@@ -4,159 +4,8 @@ import Image from 'next/image';
 
 export const metadata: Metadata = {
   title: 'О платформе — АЛТЕХ',
-  description: 'Заказная разработка интернет-магазина АЛТЕХ. Архитектура, стек, масштабируемость.',
+  description: 'Цифровая платформа для оптово-розничной торговли ГСМ. Бизнес-модель, возможности, онбординг.',
 };
-
-const modules = [
-  {
-    title: 'Каталог товаров',
-    description: 'Категоризация по типам ГСМ, фильтры по бренду и вязкости. Карточки с допусками, вариантами фасовок и ценами. Розлив масла с шагом 5 литров.',
-    status: 'live' as const,
-  },
-  {
-    title: 'Поиск по каталогу',
-    description: 'Мгновенный поиск по названию, бренду, вязкости и допускам. Доступен из шапки на любой странице.',
-    status: 'live' as const,
-  },
-  {
-    title: 'Корзина и повтор заказа',
-    description: 'Добавление в один клик, редактирование количества, автопересчёт. Повтор предыдущего заказа одной кнопкой. Персистентное хранение.',
-    status: 'live' as const,
-  },
-  {
-    title: 'SMS-авторизация',
-    description: 'Вход и регистрация клиентов по номеру телефона + SMS-код. Отдельный вход для сотрудников по email/паролю (/admin-login).',
-    status: 'live' as const,
-  },
-  {
-    title: 'Оформление заказа',
-    description: 'Форма с валидацией, применение промокодов и бонусов, расчёт итога, инициация оплаты.',
-    status: 'live' as const,
-  },
-  {
-    title: 'Личный кабинет',
-    description: 'История заказов со статусами, бонусный уровень с прогресс-баром, реферальный код, повтор заказа, профиль.',
-    status: 'live' as const,
-  },
-  {
-    title: 'Тиерная бонусная программа',
-    description: 'Растущий кэшбэк: Старт 3% → Бронза 5% → Серебро 7% → Золото 10% → Платина 15%. Уровень растёт с накоплением покупок.',
-    status: 'live' as const,
-  },
-  {
-    title: 'Промокоды',
-    description: 'Процентные и фиксированные скидки. Контроль сроков, лимитов использования и минимальной суммы.',
-    status: 'live' as const,
-  },
-  {
-    title: 'Мини-CRM для менеджеров',
-    description: 'Привязка клиентов к менеджерам, автоматическая комиссия 3% с продаж. Прогноз замены масла (4 мес.), блок «Требуют внимания» с просроченными и предстоящими заменами. WhatsApp-связь с клиентом.',
-    status: 'live' as const,
-  },
-  {
-    title: 'Панель администратора',
-    description: 'Две роли: Админ видит всё, Менеджер — только своих клиентов. Управление заказами, назначение менеджеров, смена статусов, настройка комиссий.',
-    status: 'live' as const,
-  },
-  {
-    title: 'REST API для интеграций',
-    description: 'Готовые эндпоинты для внешних систем: поиск товаров, проверка остатков, создание заказов. Bearer-авторизация.',
-    status: 'live' as const,
-  },
-  {
-    title: 'Интернет-эквайринг (ЮKassa)',
-    description: 'Приём платежей картами, СБП, электронными кошельками. Сейчас работает демо-оплата с полным flow.',
-    status: 'next' as const,
-  },
-  {
-    title: 'SIPmind — голосовой AI',
-    description: 'Клиент звонит — AI-ассистент принимает, находит товар и оформляет заказ автоматически через API.',
-    status: 'next' as const,
-  },
-  {
-    title: 'WhatsApp-заказы',
-    description: 'Оператор или бот формирует заказ в мессенджере и отправляет ссылку на готовую корзину.',
-    status: 'next' as const,
-  },
-];
-
-const stack = [
-  { label: 'Фронтенд', value: 'Next.js 16, React 19, TypeScript 5 (strict mode), Tailwind CSS 4' },
-  { label: 'Бэкенд и БД', value: 'Supabase PostgreSQL 15, PostgREST, Row Level Security, SECURITY DEFINER functions' },
-  { label: 'Авторизация', value: 'Кастомный OTP через SMS.ru + Supabase Auth — JWT, refresh-токены, HttpOnly cookie-сессии' },
-  { label: 'Безопасность', value: 'RLS на всех таблицах, Zod-валидация входных данных, CORS, CSP, TLS/SSL, rate limiting OTP' },
-  { label: 'Хранилище', value: 'Supabase Storage CDN, оптимизация изображений через next/image (WebP, AVIF)' },
-  { label: 'Тестирование', value: 'Vitest — 138 unit-тестов, 100% покрытие критических путей (оплата, авторизация, CRM, API)' },
-  { label: 'Валидация', value: 'Zod v4 — сквозная типизация: одна схема для клиента (UX) и сервера (безопасность)' },
-  { label: 'Состояние', value: 'Zustand 5 — изоморфное состояние с localStorage-персистентностью и SSR hydration guard' },
-  { label: 'Инфраструктура', value: 'Docker standalone, GitHub Actions CI/CD, zero-downtime deploy через Coolify REST API' },
-  { label: 'Мониторинг', value: 'Структурное логирование, graceful degradation, fail-open архитектура' },
-];
-
-const architecture = [
-  {
-    title: 'Server Components + Streaming',
-    desc: 'React Server Components для zero-bundle серверной логики. Streaming SSR с Suspense. TTFB < 200ms на статике.',
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="2" y="3" width="20" height="14" rx="2" />
-        <line x1="8" y1="21" x2="16" y2="21" />
-        <line x1="12" y1="17" x2="12" y2="21" />
-      </svg>
-    ),
-  },
-  {
-    title: 'Row Level Security',
-    desc: 'Безопасность на уровне PostgreSQL. SECURITY DEFINER функции для ролевой модели. Три уровня клиентов: anon, authenticated, service_role.',
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="3" y="11" width="18" height="11" rx="2" />
-        <path d="M7 11V7a5 5 0 0110 0v4" />
-      </svg>
-    ),
-  },
-  {
-    title: 'Горизонтальное масштабирование',
-    desc: 'Stateless-архитектура с cookie-сессиями. Контейнеризация через Docker. Несколько инстансов за балансировщиком без изменения кода.',
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <line x1="22" y1="12" x2="2" y2="12" />
-        <polyline points="15 5 22 12 15 19" />
-        <polyline points="9 19 2 12 9 5" />
-      </svg>
-    ),
-  },
-  {
-    title: 'Покрытие тестами',
-    desc: '138 автоматизированных тестов в 13 test suites. CI-пайплайн: линтер → type-check → тесты → билд → деплой. Каждый коммит проверяется автоматически.',
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
-        <polyline points="22 4 12 14.01 9 11.01" />
-      </svg>
-    ),
-  },
-  {
-    title: 'Мобильный приоритет',
-    desc: 'Адаптивный интерфейс с mobile-first подходом. Оптимизирован под касания, нижняя навигация на мобильных.',
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="5" y="2" width="14" height="20" rx="2" />
-        <line x1="12" y1="18" x2="12.01" y2="18" />
-      </svg>
-    ),
-  },
-  {
-    title: 'API-first',
-    desc: 'REST API для любых каналов продаж: голосовой AI, мессенджеры, мобильное приложение, внешние системы.',
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-        <polyline points="16 18 22 12 16 6" />
-        <polyline points="8 6 2 12 8 18" />
-      </svg>
-    ),
-  },
-];
 
 function StatusBadge({ status }: { status: 'live' | 'next' }) {
   if (status === 'live') {
@@ -175,18 +24,14 @@ function StatusBadge({ status }: { status: 'live' | 'next' }) {
   );
 }
 
-function CopyButton({ text }: { text: string }) {
-  return (
-    <span className="font-mono text-text-primary select-all">{text}</span>
-  );
-}
-
 export default function AboutPage() {
   return (
     <div className="mx-auto max-w-[var(--container-max)] px-[var(--container-padding)] py-8 md:py-14">
 
-      {/* Hero */}
-      <section className="mb-12 md:mb-16">
+      {/* ═══════════════════════════════════════════════
+          1. HERO
+      ═══════════════════════════════════════════════ */}
+      <section className="mb-14 md:mb-20">
         <div className="flex items-center gap-3 mb-5">
           <Image
             src="/images/logo-white-full.png"
@@ -200,46 +45,207 @@ export default function AboutPage() {
           </span>
         </div>
         <h1 className="font-display text-2xl md:text-3xl lg:text-4xl text-text-primary mb-4 leading-tight">
-          Цифровая платформа для оптово-розничной<br className="hidden md:block" /> торговли ГСМ
+          Платформа, которая продаёт<br className="hidden md:block" /> пока вы заняты бизнесом
         </h1>
-        <p className="text-text-secondary text-sm md:text-base max-w-2xl leading-relaxed">
-          Заказная разработка полного цикла: от каталога до управления заказами.
-          Построена на промышленном стеке с фокусом на масштабируемость,
-          безопасность и интеграцию с внешними системами.
+        <p className="text-text-secondary text-sm md:text-base max-w-2xl leading-relaxed mb-8">
+          Цифровая платформа для оптово-розничной торговли ГСМ.
+          Автоматизирует повторные продажи, мотивирует менеджеров
+          и удерживает клиентов — без ручного контроля.
         </p>
+
+        <div className="grid gap-4 sm:grid-cols-3">
+          <div className="rounded-xl border border-accent-yellow/20 bg-accent-yellow/5 p-5">
+            <p className="font-display text-2xl text-accent-yellow mb-1">1 клик</p>
+            <p className="text-xs text-text-primary font-medium">Повтор заказа</p>
+            <p className="text-[11px] text-text-muted mt-1">Клиент повторяет прошлый заказ за 10 секунд вместо 10 минут</p>
+          </div>
+          <div className="rounded-xl border border-accent-cyan/20 bg-accent-cyan/5 p-5">
+            <p className="font-display text-2xl text-accent-cyan mb-1">4 мес.</p>
+            <p className="text-xs text-text-primary font-medium">Прогноз замены масла</p>
+            <p className="text-[11px] text-text-muted mt-1">Платформа напоминает менеджеру позвонить клиенту до того, как он уйдёт к конкуренту</p>
+          </div>
+          <div className="rounded-xl border border-accent-magenta/20 bg-accent-magenta/5 p-5">
+            <p className="font-display text-2xl text-accent-magenta mb-1">3%</p>
+            <p className="text-xs text-text-primary font-medium">Комиссия менеджера</p>
+            <p className="text-[11px] text-text-muted mt-1">Менеджеры зарабатывают на комиссии — прозрачно, мотивирует продавать</p>
+          </div>
+        </div>
       </section>
 
-      {/* Архитектура и гарантии */}
-      <section className="mb-12 md:mb-16">
-        <h2 className="font-display text-xs uppercase tracking-wider text-text-muted mb-6">
-          Архитектура и гарантии
+      {/* ═══════════════════════════════════════════════
+          2. КАК ПЛАТФОРМА ЗАРАБАТЫВАЕТ ДЕНЬГИ
+      ═══════════════════════════════════════════════ */}
+      <section className="mb-14 md:mb-20">
+        <h2 className="font-display text-xs uppercase tracking-wider text-text-muted mb-2">
+          Юнит-экономика
         </h2>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {architecture.map((a) => (
-            <div key={a.title} className="rounded-xl border border-border-subtle bg-bg-card p-5 transition-colors hover:border-accent-yellow/30">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent-yellow/10 text-accent-yellow">
-                  {a.icon}
-                </div>
-                <h3 className="text-sm font-semibold text-text-primary">{a.title}</h3>
+        <p className="font-display text-lg md:text-xl text-text-primary mb-6">
+          Как платформа зарабатывает деньги
+        </p>
+
+        <div className="grid gap-5 md:grid-cols-2">
+          <div className="rounded-xl border border-border-subtle bg-bg-card p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent-yellow/10 text-accent-yellow">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                </svg>
               </div>
-              <p className="text-xs text-text-secondary leading-relaxed">{a.desc}</p>
+              <h3 className="text-sm font-semibold text-text-primary">Удержание клиентов (LTV)</h3>
+            </div>
+            <div className="space-y-3 text-xs text-text-secondary leading-relaxed">
+              <p>
+                <span className="text-accent-yellow font-medium">Тиерная лояльность:</span> кэшбэк растёт с покупками — от 3% (Старт) до 15% (Платина).
+                Клиент на уровне Золото (10%) не уйдёт к конкуренту, который даёт 5%.
+              </p>
+              <p>
+                <span className="text-accent-yellow font-medium">Повтор заказа:</span> одна кнопка восстанавливает корзину из прошлого заказа.
+                Флит-менеджер, который каждый месяц берёт одно и то же — делает это за 10 секунд.
+              </p>
+              <p>
+                <span className="text-accent-yellow font-medium">Бонусы, а не скидки:</span> бонусы нужно потратить — клиент возвращается.
+                Скидка работает один раз и снижает маржу. Бонус удерживает.
+              </p>
+            </div>
+          </div>
+
+          <div className="rounded-xl border border-border-subtle bg-bg-card p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent-cyan/10 text-accent-cyan">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10" />
+                  <polyline points="12 6 12 12 16 14" />
+                </svg>
+              </div>
+              <h3 className="text-sm font-semibold text-text-primary">Прогноз замены масла</h3>
+            </div>
+            <div className="space-y-3 text-xs text-text-secondary leading-relaxed">
+              <p>
+                <span className="text-accent-cyan font-medium">Автоматический расчёт:</span> дата покупки + 4 месяца = время замены.
+                Менеджер видит на дашборде блок «Требуют внимания» с конкретными клиентами.
+              </p>
+              <p>
+                <span className="text-accent-cyan font-medium">Проактивные продажи:</span> конкуренты ждут, пока клиент сам позвонит.
+                АЛТЕХ звонит первым — через WhatsApp прямо из карточки клиента.
+              </p>
+              <p>
+                <span className="text-accent-cyan font-medium">Результат:</span> менеджер не забывает ни одного клиента.
+                Один человек обслуживает 50+ клиентов с предсказуемым циклом.
+              </p>
+            </div>
+          </div>
+
+          <div className="rounded-xl border border-border-subtle bg-bg-card p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent-magenta/10 text-accent-magenta">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="12" y1="1" x2="12" y2="23" />
+                  <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" />
+                </svg>
+              </div>
+              <h3 className="text-sm font-semibold text-text-primary">Децентрализованные продажи</h3>
+            </div>
+            <div className="space-y-3 text-xs text-text-secondary leading-relaxed">
+              <p>
+                <span className="text-accent-magenta font-medium">Комиссия 3%:</span> менеджеры работают на проценте от продаж.
+                Расходы на продажи пропорциональны доходам.
+              </p>
+              <p>
+                <span className="text-accent-magenta font-medium">Прозрачность:</span> каждый менеджер видит свою комиссию в реальном времени —
+                разбивка по месяцам, по заказам, с номером и суммой. Нет споров при выплате.
+              </p>
+              <p>
+                <span className="text-accent-magenta font-medium">Масштаб:</span> нет потолка продаж.
+                Можно подключать сколько угодно менеджеров — система масштабируется без дополнительных затрат.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════
+          3. ПОЧЕМУ СДЕЛАНО ИМЕННО ТАК
+      ═══════════════════════════════════════════════ */}
+      <section className="mb-14 md:mb-20">
+        <h2 className="font-display text-xs uppercase tracking-wider text-text-muted mb-2">
+          Продуктовые решения
+        </h2>
+        <p className="font-display text-lg md:text-xl text-text-primary mb-6">
+          Почему сделано именно так
+        </p>
+
+        <div className="space-y-3">
+          {[
+            {
+              decision: 'SMS вместо email и пароля',
+              why: 'Водители и механики не помнят пароли. Телефон — естественная идентификация в B2B. Вход за 15 секунд без регистрации.',
+              alternative: 'Email-регистрация: 40% отказов на этапе «подтвердите почту». Для B2B-клиентов, которые покупают масло — это неприемлемый барьер.',
+            },
+            {
+              decision: 'Розлив масла с шагом 5 литров',
+              why: 'Региональная специфика: клиент берёт ровно столько, сколько нужно. 15 литров? 25? Без проблем. Цена пересчитывается автоматически.',
+              alternative: 'Фиксированные упаковки (5л, 20л, 208л): клиент, которому нужно 15л — уходит к конкуренту, где продают на розлив.',
+            },
+            {
+              decision: 'Прогноз замены масла в CRM',
+              why: 'Превращает реактивные продажи в проактивные. Система считает дату следующей замены. Менеджер звонит ДО того, как клиент задумался.',
+              alternative: 'Ручные напоминания в Excel: человеческий фактор, забывают. При 50+ клиентах — невозможно отследить.',
+            },
+            {
+              decision: 'Комиссионная система',
+              why: 'Масштабируемость без потолка: 5 менеджеров или 50 — расходы пропорциональны доходам. Менеджер мотивирован продавать больше.',
+              alternative: 'Фиксированная мотивация: потолок по числу клиентов, нет стимула перевыполнять план.',
+            },
+            {
+              decision: 'Бонусы вместо прямых скидок',
+              why: 'Бонусы нужно потратить — клиент обязан вернуться. Скидка работает один раз. Бонусная программа с тиерами создаёт switching costs.',
+              alternative: 'Скидки 5-10% всем: снижают маржу без удержания. Клиент берёт скидку и уходит к конкуренту на следующий заказ.',
+            },
+            {
+              decision: 'Песочница ЮKassa вместо заглушки',
+              why: 'Реальный платёжный flow: инициация — страница оплаты — webhook — статус. Для запуска в продакшн — только поменять ключи. Ноль доработок.',
+              alternative: 'Мок-оплата с кнопкой «Оплачено»: не даёт понимания реального UX. Требует переписывания при интеграции.',
+            },
+          ].map((item) => (
+            <div key={item.decision} className="rounded-xl border border-border-subtle bg-bg-card p-5">
+              <h3 className="text-sm font-semibold text-accent-yellow mb-2">{item.decision}</h3>
+              <p className="text-xs text-text-primary leading-relaxed mb-2">{item.why}</p>
+              <p className="text-[11px] text-text-muted leading-relaxed">
+                <span className="text-accent-magenta font-medium">Альтернатива:</span> {item.alternative}
+              </p>
             </div>
           ))}
         </div>
       </section>
 
-      {/* Модули платформы */}
-      <section className="mb-12 md:mb-16">
-        <h2 className="font-display text-xs uppercase tracking-wider text-text-muted mb-4">
-          Модули платформы
+      {/* ═══════════════════════════════════════════════
+          4. МОДУЛИ ПЛАТФОРМЫ
+      ═══════════════════════════════════════════════ */}
+      <section className="mb-14 md:mb-20">
+        <h2 className="font-display text-xs uppercase tracking-wider text-text-muted mb-2">
+          Что входит
         </h2>
-        <p className="text-text-secondary text-sm mb-6 max-w-2xl">
-          Каждый модуль — самостоятельная единица, которую можно развивать независимо.
-          Архитектура позволяет добавлять новые модули без переписывания существующих.
+        <p className="font-display text-lg md:text-xl text-text-primary mb-6">
+          Модули платформы
         </p>
+
         <div className="grid gap-3 md:grid-cols-2">
-          {modules.map((m) => (
+          {[
+            { title: 'Каталог товаров', description: 'Категоризация по типам ГСМ, фильтры по бренду и вязкости. Карточки с допусками, вариантами фасовок и ценами. Розлив масла с шагом 5 литров.', status: 'live' as const },
+            { title: 'Поиск по каталогу', description: 'Мгновенный поиск по названию, бренду, вязкости и допускам. Доступен из шапки на любой странице.', status: 'live' as const },
+            { title: 'Корзина и повтор заказа', description: 'Добавление в один клик, редактирование количества, автопересчёт. Повтор предыдущего заказа одной кнопкой.', status: 'live' as const },
+            { title: 'SMS-авторизация', description: 'Вход и регистрация клиентов по SMS-коду. Отдельный вход для сотрудников. Менеджеры входят по телефону — автоматический редирект в панель.', status: 'live' as const },
+            { title: 'Оформление и оплата', description: 'Форма с валидацией, применение промокодов и бонусов, расчёт итога. Оплата через песочницу ЮKassa (полный flow, готов к запуску).', status: 'live' as const },
+            { title: 'Личный кабинет', description: 'История заказов со статусами, бонусный уровень с прогресс-баром, реферальный код, повтор заказа, профиль.', status: 'live' as const },
+            { title: 'Тиерная бонусная программа', description: 'Растущий кэшбэк: Старт 3% — Бронза 5% — Серебро 7% — Золото 10% — Платина 15%. Уровень растёт с накоплением покупок.', status: 'live' as const },
+            { title: 'Промокоды', description: 'Процентные и фиксированные скидки. Контроль сроков, лимитов использования и минимальной суммы.', status: 'live' as const },
+            { title: 'Мини-CRM', description: 'Привязка клиентов к менеджерам. Прогноз замены масла (4 мес.), блок «Требуют внимания». WhatsApp-связь с клиентом из карточки.', status: 'live' as const },
+            { title: 'Комиссии менеджеров', description: 'Автоматическое начисление 3% с каждого оплаченного заказа. Разбивка по месяцам, история по заказам. Настраиваемая ставка.', status: 'live' as const },
+            { title: 'Панель администратора', description: 'Два уровня: Админ видит всё, Менеджер — только своих клиентов. Управление заказами, назначение менеджеров, настройка комиссий.', status: 'live' as const },
+            { title: 'REST API для интеграций', description: 'Готовые эндпоинты для внешних систем: поиск товаров, проверка остатков, создание заказов. Bearer-авторизация.', status: 'live' as const },
+            { title: 'SIPmind — голосовой AI', description: 'Потенциальная интеграция: клиент звонит — AI-ассистент принимает, находит товар и оформляет заказ через подготовленный API.', status: 'next' as const },
+            { title: 'WhatsApp-заказы', description: 'Оператор или бот формирует заказ в мессенджере и отправляет ссылку на готовую корзину.', status: 'next' as const },
+          ].map((m) => (
             <div
               key={m.title}
               className="rounded-xl border border-border-subtle bg-bg-card p-4 transition-colors hover:border-border-accent"
@@ -254,321 +260,139 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Масштабирование */}
-      <section className="mb-12 md:mb-16">
-        <h2 className="font-display text-xs uppercase tracking-wider text-text-muted mb-4">
-          Возможности масштабирования
+      {/* ═══════════════════════════════════════════════
+          5. ОНБОРДИНГ
+      ═══════════════════════════════════════════════ */}
+      <section className="mb-14 md:mb-20">
+        <h2 className="font-display text-xs uppercase tracking-wider text-text-muted mb-2">
+          Онбординг
         </h2>
-        <div className="rounded-xl border border-accent-yellow/20 bg-accent-yellow/5 p-6 md:p-8">
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            <div>
-              <h3 className="text-sm font-semibold text-accent-yellow mb-2">Мобильное приложение</h3>
-              <p className="text-xs text-text-secondary leading-relaxed">
-                API-first архитектура позволяет подключить нативное iOS/Android приложение
-                к тому же бэкенду. Единая база данных, единая бизнес-логика.
-              </p>
-            </div>
-            <div>
-              <h3 className="text-sm font-semibold text-accent-yellow mb-2">Мультирегиональность</h3>
-              <p className="text-xs text-text-secondary leading-relaxed">
-                Расширение на другие регионы через дополнительные склады, ценовые матрицы
-                и локальные каталоги — без изменения ядра платформы.
-              </p>
-            </div>
-            <div>
-              <h3 className="text-sm font-semibold text-accent-yellow mb-2">Каналы продаж</h3>
-              <p className="text-xs text-text-secondary leading-relaxed">
-                Веб-сайт, голосовой AI, WhatsApp, Telegram-бот, мобильное приложение —
-                все каналы работают через один API и одну базу данных.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Ближайшие интеграции */}
-      <section className="mb-12 md:mb-16">
-        <h2 className="font-display text-xs uppercase tracking-wider text-text-muted mb-4">
-          Ближайшие интеграции
-        </h2>
-        <div className="grid gap-3 md:grid-cols-3">
-          <div className="rounded-xl border border-accent-cyan/20 bg-accent-cyan/5 p-5">
-            <h3 className="text-sm font-semibold text-accent-cyan mb-2">SIPmind — голосовой AI</h3>
-            <p className="text-xs text-text-secondary leading-relaxed">
-              Клиент звонит на номер компании. AI-ассистент принимает звонок, уточняет
-              потребность, находит товар в каталоге и оформляет заказ — без участия менеджера.
-            </p>
-            <p className="text-[10px] text-accent-cyan mt-2 font-medium">Бесплатно в рамках пилота</p>
-          </div>
-          <div className="rounded-xl border border-accent-cyan/20 bg-accent-cyan/5 p-5">
-            <h3 className="text-sm font-semibold text-accent-cyan mb-2">WhatsApp-заказы</h3>
-            <p className="text-xs text-text-secondary leading-relaxed">
-              Клиент пишет в WhatsApp — оператор или бот собирает заказ
-              и отправляет ссылку на готовую корзину для оплаты на сайте.
-            </p>
-          </div>
-          <div className="rounded-xl border border-accent-cyan/20 bg-accent-cyan/5 p-5">
-            <h3 className="text-sm font-semibold text-accent-cyan mb-2">ЮKassa — онлайн-оплата</h3>
-            <p className="text-xs text-text-secondary leading-relaxed">
-              Приём платежей банковскими картами, через СБП и электронные кошельки.
-              Автоматическое подтверждение через webhook.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Дополнительные интеграции */}
-      <section className="mb-12 md:mb-16">
-        <h2 className="font-display text-xs uppercase tracking-wider text-text-muted mb-4">
-          Перспективные интеграции
-        </h2>
-        <p className="text-xs text-text-secondary mb-4 max-w-2xl">
-          Не входят в текущий объём разработки. Могут быть реализованы в рамках
-          отдельного этапа по мере необходимости бизнеса.
-        </p>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {[
-            { name: '1С', desc: 'Двусторонняя синхронизация остатков, цен и заказов с учётной системой' },
-            { name: 'AmoCRM', desc: 'Управление клиентской базой, воронки продаж, аналитика конверсий' },
-            { name: 'Битрикс24', desc: 'CRM, внутренние задачи, коммуникации, автоматизация процессов' },
-            { name: 'МойСклад', desc: 'Складской учёт, приход/расход, инвентаризация, документооборот' },
-          ].map((item) => (
-            <div key={item.name} className="rounded-xl border border-border-subtle bg-bg-card p-4">
-              <h3 className="text-xs font-semibold text-text-primary mb-1">{item.name}</h3>
-              <p className="text-[11px] text-text-muted leading-relaxed">{item.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Технологический стек */}
-      <section className="mb-12 md:mb-16">
-        <h2 className="font-display text-xs uppercase tracking-wider text-text-muted mb-4">
-          Технологический стек
-        </h2>
-        <div className="rounded-xl border border-border-subtle bg-bg-card overflow-hidden">
-          {stack.map((item, i) => (
-            <div
-              key={item.label}
-              className={`flex flex-col gap-1 px-4 py-3 sm:flex-row sm:items-center sm:gap-4 ${
-                i !== stack.length - 1 ? 'border-b border-border-subtle' : ''
-              }`}
-            >
-              <span className="text-xs font-medium uppercase tracking-wider text-accent-cyan w-36 flex-shrink-0">
-                {item.label}
-              </span>
-              <span className="text-sm text-text-secondary">{item.value}</span>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Метрики качества */}
-      <section className="mb-12 md:mb-16">
-        <h2 className="font-display text-xs uppercase tracking-wider text-text-muted mb-4">
-          Метрики качества
-        </h2>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {[
-            { value: '138', label: 'автоматизированных тестов', sub: '13 test suites' },
-            { value: '0', label: 'ошибок TypeScript', sub: 'strict mode' },
-            { value: '< 1 мин', label: 'CI/CD пайплайн', sub: 'push → deploy' },
-            { value: '100%', label: 'покрытие критических путей', sub: 'оплата, auth, CRM' },
-          ].map((m) => (
-            <div key={m.label} className="rounded-xl border border-accent-yellow/20 bg-accent-yellow/5 p-5 text-center">
-              <p className="font-display text-2xl text-accent-yellow">{m.value}</p>
-              <p className="text-xs text-text-primary mt-1">{m.label}</p>
-              <p className="text-[10px] text-text-muted mt-0.5">{m.sub}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Принципы разработки */}
-      <section className="mb-12 md:mb-16">
-        <h2 className="font-display text-xs uppercase tracking-wider text-text-muted mb-4">
-          Принципы разработки
-        </h2>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {[
-            {
-              title: 'Type Safety',
-              desc: 'TypeScript strict mode + Zod v4 runtime-валидация. Типизация сквозная: от формы до базы данных. Ни одного any.',
-            },
-            {
-              title: 'Security by Design',
-              desc: 'RLS с SECURITY DEFINER функциями, RBAC (admin/manager/customer), rate limiting, HttpOnly cookies, input sanitization.',
-            },
-            {
-              title: 'Test-Driven Quality',
-              desc: 'Каждый API-эндпоинт покрыт тестами. Мок-изоляция без внешних зависимостей. Regression-тест на каждый баг.',
-            },
-            {
-              title: 'Zero-Downtime Deploy',
-              desc: 'Docker-контейнеры с health checks. GitHub Actions запускает тесты, билд и деплой атомарно через Coolify API.',
-            },
-            {
-              title: 'Fail-Open Architecture',
-              desc: 'Внешний сервис недоступен — платформа работает. Graceful degradation для SMS, платежей, интеграций.',
-            },
-            {
-              title: 'Code Review Culture',
-              desc: 'Каждое изменение проходит линтер (ESLint), форматтер, type-check, полный прогон тестов. Коммит без прохождения CI невозможен.',
-            },
-          ].map((p) => (
-            <div key={p.title} className="rounded-xl border border-border-subtle bg-bg-card p-4">
-              <h3 className="text-xs font-semibold text-accent-yellow mb-1.5">{p.title}</h3>
-              <p className="text-xs text-text-secondary leading-relaxed">{p.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Паттерны */}
-      <section className="mb-12 md:mb-16">
-        <h2 className="font-display text-xs uppercase tracking-wider text-text-muted mb-4">
-          Архитектурные паттерны
-        </h2>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {[
-            {
-              title: 'Server Components + Client Islands',
-              desc: 'Серверные компоненты для данных, клиентские — только для интерактива. Минимальный JS-бандл на клиенте.',
-            },
-            {
-              title: 'Route Groups + Isolated Layouts',
-              desc: '(shop), (cabinet), (admin), (auth) — четыре изолированных модуля со своими layouts, middleware и навигацией.',
-            },
-            {
-              title: 'Three-Tier DB Access',
-              desc: 'Anon (каталог), Server (сессия пользователя), Admin (service_role). RLS-политики адаптируются под каждый уровень.',
-            },
-            {
-              title: 'Сквозная Zod-валидация',
-              desc: 'Одна Zod-схема валидирует на клиенте (мгновенный UX-фидбек) и на сервере (защита от injection).',
-            },
-            {
-              title: 'Persist + Hydration Guard',
-              desc: 'Zustand c localStorage-персистентностью. mounted-флаг предотвращает SSR/CSR mismatch при гидратации.',
-            },
-            {
-              title: 'Feature-Based Route Handlers',
-              desc: 'Каждый эндпоинт — изолированный route handler. Независимое тестирование, версионирование, документация.',
-            },
-          ].map((p) => (
-            <div key={p.title} className="rounded-xl border border-border-subtle bg-bg-card p-4">
-              <h3 className="text-xs font-semibold text-accent-yellow mb-1.5">{p.title}</h3>
-              <p className="text-xs text-text-secondary leading-relaxed">{p.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Как смотреть */}
-      <section className="mb-12 md:mb-16">
-        <h2 className="font-display text-xs uppercase tracking-wider text-text-muted mb-4">
+        <p className="font-display text-lg md:text-xl text-text-primary mb-3">
           Как смотреть — пошаговый маршрут
-        </h2>
-        <p className="text-text-secondary text-sm mb-6 max-w-2xl">
-          Рекомендуемый порядок для ознакомления с платформой. Каждый шаг показывает конкретную функцию.
         </p>
-        <div className="space-y-3">
-          {[
-            {
-              step: '1',
-              title: 'Каталог и карточки товаров',
-              action: 'Откройте каталог, выберите категорию (например, «Моторные масла»). Нажмите на карточку — откроется попап с вариантами фасовок и ценами. Попробуйте розлив: двигайте ползунок для объёма.',
-              link: '/catalog/lubricants',
-              linkLabel: 'Открыть каталог',
-            },
-            {
-              step: '2',
-              title: 'Корзина и оформление заказа',
-              action: 'Добавьте пару товаров в корзину. Перейдите в корзину — измените количество, удалите позицию. Нажмите «Оформить» — заполните форму (имя, телефон, адрес). Примените промокод ALTECH10. Пройдите демо-оплату.',
-              link: '/cart',
-              linkLabel: 'Открыть корзину',
-            },
-            {
-              step: '3',
-              title: 'Регистрация покупателя',
-              action: 'Нажмите «Войти». Введите любой номер телефона (можно выдуманный) — в демо-режиме SMS-код отображается прямо на экране. Аккаунт создаётся автоматически при первом входе.',
-              link: '/login',
-              linkLabel: 'Войти / Зарегистрироваться',
-            },
-            {
-              step: '4',
-              title: 'Личный кабинет покупателя',
-              action: 'После оформления заказа зайдите в кабинет. Посмотрите историю заказов, бонусный уровень, реферальный код. Откройте детали заказа — внизу кнопка «Повторить заказ».',
-              link: '/cabinet',
-              linkLabel: 'Личный кабинет',
-            },
-            {
-              step: '5',
-              title: 'Панель менеджера',
-              action: 'Войдите через /admin-login: manager@altech-store.ru / manager2025. На дашборде — заказы привязанных клиентов, комиссия, блок «Требуют внимания» с прогнозом замены масла. Откройте карточку клиента — история покупок, прогноз, кнопка WhatsApp.',
-              link: '/admin-login',
-              linkLabel: 'Вход менеджера →',
-            },
-            {
-              step: '6',
-              title: 'Панель администратора',
-              action: 'Войдите через /admin-login: admin@altech-store.ru / admin2025. Дашборд: все заказы, выручка, клиенты без менеджера. Откройте «Клиенты» — назначьте менеджера. Откройте заказ — смените статус.',
-              link: '/admin-login',
-              linkLabel: 'Вход администратора →',
-            },
-          ].map((item) => (
-            <div
-              key={item.step}
-              className="rounded-xl border border-border-subtle bg-bg-card p-4 md:p-5"
-            >
-              <div className="flex gap-4">
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent-yellow/15 text-accent-yellow font-display text-sm">
-                  {item.step}
-                </div>
-                <div className="min-w-0">
-                  <h3 className="text-sm font-semibold text-text-primary mb-1">{item.title}</h3>
-                  <p className="text-xs text-text-secondary leading-relaxed mb-2">{item.action}</p>
-                  <Link
-                    href={item.link}
-                    className="inline-flex items-center gap-1 text-xs text-accent-cyan hover:text-accent-yellow transition-colors"
-                  >
-                    {item.linkLabel}
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <line x1="5" y1="12" x2="19" y2="12" />
-                      <polyline points="12 5 19 12 12 19" />
-                    </svg>
-                  </Link>
-                </div>
+        <p className="text-text-secondary text-sm mb-6 max-w-2xl">
+          Три роли, три сценария. Пройдите каждый за 5 минут — увидите платформу глазами покупателя, менеджера и администратора.
+        </p>
+
+        <div className="space-y-6">
+          {/* Buyer */}
+          <div className="rounded-xl border border-accent-yellow/20 bg-accent-yellow/5 p-5 md:p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent-yellow/15 text-accent-yellow font-display text-lg">1</div>
+              <div>
+                <h3 className="text-sm font-semibold text-accent-yellow">Сценарий: Покупатель</h3>
+                <p className="text-[11px] text-text-muted">Весь путь от каталога до личного кабинета</p>
               </div>
             </div>
-          ))}
+            <div className="space-y-3 text-xs text-text-secondary leading-relaxed">
+              <div className="flex gap-3">
+                <span className="text-accent-yellow font-bold shrink-0">1.</span>
+                <p>Откройте <Link href="/catalog/lubricants" className="text-accent-cyan hover:text-accent-yellow transition-colors">каталог</Link>. Выберите категорию «Моторные масла». Нажмите на карточку — откроется попап с вариантами. Попробуйте розлив: двигайте ползунок объёма.</p>
+              </div>
+              <div className="flex gap-3">
+                <span className="text-accent-yellow font-bold shrink-0">2.</span>
+                <p>Добавьте 2-3 товара в <Link href="/cart" className="text-accent-cyan hover:text-accent-yellow transition-colors">корзину</Link>. Измените количество, удалите позицию. Нажмите «Оформить».</p>
+              </div>
+              <div className="flex gap-3">
+                <span className="text-accent-yellow font-bold shrink-0">3.</span>
+                <p>Нажмите <Link href="/login" className="text-accent-cyan hover:text-accent-yellow transition-colors">Войти</Link>. Введите <span className="text-text-primary font-medium">любой номер телефона</span> (можно выдуманный) — SMS-код показывается прямо на экране (демо-режим).</p>
+              </div>
+              <div className="flex gap-3">
+                <span className="text-accent-yellow font-bold shrink-0">4.</span>
+                <p>Заполните форму заказа. Попробуйте промокод <span className="font-mono text-text-primary">ALTECH10</span>. Пройдите оплату через песочницу ЮKassa (тестовая карта — любые цифры).</p>
+              </div>
+              <div className="flex gap-3">
+                <span className="text-accent-yellow font-bold shrink-0">5.</span>
+                <p>Зайдите в <Link href="/cabinet" className="text-accent-cyan hover:text-accent-yellow transition-colors">личный кабинет</Link>. Обратите внимание: бонусный уровень, прогресс-бар, реферальный код. Откройте заказ — кнопка «Повторить заказ».</p>
+              </div>
+            </div>
+            <p className="text-[10px] text-text-muted mt-4 border-t border-accent-yellow/10 pt-3">
+              Обратите внимание: бонусы начисляются автоматически после оплаты. Уровень лояльности растёт с каждой покупкой.
+            </p>
+          </div>
+
+          {/* Manager */}
+          <div className="rounded-xl border border-accent-cyan/20 bg-accent-cyan/5 p-5 md:p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent-cyan/15 text-accent-cyan font-display text-lg">2</div>
+              <div>
+                <h3 className="text-sm font-semibold text-accent-cyan">Сценарий: Менеджер</h3>
+                <p className="text-[11px] text-text-muted">CRM, клиенты, комиссия, прогноз замены</p>
+              </div>
+            </div>
+            <div className="space-y-3 text-xs text-text-secondary leading-relaxed">
+              <div className="flex gap-3">
+                <span className="text-accent-cyan font-bold shrink-0">1.</span>
+                <p>Войдите через <Link href="/admin-login" className="text-accent-cyan hover:text-accent-yellow transition-colors">/admin-login</Link>: <span className="font-mono text-text-primary">manager@altech-store.ru</span> / <span className="font-mono text-text-primary">manager2025</span></p>
+              </div>
+              <div className="flex gap-3">
+                <span className="text-accent-cyan font-bold shrink-0">2.</span>
+                <p>На дашборде: заказы ваших клиентов, комиссия за месяц и за всё время. Блок «Требуют внимания» — клиенты, которым пора менять масло.</p>
+              </div>
+              <div className="flex gap-3">
+                <span className="text-accent-cyan font-bold shrink-0">3.</span>
+                <p>Откройте <Link href="/admin/clients" className="text-accent-cyan hover:text-accent-yellow transition-colors">«Мои клиенты»</Link> — карточку клиента. Внутри: история покупок, прогноз замены масла, кнопка WhatsApp для связи.</p>
+              </div>
+              <div className="flex gap-3">
+                <span className="text-accent-cyan font-bold shrink-0">4.</span>
+                <p>Откройте <Link href="/admin/commissions" className="text-accent-cyan hover:text-accent-yellow transition-colors">«Комиссии»</Link> — разбивка по месяцам: за какой заказ, какая сумма, какой процент. Прозрачно для бухгалтерии.</p>
+              </div>
+            </div>
+            <p className="text-[10px] text-text-muted mt-4 border-t border-accent-cyan/10 pt-3">
+              Обратите внимание: менеджер видит только своих привязанных клиентов. В шапке — «АЛТЕХ Менеджер», не «Admin».
+            </p>
+          </div>
+
+          {/* Admin */}
+          <div className="rounded-xl border border-accent-magenta/20 bg-accent-magenta/5 p-5 md:p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent-magenta/15 text-accent-magenta font-display text-lg">3</div>
+              <div>
+                <h3 className="text-sm font-semibold text-accent-magenta">Сценарий: Администратор</h3>
+                <p className="text-[11px] text-text-muted">Полный контроль: заказы, клиенты, менеджеры, комиссии</p>
+              </div>
+            </div>
+            <div className="space-y-3 text-xs text-text-secondary leading-relaxed">
+              <div className="flex gap-3">
+                <span className="text-accent-magenta font-bold shrink-0">1.</span>
+                <p>Войдите через <Link href="/admin-login" className="text-accent-cyan hover:text-accent-yellow transition-colors">/admin-login</Link>: <span className="font-mono text-text-primary">admin@altech-store.ru</span> / <span className="font-mono text-text-primary">admin2025</span></p>
+              </div>
+              <div className="flex gap-3">
+                <span className="text-accent-magenta font-bold shrink-0">2.</span>
+                <p>Дашборд: все заказы, общая выручка, клиенты без менеджера (жёлтое предупреждение). Блок прогноза замены масла — по всем клиентам.</p>
+              </div>
+              <div className="flex gap-3">
+                <span className="text-accent-magenta font-bold shrink-0">3.</span>
+                <p>Откройте <Link href="/admin/clients" className="text-accent-cyan hover:text-accent-yellow transition-colors">«Клиенты»</Link> — назначьте менеджера. Откройте <Link href="/admin/orders" className="text-accent-cyan hover:text-accent-yellow transition-colors">заказ</Link> — смените статус (оплачен — в обработке — отправлен).</p>
+              </div>
+              <div className="flex gap-3">
+                <span className="text-accent-magenta font-bold shrink-0">4.</span>
+                <p>Откройте <Link href="/admin/managers" className="text-accent-cyan hover:text-accent-yellow transition-colors">«Менеджеры»</Link> — продажи, клиенты, ставка комиссии (можно изменить). <Link href="/admin/commissions" className="text-accent-cyan hover:text-accent-yellow transition-colors">«Комиссии»</Link> — полный аудит начислений по всем менеджерам.</p>
+              </div>
+            </div>
+            <p className="text-[10px] text-text-muted mt-4 border-t border-accent-magenta/10 pt-3">
+              Обратите внимание: админ видит ВСЕ заказы и клиентов. Может назначить любого покупателя менеджером и задать ему ставку комиссии.
+            </p>
+          </div>
         </div>
       </section>
 
-      {/* Тестовые аккаунты */}
-      <section className="mb-12 md:mb-16">
+      {/* ═══════════════════════════════════════════════
+          6. ТЕСТОВЫЕ АККАУНТЫ
+      ═══════════════════════════════════════════════ */}
+      <section className="mb-14 md:mb-20">
         <h2 className="font-display text-xs uppercase tracking-wider text-text-muted mb-4">
           Тестовые аккаунты
         </h2>
         <div className="grid gap-3 md:grid-cols-3">
           <div className="rounded-xl border border-accent-yellow/20 bg-accent-yellow/5 p-5">
             <div className="flex items-center gap-2 mb-3">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-accent-yellow">
-                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
-                <circle cx="12" cy="7" r="4" />
-              </svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-accent-yellow"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
               <h3 className="text-sm font-semibold text-accent-yellow">Покупатель</h3>
             </div>
-            <div className="space-y-1.5 text-sm">
-              <div className="flex items-center justify-between">
-                <span className="text-text-muted">Телефон:</span>
-                <span className="text-text-primary text-xs">любой номер</span>
-              </div>
-            </div>
-            <p className="text-xs text-text-muted mt-3">
-              Введите любой номер — SMS-код показывается на экране (демо-режим). Каталог, корзина, оформление, кабинет, бонусы, повтор заказа.
-            </p>
-            <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-[11px]">
+            <p className="text-xs text-text-secondary mb-2">Телефон: <span className="text-text-primary">любой номер</span></p>
+            <p className="text-[11px] text-text-muted">SMS-код на экране (демо). Аккаунт создаётся автоматически.</p>
+            <div className="mt-3 flex gap-3 text-[11px]">
               <Link href="/login" className="text-accent-cyan hover:text-accent-yellow transition-colors">Вход →</Link>
               <Link href="/cabinet" className="text-accent-cyan hover:text-accent-yellow transition-colors">Кабинет →</Link>
             </div>
@@ -576,28 +400,13 @@ export default function AboutPage() {
 
           <div className="rounded-xl border border-accent-cyan/20 bg-accent-cyan/5 p-5">
             <div className="flex items-center gap-2 mb-3">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-accent-cyan">
-                <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
-                <circle cx="9" cy="7" r="4" />
-                <path d="M23 21v-2a4 4 0 00-3-3.87" />
-                <path d="M16 3.13a4 4 0 010 7.75" />
-              </svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-accent-cyan"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 00-3-3.87" /><path d="M16 3.13a4 4 0 010 7.75" /></svg>
               <h3 className="text-sm font-semibold text-accent-cyan">Менеджер</h3>
             </div>
-            <div className="space-y-1.5 text-sm">
-              <div className="flex items-center justify-between">
-                <span className="text-text-muted">Email:</span>
-                <CopyButton text="manager@altech-store.ru" />
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-text-muted">Пароль:</span>
-                <CopyButton text="manager2025" />
-              </div>
-            </div>
-            <p className="text-xs text-text-muted mt-3">
-              CRM: свои клиенты, их заказы, комиссия, прогноз замены масла
-            </p>
-            <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-[11px]">
+            <p className="text-xs text-text-secondary mb-1"><span className="font-mono text-text-primary select-all">manager@altech-store.ru</span></p>
+            <p className="text-xs text-text-secondary mb-2">Пароль: <span className="font-mono text-text-primary select-all">manager2025</span></p>
+            <p className="text-[11px] text-text-muted">CRM: клиенты, заказы, комиссия, прогноз замены</p>
+            <div className="mt-3 flex gap-3 text-[11px]">
               <Link href="/admin-login" className="text-accent-cyan hover:text-accent-yellow transition-colors">Вход →</Link>
               <Link href="/admin" className="text-accent-cyan hover:text-accent-yellow transition-colors">Панель →</Link>
             </div>
@@ -605,54 +414,193 @@ export default function AboutPage() {
 
           <div className="rounded-xl border border-accent-magenta/20 bg-accent-magenta/5 p-5">
             <div className="flex items-center gap-2 mb-3">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-accent-magenta">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-              </svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-accent-magenta"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
               <h3 className="text-sm font-semibold text-accent-magenta">Администратор</h3>
             </div>
-            <div className="space-y-1.5 text-sm">
-              <div className="flex items-center justify-between">
-                <span className="text-text-muted">Email:</span>
-                <CopyButton text="admin@altech-store.ru" />
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-text-muted">Пароль:</span>
-                <CopyButton text="admin2025" />
-              </div>
-            </div>
-            <p className="text-xs text-text-muted mt-3">
-              Полный доступ: заказы, клиенты, назначение менеджеров, статусы
-            </p>
-            <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-[11px]">
+            <p className="text-xs text-text-secondary mb-1"><span className="font-mono text-text-primary select-all">admin@altech-store.ru</span></p>
+            <p className="text-xs text-text-secondary mb-2">Пароль: <span className="font-mono text-text-primary select-all">admin2025</span></p>
+            <p className="text-[11px] text-text-muted">Полный доступ: заказы, клиенты, менеджеры, комиссии</p>
+            <div className="mt-3 flex gap-3 text-[11px]">
               <Link href="/admin-login" className="text-accent-cyan hover:text-accent-yellow transition-colors">Вход →</Link>
               <Link href="/admin" className="text-accent-cyan hover:text-accent-yellow transition-colors">Панель →</Link>
             </div>
           </div>
         </div>
-        <p className="text-xs text-text-muted mt-3">
-          Покупатели — введите любой номер телефона, SMS-код показывается на экране (демо-режим).
-          Сотрудники — вход по email/паролю через <span className="text-text-secondary">/admin-login</span>.
-        </p>
       </section>
 
-      {/* CTA */}
-      <section className="flex flex-col sm:flex-row items-center justify-center gap-3 py-6">
-        <Link
-          href="/catalog/lubricants"
-          className="inline-flex items-center gap-2 rounded-xl bg-accent-yellow px-6 py-3 text-sm font-bold text-bg-primary transition-all hover:shadow-[0_0_24px_rgba(255,214,0,0.3)]"
-        >
-          Открыть каталог
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="5" y1="12" x2="19" y2="12" />
-            <polyline points="12 5 19 12 12 19" />
-          </svg>
-        </Link>
-        <Link
-          href="/login"
-          className="inline-flex items-center gap-2 rounded-xl border border-border-subtle px-6 py-3 text-sm font-medium text-text-secondary transition-colors hover:border-accent-yellow hover:text-accent-yellow"
-        >
-          Войти в аккаунт
-        </Link>
+      {/* ═══════════════════════════════════════════════
+          7. РЕКОМЕНДАЦИИ ПО РАЗВИТИЮ
+      ═══════════════════════════════════════════════ */}
+      <section className="mb-14 md:mb-20">
+        <h2 className="font-display text-xs uppercase tracking-wider text-text-muted mb-2">
+          Видение продакта
+        </h2>
+        <p className="font-display text-lg md:text-xl text-text-primary mb-6">
+          Рекомендации по развитию
+        </p>
+
+        <div className="space-y-3">
+          {[
+            {
+              title: 'ЮKassa — боевой режим',
+              impact: 'Конверсия +25-30%',
+              desc: 'Песочница ЮKassa уже интегрирована с полным flow. Для запуска — зарегистрировать аккаунт ЮKassa и подставить ключи. Ноль доработок в коде.',
+              accent: 'text-accent-yellow',
+              bg: 'bg-accent-yellow/10 border-accent-yellow/20',
+            },
+            {
+              title: 'SIPmind — голосовой AI',
+              impact: 'Потенциально',
+              desc: 'API подготовлен для интеграции (search, check-stock, create-order). В будущем: водитель звонит — AI принимает, находит товар, оформляет заказ автоматически.',
+              accent: 'text-accent-cyan',
+              bg: 'bg-accent-cyan/10 border-accent-cyan/20',
+            },
+            {
+              title: 'WhatsApp-канал продаж',
+              impact: '70% B2B-коммуникаций',
+              desc: 'Кнопка WhatsApp уже в карточках клиентов. Следующий шаг: бот формирует заказ в мессенджере и отправляет ссылку на готовую корзину.',
+              accent: 'text-green-400',
+              bg: 'bg-green-500/10 border-green-500/20',
+            },
+            {
+              title: 'Мобильное приложение',
+              impact: 'Retention через push',
+              desc: 'API-first архитектура позволяет подключить нативное приложение к тому же бэкенду. Push-уведомления: «Пора менять масло» вместо SMS.',
+              accent: 'text-blue-400',
+              bg: 'bg-blue-500/10 border-blue-500/20',
+            },
+            {
+              title: '1С-интеграция',
+              impact: 'Автоматизация склада',
+              desc: 'Двусторонняя синхронизация: остатки и цены из 1С — каталог на сайте. Заказы с сайта — 1С. Исключает ручной ввод.',
+              accent: 'text-text-secondary',
+              bg: 'bg-bg-card border-border-subtle',
+            },
+          ].map((item) => (
+            <div key={item.title} className={`rounded-xl border p-5 ${item.bg}`}>
+              <div className="flex items-start justify-between gap-3 mb-2">
+                <h3 className={`text-sm font-semibold ${item.accent}`}>{item.title}</h3>
+                <span className={`text-[10px] font-medium ${item.accent} whitespace-nowrap`}>{item.impact}</span>
+              </div>
+              <p className="text-xs text-text-secondary leading-relaxed">{item.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════
+          8. МАСШТАБИРОВАНИЕ
+      ═══════════════════════════════════════════════ */}
+      <section className="mb-14 md:mb-20">
+        <h2 className="font-display text-xs uppercase tracking-wider text-text-muted mb-4">
+          Масштабирование
+        </h2>
+        <div className="rounded-xl border border-accent-yellow/20 bg-accent-yellow/5 p-6">
+          <div className="grid gap-6 md:grid-cols-3">
+            <div>
+              <h3 className="text-sm font-semibold text-accent-yellow mb-2">Мобильное приложение</h3>
+              <p className="text-xs text-text-secondary leading-relaxed">
+                API-first: нативное приложение подключается к тому же бэкенду. Единая база, единая логика.
+              </p>
+            </div>
+            <div>
+              <h3 className="text-sm font-semibold text-accent-yellow mb-2">Мультирегиональность</h3>
+              <p className="text-xs text-text-secondary leading-relaxed">
+                Другие регионы: дополнительные склады, ценовые матрицы, локальные каталоги — без изменения ядра.
+              </p>
+            </div>
+            <div>
+              <h3 className="text-sm font-semibold text-accent-yellow mb-2">Каналы продаж</h3>
+              <p className="text-xs text-text-secondary leading-relaxed">
+                Сайт, WhatsApp, Telegram, мобильное приложение — все каналы через один API и одну БД.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════
+          9. ПОД КАПОТОМ
+      ═══════════════════════════════════════════════ */}
+      <section className="mb-14 md:mb-20">
+        <h2 className="font-display text-xs uppercase tracking-wider text-text-muted mb-4">
+          Под капотом
+        </h2>
+        <div className="grid gap-4 sm:grid-cols-4 mb-6">
+          {[
+            { value: '138', label: 'тестов', sub: '13 test suites' },
+            { value: '0', label: 'ошибок TS', sub: 'strict mode' },
+            { value: '< 1 мин', label: 'CI/CD', sub: 'push — deploy' },
+            { value: '100%', label: 'крит. путей', sub: 'оплата, auth, CRM' },
+          ].map((m) => (
+            <div key={m.label} className="rounded-xl border border-border-subtle bg-bg-card p-4 text-center">
+              <p className="font-display text-xl text-accent-yellow">{m.value}</p>
+              <p className="text-xs text-text-primary mt-0.5">{m.label}</p>
+              <p className="text-[10px] text-text-muted">{m.sub}</p>
+            </div>
+          ))}
+        </div>
+        <div className="rounded-xl border border-border-subtle bg-bg-card overflow-hidden">
+          {[
+            { label: 'Фронтенд', value: 'Next.js 16, React 19, TypeScript 5, Tailwind CSS 4' },
+            { label: 'Бэкенд', value: 'Supabase PostgreSQL 15, Row Level Security, RBAC' },
+            { label: 'Авторизация', value: 'SMS OTP + Supabase Auth, JWT, HttpOnly cookies' },
+            { label: 'Оплата', value: 'ЮKassa (песочница), полный webhook flow' },
+            { label: 'Деплой', value: 'Docker, GitHub Actions CI/CD, Coolify, zero-downtime' },
+          ].map((item, i) => (
+            <div
+              key={item.label}
+              className={`flex flex-col gap-1 px-4 py-2.5 sm:flex-row sm:items-center sm:gap-4 ${
+                i !== 4 ? 'border-b border-border-subtle' : ''
+              }`}
+            >
+              <span className="text-xs font-medium uppercase tracking-wider text-accent-cyan w-28 flex-shrink-0">{item.label}</span>
+              <span className="text-xs text-text-secondary">{item.value}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════
+          10. CTA — ГОТОВЫ ЗАПУСТИТЬ?
+      ═══════════════════════════════════════════════ */}
+      <section className="mb-8">
+        <div className="rounded-2xl border border-accent-yellow/30 bg-gradient-to-br from-accent-yellow/10 to-accent-yellow/5 p-8 md:p-10 text-center">
+          <h2 className="font-display text-xl md:text-2xl text-text-primary mb-3">
+            Готовы запустить?
+          </h2>
+          <p className="text-text-secondary text-sm max-w-lg mx-auto mb-6 leading-relaxed">
+            Это пилотная версия с демо-данными и тестовыми аккаунтами.
+            Для настройки под ваш бизнес — реальные товары, цены, сотрудники,
+            боевая оплата — обратитесь в TechDab.
+          </p>
+          <p className="text-text-muted text-xs mb-6">
+            Мы обнулим тестовые данные, настроим ЮKassa, загрузим ваш каталог
+            и создадим аккаунты для сотрудников.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <a
+              href="https://techdab.net"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-xl bg-accent-yellow px-6 py-3 text-sm font-bold text-bg-primary transition-all hover:shadow-[0_0_24px_rgba(255,214,0,0.3)]"
+            >
+              Связаться с TechDab
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12" />
+                <polyline points="12 5 19 12 12 19" />
+              </svg>
+            </a>
+            <a
+              href="https://t.me/techdab"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-xl border border-border-subtle px-6 py-3 text-sm font-medium text-text-secondary transition-colors hover:border-accent-cyan hover:text-accent-cyan"
+            >
+              Написать в Telegram
+            </a>
+          </div>
+        </div>
       </section>
 
       {/* Footer credits */}
