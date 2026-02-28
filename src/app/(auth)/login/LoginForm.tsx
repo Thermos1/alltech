@@ -100,8 +100,9 @@ export default function LoginForm() {
         }
       }
 
-      router.push(nextUrl)
-      router.refresh()
+      // Hard redirect to ensure SSR picks up the new session
+      // Middleware will redirect staff (manager/admin) to /admin
+      window.location.href = nextUrl
     } catch {
       setError('Ошибка соединения')
       setLoading(false)
