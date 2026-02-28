@@ -32,6 +32,29 @@ export default async function AdminDashboardPage() {
 
   const isAdmin = currentProfile?.role === 'admin';
 
+  // Commission from log (this month + all time) for manager dashboard
+  let commissionThisMonth = 0;
+  let commissionAllTime = 0;
+  if (!isAdmin) {
+    const now = new Date();
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+
+    const { data: monthLogs } = await admin
+      .from('commission_log')
+      .select('amount')
+      .eq('manager_id', user.id)
+      .gte('created_at', monthStart);
+
+    commissionThisMonth = (monthLogs || []).reduce((sum, l) => sum + Number(l.amount), 0);
+
+    const { data: allLogs } = await admin
+      .from('commission_log')
+      .select('amount')
+      .eq('manager_id', user.id);
+
+    commissionAllTime = (allLogs || []).reduce((sum, l) => sum + Number(l.amount), 0);
+  }
+
   // Manager: get their client IDs for filtering
   let clientIds: string[] | null = null;
   if (!isAdmin) {
@@ -178,32 +201,25 @@ export default async function AdminDashboardPage() {
   );
   const latestOrders = latestOrdersResult.data || [];
 
-  const stats = [
-    {
-      label: isAdmin ? 'Всего заказов' : 'Заказы клиентов',
-      value: totalOrders.toString(),
-      accent: 'text-text-primary',
-    },
-    {
-      label: 'Оплачено',
-      value: paidOrders.toString(),
-      accent: 'text-accent-cyan',
-    },
-    {
-      label: isAdmin ? 'Выручка' : 'Комиссия',
-      value: isAdmin
-        ? formatPriceShort(revenue)
-        : formatPriceShort(Number(currentProfile?.manager_commission || 0)),
-      accent: 'text-accent-yellow',
-    },
-  ];
+  const stats = isAdmin
+    ? [
+        { label: 'Всего заказов', value: totalOrders.toString(), accent: 'text-text-primary' },
+        { label: 'Оплачено', value: paidOrders.toString(), accent: 'text-accent-cyan' },
+        { label: 'Выручка', value: formatPriceShort(revenue), accent: 'text-accent-yellow' },
+      ]
+    : [
+        { label: 'Заказы клиентов', value: totalOrders.toString(), accent: 'text-text-primary' },
+        { label: 'Оплачено', value: paidOrders.toString(), accent: 'text-accent-cyan' },
+        { label: 'За месяц', value: formatPriceShort(commissionThisMonth), accent: 'text-accent-yellow' },
+        { label: 'Всего заработано', value: formatPriceShort(commissionAllTime), accent: 'text-accent-cyan' },
+      ];
 
   return (
     <div className="space-y-8">
       <h1 className="font-display text-2xl text-text-primary">Дашборд</h1>
 
       {/* Stats grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className={`grid grid-cols-1 gap-4 ${isAdmin ? 'sm:grid-cols-3' : 'sm:grid-cols-2 lg:grid-cols-4'}`}>
         {stats.map((stat) => (
           <div
             key={stat.label}

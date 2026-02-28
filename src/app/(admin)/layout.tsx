@@ -8,6 +8,7 @@ const adminNavItems = [
   { href: '/admin/orders', label: 'Заказы' },
   { href: '/admin/clients', label: 'Клиенты' },
   { href: '/admin/managers', label: 'Менеджеры' },
+  { href: '/admin/commissions', label: 'Комиссии' },
   { href: '/admin/products', label: 'Товары' },
 ];
 
@@ -15,6 +16,7 @@ const managerNavItems = [
   { href: '/admin', label: 'Дашборд' },
   { href: '/admin/orders', label: 'Заказы' },
   { href: '/admin/clients', label: 'Мои клиенты' },
+  { href: '/admin/commissions', label: 'Комиссии' },
 ];
 
 export default async function AdminLayout({

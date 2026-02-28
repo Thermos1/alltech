@@ -79,6 +79,15 @@ export async function POST(request: NextRequest) {
               manager_commission: Number(manager.manager_commission || 0) + commission,
             })
             .eq('id', userProfile.manager_id);
+
+          // Write commission log entry
+          await admin.from('commission_log').insert({
+            manager_id: userProfile.manager_id,
+            order_id: orderId,
+            order_total: Number(order.total),
+            rate: commissionRate,
+            amount: commission,
+          });
         }
       }
 
