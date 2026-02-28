@@ -126,7 +126,7 @@ const architecture = [
   },
   {
     title: 'Покрытие тестами',
-    desc: '93 unit-теста. Покрыта критическая логика: оплата, бонусные тиеры, SMS OTP, роли менеджеров, валидация, корзина, API.',
+    desc: '137 unit-тестов. Покрыта вся критическая логика: оплата, бонусные тиеры, SMS OTP, CRM (менеджеры, комиссии, привязка), промокоды, заказы, SIPmind API, валидация, корзина.',
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
