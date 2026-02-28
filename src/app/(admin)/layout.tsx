@@ -13,6 +13,7 @@ const adminNavItems = [
 
 const managerNavItems = [
   { href: '/admin', label: 'Дашборд' },
+  { href: '/admin/orders', label: 'Заказы' },
   { href: '/admin/clients', label: 'Мои клиенты' },
 ];
 

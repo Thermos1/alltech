@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 import { formatPriceShort } from '@/lib/utils';
 import StatusChangeForm from './StatusChangeForm';
 
@@ -32,8 +33,20 @@ export default async function AdminOrderDetailPage({
 }) {
   const { id } = await params;
   const supabase = await createClient();
+  const admin = createAdminClient();
 
-  const { data: order } = await supabase
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) notFound();
+
+  const { data: currentProfile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single();
+
+  const isAdmin = currentProfile?.role === 'admin';
+
+  const { data: order } = await admin
     .from('orders')
     .select('*')
     .eq('id', id)
@@ -41,7 +54,20 @@ export default async function AdminOrderDetailPage({
 
   if (!order) notFound();
 
-  const { data: items } = await supabase
+  // Manager can only view orders from their assigned clients
+  if (!isAdmin) {
+    const { data: clientProfile } = await admin
+      .from('profiles')
+      .select('manager_id')
+      .eq('id', order.user_id)
+      .single();
+
+    if (!clientProfile || clientProfile.manager_id !== user.id) {
+      notFound();
+    }
+  }
+
+  const { data: items } = await admin
     .from('order_items')
     .select('*')
     .eq('order_id', id);
@@ -162,10 +188,12 @@ export default async function AdminOrderDetailPage({
 
         {/* Right column — Info & Actions */}
         <div className="space-y-6">
-          {/* Status change */}
-          <div className="rounded-xl bg-bg-card border border-border-subtle p-4">
-            <StatusChangeForm orderId={order.id} currentStatus={order.status} />
-          </div>
+          {/* Status change — admin only */}
+          {isAdmin && (
+            <div className="rounded-xl bg-bg-card border border-border-subtle p-4">
+              <StatusChangeForm orderId={order.id} currentStatus={order.status} />
+            </div>
+          )}
 
           {/* Payment info */}
           <div className="rounded-xl bg-bg-card border border-border-subtle p-4 space-y-3">

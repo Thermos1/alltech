@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 import { formatPriceShort } from '@/lib/utils';
 
 export const metadata = {
@@ -18,16 +19,48 @@ const statusLabels: Record<string, { label: string; color: string }> = {
 
 export default async function AdminOrdersPage() {
   const supabase = await createClient();
+  const admin = createAdminClient();
 
-  const { data: orders } = await supabase
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return null;
+
+  const { data: currentProfile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single();
+
+  const isAdmin = currentProfile?.role === 'admin';
+
+  // Manager: get their client IDs, then filter orders
+  let ordersQuery = admin
     .from('orders')
     .select('id, order_number, contact_name, status, payment_status, total, created_at')
     .order('created_at', { ascending: false });
 
+  if (!isAdmin) {
+    const { data: myClients } = await admin
+      .from('profiles')
+      .select('id')
+      .eq('role', 'customer')
+      .eq('manager_id', user.id);
+
+    const clientIds = (myClients || []).map((c) => c.id);
+    if (clientIds.length > 0) {
+      ordersQuery = ordersQuery.in('user_id', clientIds);
+    } else {
+      ordersQuery = ordersQuery.eq('user_id', 'no-clients');
+    }
+  }
+
+  const { data: orders } = await ordersQuery;
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="font-display text-2xl text-text-primary">Заказы</h1>
+        <h1 className="font-display text-2xl text-text-primary">
+          {isAdmin ? 'Все заказы' : 'Заказы моих клиентов'}
+        </h1>
         <p className="text-text-muted text-sm">
           Всего: {orders?.length ?? 0}
         </p>

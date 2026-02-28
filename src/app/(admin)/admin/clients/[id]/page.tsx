@@ -51,6 +51,52 @@ export default async function ClientDetailPage({
     .eq('user_id', id)
     .order('created_at', { ascending: false });
 
+  // Fetch order items from paid orders for replacement forecast
+  const paidOrderIds = (orders || [])
+    .filter((o) => o.payment_status === 'succeeded')
+    .map((o) => o.id);
+
+  const { data: orderItems } = paidOrderIds.length > 0
+    ? await admin
+        .from('order_items')
+        .select('product_name, variant_label, order_id, created_at')
+        .in('order_id', paidOrderIds)
+    : { data: [] };
+
+  // Calculate replacement forecast for oil products
+  const OIL_KEYWORDS = ['10W-40', '15W-40', '10W-30', '5W-30', '5W-40', 'моторн'];
+  const REPLACEMENT_MONTHS = 4; // avg for commercial vehicles
+
+  const oilPurchases = (orderItems || [])
+    .filter((item) => OIL_KEYWORDS.some((kw) => item.product_name.toLowerCase().includes(kw.toLowerCase())))
+    .sort((a, b) => {
+      // Find order date from orders list
+      const orderA = (orders || []).find((o) => o.id === a.order_id);
+      const orderB = (orders || []).find((o) => o.id === b.order_id);
+      return new Date(orderB?.created_at || 0).getTime() - new Date(orderA?.created_at || 0).getTime();
+    });
+
+  const lastOilPurchase = oilPurchases[0];
+  const lastOilOrder = lastOilPurchase ? (orders || []).find((o) => o.id === lastOilPurchase.order_id) : null;
+
+  let replacementForecast: { productName: string; purchaseDate: Date; forecastDate: Date; status: 'overdue' | 'soon' | 'ok' } | null = null;
+  if (lastOilOrder) {
+    const purchaseDate = new Date(lastOilOrder.created_at);
+    const forecastDate = new Date(purchaseDate);
+    forecastDate.setMonth(forecastDate.getMonth() + REPLACEMENT_MONTHS);
+    const now = new Date();
+    const thirtyDaysFromNow = new Date(now);
+    thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
+
+    const status = forecastDate < now ? 'overdue' : forecastDate < thirtyDaysFromNow ? 'soon' : 'ok';
+    replacementForecast = {
+      productName: lastOilPurchase.product_name,
+      purchaseDate,
+      forecastDate,
+      status,
+    };
+  }
+
   // Fetch managers list (for admin assign dropdown)
   let managers: { id: string; full_name: string | null }[] = [];
   if (isAdmin) {
@@ -161,6 +207,69 @@ export default async function ClientDetailPage({
           ))}
         </div>
       </div>
+
+      {/* Replacement forecast */}
+      {replacementForecast && (
+        <div className={`rounded-xl border p-4 ${
+          replacementForecast.status === 'overdue'
+            ? 'bg-accent-magenta/10 border-accent-magenta/30'
+            : replacementForecast.status === 'soon'
+            ? 'bg-accent-yellow/10 border-accent-yellow/30'
+            : 'bg-bg-card border-border-subtle'
+        }`}>
+          <div className="flex items-start gap-3">
+            <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
+              replacementForecast.status === 'overdue'
+                ? 'bg-accent-magenta/20 text-accent-magenta'
+                : replacementForecast.status === 'soon'
+                ? 'bg-accent-yellow/20 text-accent-yellow'
+                : 'bg-accent-cyan/20 text-accent-cyan'
+            }`}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
+              </svg>
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-1">
+                <p className={`text-sm font-medium ${
+                  replacementForecast.status === 'overdue'
+                    ? 'text-accent-magenta'
+                    : replacementForecast.status === 'soon'
+                    ? 'text-accent-yellow'
+                    : 'text-text-primary'
+                }`}>
+                  {replacementForecast.status === 'overdue'
+                    ? 'Пора менять масло!'
+                    : replacementForecast.status === 'soon'
+                    ? 'Скоро замена масла'
+                    : 'Прогноз замены масла'}
+                </p>
+              </div>
+              <p className="text-text-secondary text-xs">
+                {replacementForecast.productName}
+              </p>
+              <div className="flex gap-4 mt-2 text-xs text-text-muted">
+                <span>Покупка: {replacementForecast.purchaseDate.toLocaleDateString('ru-RU')}</span>
+                <span>Замена ~{replacementForecast.forecastDate.toLocaleDateString('ru-RU')}</span>
+              </div>
+            </div>
+            {client.phone && (
+              <a
+                href={`https://wa.me/${client.phone.replace(/[^\d]/g, '')}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="shrink-0 flex items-center gap-1.5 rounded-lg bg-green-600 px-3 py-2 text-xs font-medium text-white hover:bg-green-500 transition-colors"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                </svg>
+                WhatsApp
+              </a>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Orders */}
       <div>
