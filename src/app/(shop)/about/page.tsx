@@ -50,12 +50,12 @@ const modules = [
   },
   {
     title: 'Мини-CRM для менеджеров',
-    description: 'Привязка клиентов к менеджерам, автоматическая комиссия с продаж, детекция «остывающих» клиентов. Управление ролями и ставками из админки.',
+    description: 'Привязка клиентов к менеджерам, автоматическая комиссия 3% с продаж. Прогноз замены масла (4 мес.), блок «Требуют внимания» с просроченными и предстоящими заменами. WhatsApp-связь с клиентом.',
     status: 'live' as const,
   },
   {
     title: 'Панель администратора',
-    description: 'Управление заказами, клиентами, менеджерами и товарами. Назначение ролей, настройка комиссий, смена статусов.',
+    description: 'Две роли: Админ видит всё, Менеджер — только своих клиентов. Управление заказами, назначение менеджеров, смена статусов, настройка комиссий.',
     status: 'live' as const,
   },
   {
@@ -86,7 +86,7 @@ const stack = [
   { label: 'Авторизация', value: 'Кастомный OTP через SMS.ru + Supabase Auth — JWT, refresh-токены, HttpOnly cookie-сессии' },
   { label: 'Безопасность', value: 'RLS на всех таблицах, Zod-валидация входных данных, CORS, CSP, TLS/SSL, rate limiting OTP' },
   { label: 'Хранилище', value: 'Supabase Storage CDN, оптимизация изображений через next/image (WebP, AVIF)' },
-  { label: 'Тестирование', value: 'Vitest — 137 unit-тестов, 100% покрытие критических путей (оплата, авторизация, CRM, API)' },
+  { label: 'Тестирование', value: 'Vitest — 138 unit-тестов, 100% покрытие критических путей (оплата, авторизация, CRM, API)' },
   { label: 'Валидация', value: 'Zod v4 — сквозная типизация: одна схема для клиента (UX) и сервера (безопасность)' },
   { label: 'Состояние', value: 'Zustand 5 — изоморфное состояние с localStorage-персистентностью и SSR hydration guard' },
   { label: 'Инфраструктура', value: 'Docker standalone, GitHub Actions CI/CD, zero-downtime deploy через Coolify REST API' },
@@ -128,7 +128,7 @@ const architecture = [
   },
   {
     title: 'Покрытие тестами',
-    desc: '137 автоматизированных тестов в 13 test suites. CI-пайплайн: линтер → type-check → тесты → билд → деплой. Каждый коммит проверяется автоматически.',
+    desc: '138 автоматизированных тестов в 13 test suites. CI-пайплайн: линтер → type-check → тесты → билд → деплой. Каждый коммит проверяется автоматически.',
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
@@ -370,7 +370,7 @@ export default function AboutPage() {
         </h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {[
-            { value: '137', label: 'автоматизированных тестов', sub: '13 test suites' },
+            { value: '138', label: 'автоматизированных тестов', sub: '13 test suites' },
             { value: '0', label: 'ошибок TypeScript', sub: 'strict mode' },
             { value: '< 1 мин', label: 'CI/CD пайплайн', sub: 'push → deploy' },
             { value: '100%', label: 'покрытие критических путей', sub: 'оплата, auth, CRM' },
@@ -464,6 +464,87 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* Как смотреть */}
+      <section className="mb-12 md:mb-16">
+        <h2 className="font-display text-xs uppercase tracking-wider text-text-muted mb-4">
+          Как смотреть — пошаговый маршрут
+        </h2>
+        <p className="text-text-secondary text-sm mb-6 max-w-2xl">
+          Рекомендуемый порядок для ознакомления с платформой. Каждый шаг показывает конкретную функцию.
+        </p>
+        <div className="space-y-3">
+          {[
+            {
+              step: '1',
+              title: 'Каталог и карточки товаров',
+              action: 'Откройте каталог, выберите категорию (например, «Моторные масла»). Нажмите на карточку — откроется попап с вариантами фасовок и ценами. Попробуйте розлив: двигайте ползунок для объёма.',
+              link: '/catalog/lubricants',
+              linkLabel: 'Открыть каталог',
+            },
+            {
+              step: '2',
+              title: 'Корзина и оформление заказа',
+              action: 'Добавьте пару товаров в корзину. Перейдите в корзину — измените количество, удалите позицию. Нажмите «Оформить» — заполните форму (имя, телефон, адрес). Примените промокод ALTECH10. Пройдите демо-оплату.',
+              link: '/cart',
+              linkLabel: 'Открыть корзину',
+            },
+            {
+              step: '3',
+              title: 'Регистрация покупателя',
+              action: 'Нажмите «Войти». Введите любой номер телефона — в тестовом режиме SMS-код отображается на экране. После входа откроется личный кабинет.',
+              link: '/login',
+              linkLabel: 'Войти / Зарегистрироваться',
+            },
+            {
+              step: '4',
+              title: 'Личный кабинет покупателя',
+              action: 'После оформления заказа зайдите в кабинет. Посмотрите историю заказов, бонусный уровень, реферальный код. Откройте детали заказа — внизу кнопка «Повторить заказ».',
+              link: '/cabinet',
+              linkLabel: 'Личный кабинет',
+            },
+            {
+              step: '5',
+              title: 'Панель менеджера',
+              action: 'Войдите как менеджер (через /admin-login). На дашборде — заказы привязанных клиентов, комиссия, блок «Требуют внимания» с прогнозом замены масла. Откройте карточку клиента — история покупок, прогноз, кнопка WhatsApp.',
+              link: '/admin-login',
+              linkLabel: 'Вход для сотрудников',
+            },
+            {
+              step: '6',
+              title: 'Панель администратора',
+              action: 'Войдите как админ (через /admin-login). Дашборд: все заказы, выручка, клиенты без менеджера. Откройте «Клиенты» — назначьте менеджера. Откройте заказ — смените статус.',
+              link: '/admin-login',
+              linkLabel: 'Вход для сотрудников',
+            },
+          ].map((item) => (
+            <div
+              key={item.step}
+              className="rounded-xl border border-border-subtle bg-bg-card p-4 md:p-5"
+            >
+              <div className="flex gap-4">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent-yellow/15 text-accent-yellow font-display text-sm">
+                  {item.step}
+                </div>
+                <div className="min-w-0">
+                  <h3 className="text-sm font-semibold text-text-primary mb-1">{item.title}</h3>
+                  <p className="text-xs text-text-secondary leading-relaxed mb-2">{item.action}</p>
+                  <Link
+                    href={item.link}
+                    className="inline-flex items-center gap-1 text-xs text-accent-cyan hover:text-accent-yellow transition-colors"
+                  >
+                    {item.linkLabel}
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="5" y1="12" x2="19" y2="12" />
+                      <polyline points="12 5 19 12 12 19" />
+                    </svg>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* Тестовые аккаунты */}
       <section className="mb-12 md:mb-16">
         <h2 className="font-display text-xs uppercase tracking-wider text-text-muted mb-4">
@@ -516,7 +597,7 @@ export default function AboutPage() {
               </div>
             </div>
             <p className="text-xs text-text-muted mt-3">
-              CRM: свои клиенты, их заказы, комиссии
+              CRM: свои клиенты, их заказы, комиссия, прогноз замены масла
             </p>
             <div className="mt-2 text-[11px] space-y-0.5">
               <span className="text-text-muted">Вход → </span>
@@ -544,7 +625,7 @@ export default function AboutPage() {
               </div>
             </div>
             <p className="text-xs text-text-muted mt-3">
-              Полный доступ: заказы, клиенты, менеджеры, товары
+              Полный доступ: заказы, клиенты, назначение менеджеров, статусы
             </p>
             <div className="mt-2 text-[11px] space-y-0.5">
               <span className="text-text-muted">Вход → </span>

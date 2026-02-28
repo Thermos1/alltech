@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useCartStore } from '@/stores/cart-store';
 import { cn, formatPriceShort } from '@/lib/utils';
+import { checkoutSchema } from '@/lib/validators';
 
 interface CheckoutFormProps {
   profile: {
@@ -34,6 +35,7 @@ export default function CheckoutForm({ profile }: CheckoutFormProps) {
   const [bonusEnabled, setBonusEnabled] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   const bonusBalance = profile?.bonus_balance || 0;
   const maxBonus = Math.min(bonusBalance, Math.floor(subtotal * 0.3));
@@ -77,30 +79,48 @@ export default function CheckoutForm({ profile }: CheckoutFormProps) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (items.length === 0) return;
-    setLoading(true);
     setError('');
+    setFieldErrors({});
+
+    // Client-side Zod validation
+    const payload = {
+      contactName,
+      contactPhone,
+      deliveryAddress,
+      deliveryNotes,
+      promoCode: promoApplied ? promoCode.toUpperCase() : undefined,
+      useBonuses,
+      items: items.map((item) => ({
+        variantId: item.variantId,
+        productName: item.productName,
+        variantLabel: item.variantLabel,
+        quantity: item.quantity,
+        price: item.price,
+        imageUrl: item.imageUrl,
+      })),
+    };
+
+    const parsed = checkoutSchema.safeParse(payload);
+    if (!parsed.success) {
+      const errors: Record<string, string> = {};
+      for (const issue of parsed.error.issues) {
+        const key = String(issue.path[0] || '');
+        if (key && !errors[key]) {
+          errors[key] = issue.message;
+        }
+      }
+      setFieldErrors(errors);
+      return;
+    }
+
+    setLoading(true);
 
     try {
       // Create order
       const orderRes = await fetch('/api/orders/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contactName,
-          contactPhone,
-          deliveryAddress,
-          deliveryNotes,
-          promoCode: promoApplied ? promoCode.toUpperCase() : undefined,
-          useBonuses,
-          items: items.map((item) => ({
-            variantId: item.variantId,
-            productName: item.productName,
-            variantLabel: item.variantLabel,
-            quantity: item.quantity,
-            price: item.price,
-            imageUrl: item.imageUrl,
-          })),
-        }),
+        body: JSON.stringify(payload),
       });
 
       const orderData = await orderRes.json();
@@ -179,11 +199,12 @@ export default function CheckoutForm({ profile }: CheckoutFormProps) {
           <input
             type="text"
             value={contactName}
-            onChange={(e) => setContactName(e.target.value)}
+            onChange={(e) => { setContactName(e.target.value); setFieldErrors((p) => ({ ...p, contactName: '' })); }}
             placeholder="Иван Петров"
             required
-            className={inputClass}
+            className={cn(inputClass, fieldErrors.contactName && 'border-accent-magenta')}
           />
+          {fieldErrors.contactName && <p className="text-accent-magenta text-xs mt-1">{fieldErrors.contactName}</p>}
         </div>
 
         <div>
@@ -191,11 +212,12 @@ export default function CheckoutForm({ profile }: CheckoutFormProps) {
           <input
             type="tel"
             value={contactPhone}
-            onChange={(e) => setContactPhone(e.target.value)}
+            onChange={(e) => { setContactPhone(e.target.value); setFieldErrors((p) => ({ ...p, contactPhone: '' })); }}
             placeholder="+7 (999) 123-45-67"
             required
-            className={inputClass}
+            className={cn(inputClass, fieldErrors.contactPhone && 'border-accent-magenta')}
           />
+          {fieldErrors.contactPhone && <p className="text-accent-magenta text-xs mt-1">{fieldErrors.contactPhone}</p>}
         </div>
       </div>
 
@@ -208,11 +230,12 @@ export default function CheckoutForm({ profile }: CheckoutFormProps) {
           <input
             type="text"
             value={deliveryAddress}
-            onChange={(e) => setDeliveryAddress(e.target.value)}
+            onChange={(e) => { setDeliveryAddress(e.target.value); setFieldErrors((p) => ({ ...p, deliveryAddress: '' })); }}
             placeholder="г. Якутск, ул. Ленина, д. 1"
             required
-            className={inputClass}
+            className={cn(inputClass, fieldErrors.deliveryAddress && 'border-accent-magenta')}
           />
+          {fieldErrors.deliveryAddress && <p className="text-accent-magenta text-xs mt-1">{fieldErrors.deliveryAddress}</p>}
         </div>
 
         <div>
