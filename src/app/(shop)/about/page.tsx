@@ -424,6 +424,12 @@ export default function AboutPage() {
             <p className="text-xs text-text-muted mt-3">
               Каталог, корзина, оформление, кабинет, бонусы, повтор заказа
             </p>
+            <div className="mt-2 text-[11px] space-y-0.5">
+              <span className="text-text-muted">Вход → </span>
+              <CopyButton text="/login" />
+              <span className="text-text-muted"> | Кабинет → </span>
+              <CopyButton text="/cabinet" />
+            </div>
           </div>
 
           <div className="rounded-xl border border-accent-cyan/20 bg-accent-cyan/5 p-5">
@@ -445,6 +451,10 @@ export default function AboutPage() {
             <p className="text-xs text-text-muted mt-3">
               CRM: свои клиенты, их заказы, комиссии
             </p>
+            <div className="mt-2 text-[11px] space-y-0.5">
+              <span className="text-text-muted">Панель → </span>
+              <CopyButton text="/admin" />
+            </div>
           </div>
 
           <div className="rounded-xl border border-accent-magenta/20 bg-accent-magenta/5 p-5">
@@ -463,6 +473,10 @@ export default function AboutPage() {
             <p className="text-xs text-text-muted mt-3">
               Полный доступ: заказы, клиенты, менеджеры, товары
             </p>
+            <div className="mt-2 text-[11px] space-y-0.5">
+              <span className="text-text-muted">Панель → </span>
+              <CopyButton text="/admin" />
+            </div>
           </div>
         </div>
         <p className="text-xs text-text-muted mt-3">
