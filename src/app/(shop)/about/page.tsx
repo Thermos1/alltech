@@ -560,15 +560,16 @@ export default function AboutPage() {
         <div className="rounded-xl border border-border-subtle bg-bg-card overflow-hidden">
           {[
             { label: 'Фронтенд', value: 'Next.js 16, React 19, TypeScript 5, Tailwind CSS 4' },
-            { label: 'Бэкенд', value: 'FastAPI (Python 3.11+), Supabase PostgreSQL 15, Row Level Security, RBAC' },
+            { label: 'Бэкенд API', value: 'FastAPI (Python 3.11+), Pydantic v2, async, structlog' },
+            { label: 'База данных', value: 'Supabase PostgreSQL 15, Row Level Security, RBAC' },
             { label: 'Авторизация', value: 'SMS OTP + Supabase Auth, JWT, HttpOnly cookies' },
             { label: 'Оплата', value: 'ЮKassa (песочница), полный webhook flow' },
             { label: 'Деплой', value: 'Docker, GitHub Actions CI/CD, Coolify, zero-downtime' },
-          ].map((item, i) => (
+          ].map((item, i, arr) => (
             <div
               key={item.label}
               className={`flex flex-col gap-1 px-4 py-2.5 sm:flex-row sm:items-center sm:gap-4 ${
-                i !== 4 ? 'border-b border-border-subtle' : ''
+                i !== arr.length - 1 ? 'border-b border-border-subtle' : ''
               }`}
             >
               <span className="text-xs font-medium uppercase tracking-wider text-accent-cyan w-28 flex-shrink-0">{item.label}</span>
