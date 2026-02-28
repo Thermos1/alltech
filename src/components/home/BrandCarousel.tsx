@@ -3,11 +3,12 @@ import Link from 'next/link';
 const brands = [
   { name: 'ROLF', slug: 'rolf' },
   { name: 'SINTEC', slug: 'sintec' },
-  { name: 'TAKAYAMA', slug: 'takayama' },
   { name: 'KIXX', slug: 'kixx' },
   { name: 'RhinOIL', slug: 'rhinoil' },
   { name: 'ХИМАВТО', slug: 'himavto' },
-  { name: 'Volga Oil', slug: 'volga-oil' },
+  { name: 'Volga Oil', slug: 'volga' },
+  { name: 'AKross', slug: 'akross' },
+  { name: 'Savtok', slug: 'savtok' },
 ];
 
 export default function BrandCarousel() {

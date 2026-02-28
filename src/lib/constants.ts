@@ -27,11 +27,12 @@ export const SECTIONS = {
 export const BRANDS = [
   { slug: "rolf", name: "ROLF" },
   { slug: "sintec", name: "SINTEC" },
-  { slug: "takayama", name: "TAKAYAMA" },
   { slug: "kixx", name: "KIXX" },
   { slug: "rhinoil", name: "RhinOIL" },
   { slug: "himavto", name: "ХИМАВТО" },
   { slug: "volga", name: "Volga Oil" },
+  { slug: "akross", name: "AKross" },
+  { slug: "savtok", name: "Savtok" },
 ] as const;
 
 export const VEHICLE_BRANDS = [
