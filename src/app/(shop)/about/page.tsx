@@ -242,7 +242,7 @@ export default function AboutPage() {
             { title: 'Мини-CRM', description: 'Привязка клиентов к менеджерам. Прогноз замены масла (4 мес.), блок «Требуют внимания». WhatsApp-связь с клиентом из карточки.', status: 'live' as const },
             { title: 'Комиссии менеджеров', description: 'Автоматическое начисление 3% с каждого оплаченного заказа. Разбивка по месяцам, история по заказам. Настраиваемая ставка.', status: 'live' as const },
             { title: 'Панель администратора', description: 'Два уровня: Админ видит всё, Менеджер — только своих клиентов. Управление заказами, назначение менеджеров, настройка комиссий.', status: 'live' as const },
-            { title: 'REST API для интеграций', description: 'Готовые эндпоинты для внешних систем: поиск товаров, проверка остатков, создание заказов. Bearer-авторизация.', status: 'live' as const },
+            { title: 'REST API (FastAPI)', description: 'Серверный бэкенд на FastAPI: эндпоинты для внешних систем, поиск товаров, проверка остатков, создание заказов. Bearer-авторизация, Pydantic-валидация.', status: 'live' as const },
             { title: 'SIPmind — голосовой AI', description: 'Потенциальная интеграция: клиент звонит — AI-ассистент принимает, находит товар и оформляет заказ через подготовленный API.', status: 'next' as const },
             { title: 'WhatsApp-заказы', description: 'Оператор или бот формирует заказ в мессенджере и отправляет ссылку на готовую корзину.', status: 'next' as const },
           ].map((m) => (
@@ -470,6 +470,13 @@ export default function AboutPage() {
               bg: 'bg-blue-500/10 border-blue-500/20',
             },
             {
+              title: 'Доставка — СДЭК и другие',
+              impact: 'Вся РФ',
+              desc: 'Подключение агрегатора доставки (СДЭК, DPD, Boxberry): расчёт стоимости в корзине, трекинг, пункты выдачи. Федеральный масштаб без своей логистики.',
+              accent: 'text-amber-400',
+              bg: 'bg-amber-500/10 border-amber-500/20',
+            },
+            {
               title: '1С-интеграция',
               impact: 'Автоматизация склада',
               desc: 'Двусторонняя синхронизация: остатки и цены из 1С — каталог на сайте. Заказы с сайта — 1С. Исключает ручной ввод.',
@@ -496,23 +503,33 @@ export default function AboutPage() {
           Масштабирование
         </h2>
         <div className="rounded-xl border border-accent-yellow/20 bg-accent-yellow/5 p-6">
-          <div className="grid gap-6 md:grid-cols-3">
+          <p className="text-xs text-text-secondary leading-relaxed mb-5 max-w-2xl">
+            Боль покупателя очевидна: люди давно привыкли заказывать продукты домой, потому что берегут время.
+            ГСМ — не исключение. Меньше кликов, лучше цены, больше бонусов, доставка до двери — и клиент не уходит.
+          </p>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             <div>
-              <h3 className="text-sm font-semibold text-accent-yellow mb-2">Мобильное приложение</h3>
+              <h3 className="text-sm font-semibold text-accent-yellow mb-2">Доставка по всей РФ</h3>
               <p className="text-xs text-text-secondary leading-relaxed">
-                API-first: нативное приложение подключается к тому же бэкенду. Единая база, единая логика.
+                СДЭК, DPD, Boxberry — расчёт стоимости в корзине, пункты выдачи, трекинг. Якутск сегодня, вся Россия завтра.
               </p>
             </div>
             <div>
               <h3 className="text-sm font-semibold text-accent-yellow mb-2">Мультирегиональность</h3>
               <p className="text-xs text-text-secondary leading-relaxed">
-                Другие регионы: дополнительные склады, ценовые матрицы, локальные каталоги — без изменения ядра.
+                Дополнительные склады, региональные ценовые матрицы, локальные каталоги — без изменения ядра платформы.
               </p>
             </div>
             <div>
               <h3 className="text-sm font-semibold text-accent-yellow mb-2">Каналы продаж</h3>
               <p className="text-xs text-text-secondary leading-relaxed">
                 Сайт, WhatsApp, Telegram, мобильное приложение — все каналы через один API и одну БД.
+              </p>
+            </div>
+            <div>
+              <h3 className="text-sm font-semibold text-accent-yellow mb-2">Мобильное приложение</h3>
+              <p className="text-xs text-text-secondary leading-relaxed">
+                API-first: нативное приложение подключается к тому же бэкенду. Push вместо SMS. Заказ за 3 тапа.
               </p>
             </div>
           </div>
@@ -543,7 +560,7 @@ export default function AboutPage() {
         <div className="rounded-xl border border-border-subtle bg-bg-card overflow-hidden">
           {[
             { label: 'Фронтенд', value: 'Next.js 16, React 19, TypeScript 5, Tailwind CSS 4' },
-            { label: 'Бэкенд', value: 'Supabase PostgreSQL 15, Row Level Security, RBAC' },
+            { label: 'Бэкенд', value: 'FastAPI (Python 3.11+), Supabase PostgreSQL 15, Row Level Security, RBAC' },
             { label: 'Авторизация', value: 'SMS OTP + Supabase Auth, JWT, HttpOnly cookies' },
             { label: 'Оплата', value: 'ЮKassa (песочница), полный webhook flow' },
             { label: 'Деплой', value: 'Docker, GitHub Actions CI/CD, Coolify, zero-downtime' },
