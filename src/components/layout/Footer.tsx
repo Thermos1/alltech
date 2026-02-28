@@ -145,7 +145,7 @@ export default function Footer() {
         <div className="mt-8 border-t border-border-subtle pt-6">
           <p className="mb-3 text-xs text-text-muted">Наши бренды:</p>
           <div className="flex flex-wrap gap-2">
-            {['ROLF', 'SINTEC', 'TAKAYAMA', 'KIXX', 'RhinOIL', 'ХИМАВТО', 'Volga Oil'].map(
+            {['ROLF', 'SINTEC', 'KIXX', 'RhinOIL', 'ХИМАВТО', 'Volga Oil', 'AKross', 'Savtok'].map(
               (brand) => (
                 <span
                   key={brand}
@@ -158,8 +158,22 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Company details */}
-        <div className="mt-6 border-t border-border-subtle pt-6">
+        {/* Legal links */}
+        <div className="mt-8 border-t border-border-subtle pt-6">
+          <div className="flex flex-wrap gap-x-4 gap-y-1.5 mb-4">
+            <Link href="/privacy" className="text-[11px] text-text-muted hover:text-accent-cyan transition-colors">
+              Политика конфиденциальности
+            </Link>
+            <Link href="/terms" className="text-[11px] text-text-muted hover:text-accent-cyan transition-colors">
+              Пользовательское соглашение
+            </Link>
+            <Link href="/offer" className="text-[11px] text-text-muted hover:text-accent-cyan transition-colors">
+              Публичная оферта
+            </Link>
+            <Link href="/returns" className="text-[11px] text-text-muted hover:text-accent-cyan transition-colors">
+              Возврат и обмен
+            </Link>
+          </div>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
             <div className="text-[11px] text-text-muted leading-relaxed">
               <p>ООО &laquo;АЛТЕХ&raquo; &middot; ОГРН 1221400010182 &middot; ИНН 1400013380 &middot; КПП 140001001</p>
