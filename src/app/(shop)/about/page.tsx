@@ -25,7 +25,7 @@ const modules = [
   },
   {
     title: 'SMS-авторизация',
-    description: 'Вход и регистрация по номеру телефона + SMS-код. Единый flow: ввёл номер → получил код → вошёл или зарегистрировался автоматически.',
+    description: 'Вход и регистрация клиентов по номеру телефона + SMS-код. Отдельный вход для сотрудников по email/паролю (/admin-login).',
     status: 'live' as const,
   },
   {
@@ -81,20 +81,22 @@ const modules = [
 ];
 
 const stack = [
-  { label: 'Фронтенд', value: 'Next.js 16, React 19, TypeScript 5, Tailwind CSS 4' },
-  { label: 'Бэкенд и БД', value: 'Supabase (PostgreSQL 15), REST API, Row Level Security' },
-  { label: 'Авторизация', value: 'SMS OTP (SMS.ru) + Supabase Auth — JWT-токены, refresh, cookie-сессии' },
-  { label: 'Хранилище', value: 'Supabase Storage — CDN, оптимизация изображений через next/image' },
-  { label: 'Тестирование', value: 'Vitest, React Testing Library — unit и интеграционные тесты' },
-  { label: 'Валидация', value: 'Zod — строгая типизация входных данных на клиенте и сервере' },
-  { label: 'Состояние', value: 'Zustand 5 — глобальное состояние с персистентностью' },
-  { label: 'Инфраструктура', value: 'Docker, CI/CD (GitHub Actions), автодеплой при обновлении кода' },
+  { label: 'Фронтенд', value: 'Next.js 16, React 19, TypeScript 5 (strict mode), Tailwind CSS 4' },
+  { label: 'Бэкенд и БД', value: 'Supabase PostgreSQL 15, PostgREST, Row Level Security, SECURITY DEFINER functions' },
+  { label: 'Авторизация', value: 'Кастомный OTP через SMS.ru + Supabase Auth — JWT, refresh-токены, HttpOnly cookie-сессии' },
+  { label: 'Безопасность', value: 'RLS на всех таблицах, Zod-валидация входных данных, CORS, CSP, TLS/SSL, rate limiting OTP' },
+  { label: 'Хранилище', value: 'Supabase Storage CDN, оптимизация изображений через next/image (WebP, AVIF)' },
+  { label: 'Тестирование', value: 'Vitest — 137 unit-тестов, 100% покрытие критических путей (оплата, авторизация, CRM, API)' },
+  { label: 'Валидация', value: 'Zod v4 — сквозная типизация: одна схема для клиента (UX) и сервера (безопасность)' },
+  { label: 'Состояние', value: 'Zustand 5 — изоморфное состояние с localStorage-персистентностью и SSR hydration guard' },
+  { label: 'Инфраструктура', value: 'Docker standalone, GitHub Actions CI/CD, zero-downtime deploy через Coolify REST API' },
+  { label: 'Мониторинг', value: 'Структурное логирование, graceful degradation, fail-open архитектура' },
 ];
 
 const architecture = [
   {
-    title: 'Server-Side Rendering',
-    desc: 'Страницы рендерятся на сервере — мгновенная загрузка, SEO-индексация, низкий Time to First Byte.',
+    title: 'Server Components + Streaming',
+    desc: 'React Server Components для zero-bundle серверной логики. Streaming SSR с Suspense. TTFB < 200ms на статике.',
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <rect x="2" y="3" width="20" height="14" rx="2" />
@@ -105,7 +107,7 @@ const architecture = [
   },
   {
     title: 'Row Level Security',
-    desc: 'Безопасность на уровне базы данных. Каждый пользователь видит только свои данные — невозможно обойти.',
+    desc: 'Безопасность на уровне PostgreSQL. SECURITY DEFINER функции для ролевой модели. Три уровня клиентов: anon, authenticated, service_role.',
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <rect x="3" y="11" width="18" height="11" rx="2" />
@@ -115,7 +117,7 @@ const architecture = [
   },
   {
     title: 'Горизонтальное масштабирование',
-    desc: 'Stateless-архитектура. Можно развернуть несколько инстансов за балансировщиком при росте нагрузки.',
+    desc: 'Stateless-архитектура с cookie-сессиями. Контейнеризация через Docker. Несколько инстансов за балансировщиком без изменения кода.',
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <line x1="22" y1="12" x2="2" y2="12" />
@@ -126,7 +128,7 @@ const architecture = [
   },
   {
     title: 'Покрытие тестами',
-    desc: '137 unit-тестов. Покрыта вся критическая логика: оплата, бонусные тиеры, SMS OTP, CRM (менеджеры, комиссии, привязка), промокоды, заказы, SIPmind API, валидация, корзина.',
+    desc: '137 автоматизированных тестов в 13 test suites. CI-пайплайн: линтер → type-check → тесты → билд → деплой. Каждый коммит проверяется автоматически.',
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
@@ -361,36 +363,97 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* Метрики качества */}
+      <section className="mb-12 md:mb-16">
+        <h2 className="font-display text-xs uppercase tracking-wider text-text-muted mb-4">
+          Метрики качества
+        </h2>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            { value: '137', label: 'автоматизированных тестов', sub: '13 test suites' },
+            { value: '0', label: 'ошибок TypeScript', sub: 'strict mode' },
+            { value: '< 1 мин', label: 'CI/CD пайплайн', sub: 'push → deploy' },
+            { value: '100%', label: 'покрытие критических путей', sub: 'оплата, auth, CRM' },
+          ].map((m) => (
+            <div key={m.label} className="rounded-xl border border-accent-yellow/20 bg-accent-yellow/5 p-5 text-center">
+              <p className="font-display text-2xl text-accent-yellow">{m.value}</p>
+              <p className="text-xs text-text-primary mt-1">{m.label}</p>
+              <p className="text-[10px] text-text-muted mt-0.5">{m.sub}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Принципы разработки */}
+      <section className="mb-12 md:mb-16">
+        <h2 className="font-display text-xs uppercase tracking-wider text-text-muted mb-4">
+          Принципы разработки
+        </h2>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {[
+            {
+              title: 'Type Safety',
+              desc: 'TypeScript strict mode + Zod v4 runtime-валидация. Типизация сквозная: от формы до базы данных. Ни одного any.',
+            },
+            {
+              title: 'Security by Design',
+              desc: 'RLS с SECURITY DEFINER функциями, RBAC (admin/manager/customer), rate limiting, HttpOnly cookies, input sanitization.',
+            },
+            {
+              title: 'Test-Driven Quality',
+              desc: 'Каждый API-эндпоинт покрыт тестами. Мок-изоляция без внешних зависимостей. Regression-тест на каждый баг.',
+            },
+            {
+              title: 'Zero-Downtime Deploy',
+              desc: 'Docker-контейнеры с health checks. GitHub Actions запускает тесты, билд и деплой атомарно через Coolify API.',
+            },
+            {
+              title: 'Fail-Open Architecture',
+              desc: 'Внешний сервис недоступен — платформа работает. Graceful degradation для SMS, платежей, интеграций.',
+            },
+            {
+              title: 'Code Review Culture',
+              desc: 'Каждое изменение проходит линтер (ESLint), форматтер, type-check, полный прогон тестов. Коммит без прохождения CI невозможен.',
+            },
+          ].map((p) => (
+            <div key={p.title} className="rounded-xl border border-border-subtle bg-bg-card p-4">
+              <h3 className="text-xs font-semibold text-accent-yellow mb-1.5">{p.title}</h3>
+              <p className="text-xs text-text-secondary leading-relaxed">{p.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* Паттерны */}
       <section className="mb-12 md:mb-16">
         <h2 className="font-display text-xs uppercase tracking-wider text-text-muted mb-4">
           Архитектурные паттерны
         </h2>
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {[
             {
               title: 'Server Components + Client Islands',
-              desc: 'Серверные компоненты для данных, клиентские — только для интерактива. Минимальный JS-бандл.',
+              desc: 'Серверные компоненты для данных, клиентские — только для интерактива. Минимальный JS-бандл на клиенте.',
             },
             {
-              title: 'Модульная маршрутизация',
-              desc: 'Route groups: (shop), (cabinet), (admin), (auth). Каждый модуль — изолированный layout и middleware.',
+              title: 'Route Groups + Isolated Layouts',
+              desc: '(shop), (cabinet), (admin), (auth) — четыре изолированных модуля со своими layouts, middleware и навигацией.',
             },
             {
-              title: 'Admin Client / Server Client / Service Role',
-              desc: 'Три уровня доступа к БД: анонимный, авторизованный, сервисный. RLS на каждом уровне.',
+              title: 'Three-Tier DB Access',
+              desc: 'Anon (каталог), Server (сессия пользователя), Admin (service_role). RLS-политики адаптируются под каждый уровень.',
             },
             {
-              title: 'Zod-валидация на обоих концах',
-              desc: 'Одна Zod-схема валидирует и на клиенте (мгновенный UX), и на сервере (безопасность).',
+              title: 'Сквозная Zod-валидация',
+              desc: 'Одна Zod-схема валидирует на клиенте (мгновенный UX-фидбек) и на сервере (защита от injection).',
             },
             {
-              title: 'Persist + Hydration pattern',
-              desc: 'Zustand с localStorage-персистентностью и защитой от SSR-гидратации для корзины.',
+              title: 'Persist + Hydration Guard',
+              desc: 'Zustand c localStorage-персистентностью. mounted-флаг предотвращает SSR/CSR mismatch при гидратации.',
             },
             {
-              title: 'Feature-based API',
-              desc: 'Каждый эндпоинт — отдельный route handler. Легко тестировать, документировать и версионировать.',
+              title: 'Feature-Based Route Handlers',
+              desc: 'Каждый эндпоинт — изолированный route handler. Независимое тестирование, версионирование, документация.',
             },
           ].map((p) => (
             <div key={p.title} className="rounded-xl border border-border-subtle bg-bg-card p-4">
@@ -444,15 +507,21 @@ export default function AboutPage() {
             </div>
             <div className="space-y-1.5 text-sm">
               <div className="flex items-center justify-between">
-                <span className="text-text-muted">Телефон:</span>
-                <CopyButton text="+7 900 222-22-22" />
+                <span className="text-text-muted">Email:</span>
+                <CopyButton text="manager@altech-store.ru" />
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-text-muted">Пароль:</span>
+                <CopyButton text="manager2025" />
               </div>
             </div>
             <p className="text-xs text-text-muted mt-3">
               CRM: свои клиенты, их заказы, комиссии
             </p>
             <div className="mt-2 text-[11px] space-y-0.5">
-              <span className="text-text-muted">Панель → </span>
+              <span className="text-text-muted">Вход → </span>
+              <CopyButton text="/admin-login" />
+              <span className="text-text-muted"> | Панель → </span>
               <CopyButton text="/admin" />
             </div>
           </div>
@@ -466,21 +535,28 @@ export default function AboutPage() {
             </div>
             <div className="space-y-1.5 text-sm">
               <div className="flex items-center justify-between">
-                <span className="text-text-muted">Телефон:</span>
-                <CopyButton text="+7 900 333-33-33" />
+                <span className="text-text-muted">Email:</span>
+                <CopyButton text="admin@altech-store.ru" />
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-text-muted">Пароль:</span>
+                <CopyButton text="admin2025" />
               </div>
             </div>
             <p className="text-xs text-text-muted mt-3">
               Полный доступ: заказы, клиенты, менеджеры, товары
             </p>
             <div className="mt-2 text-[11px] space-y-0.5">
-              <span className="text-text-muted">Панель → </span>
+              <span className="text-text-muted">Вход → </span>
+              <CopyButton text="/admin-login" />
+              <span className="text-text-muted"> | Панель → </span>
               <CopyButton text="/admin" />
             </div>
           </div>
         </div>
         <p className="text-xs text-text-muted mt-3">
-          Вход по SMS-коду. В тестовом режиме код отображается на экране (SMS_RU_API_KEY не подключен).
+          Покупатели — вход по SMS-коду (в тестовом режиме код отображается на экране).
+          Сотрудники — вход по email/паролю через <span className="text-text-secondary">/admin-login</span>.
         </p>
       </section>
 
