@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { formatPriceShort } from '@/lib/utils';
+import { getBonusTier, getNextTier, BONUS_TIERS } from '@/lib/constants';
 
 export const metadata = {
   title: 'Личный кабинет — АЛТЕХ',
@@ -16,7 +17,7 @@ export default async function CabinetPage() {
   const [profileResult, ordersResult] = await Promise.all([
     supabase
       .from('profiles')
-      .select('full_name, phone, bonus_balance, referral_code, company_name')
+      .select('full_name, phone, bonus_balance, referral_code, company_name, total_spent')
       .eq('id', user.id)
       .single(),
     supabase
@@ -53,33 +54,107 @@ export default async function CabinetPage() {
       </div>
 
       {/* Stats cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {/* Bonus balance */}
-        <div className="rounded-xl bg-bg-card border border-border-subtle p-5">
-          <p className="text-text-muted text-xs uppercase tracking-wider mb-1">
-            Бонусный баланс
-          </p>
-          <p className="font-display text-3xl text-accent-yellow">
-            {profile?.bonus_balance || 0}
-          </p>
-          <p className="text-text-muted text-xs mt-1">
-            1 бонус = 1 ₽ скидка
-          </p>
-        </div>
+      {(() => {
+        const totalSpent = Number(profile?.total_spent || 0);
+        const tier = getBonusTier(totalSpent);
+        const nextTier = getNextTier(totalSpent);
+        const progressPercent = nextTier
+          ? Math.min(100, Math.round(((totalSpent - tier.min) / (nextTier.min - tier.min)) * 100))
+          : 100;
+        const remaining = nextTier ? nextTier.min - totalSpent : 0;
 
-        {/* Referral code */}
-        <div className="rounded-xl bg-bg-card border border-border-subtle p-5">
-          <p className="text-text-muted text-xs uppercase tracking-wider mb-1">
-            Реферальный код
-          </p>
-          <p className="font-display text-xl text-accent-cyan break-all">
-            {profile?.referral_code || '—'}
-          </p>
-          <p className="text-text-muted text-xs mt-1">
-            Приведи друга — получи 500 бонусов
-          </p>
-        </div>
-      </div>
+        return (
+          <div className="space-y-4">
+            {/* Bonus tier */}
+            <div className="rounded-xl bg-bg-card border border-border-subtle p-5">
+              <div className="flex items-center justify-between mb-3">
+                <div>
+                  <p className="text-text-muted text-xs uppercase tracking-wider mb-1">
+                    Ваш уровень
+                  </p>
+                  <p className={`font-display text-2xl ${tier.color}`}>
+                    {tier.name}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="text-text-muted text-xs uppercase tracking-wider mb-1">
+                    Кэшбэк
+                  </p>
+                  <p className={`font-display text-2xl ${tier.color}`}>
+                    {tier.percent}%
+                  </p>
+                </div>
+              </div>
+
+              {/* Progress bar */}
+              <div className="mb-2">
+                <div className="h-2 rounded-full bg-bg-secondary overflow-hidden">
+                  <div
+                    className="h-full rounded-full bg-accent-yellow transition-all"
+                    style={{ width: `${progressPercent}%` }}
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between text-xs text-text-muted">
+                <span>Покупок на {formatPriceShort(totalSpent)}</span>
+                {nextTier ? (
+                  <span>
+                    До <span className={nextTier.color}>{nextTier.name}</span> — {formatPriceShort(remaining)}
+                  </span>
+                ) : (
+                  <span>Максимальный уровень</span>
+                )}
+              </div>
+
+              {/* All tiers */}
+              <div className="mt-4 flex gap-1">
+                {BONUS_TIERS.map((t) => (
+                  <div
+                    key={t.name}
+                    className={`flex-1 rounded-md py-1.5 text-center text-[10px] font-medium ${
+                      t.name === tier.name
+                        ? 'bg-accent-yellow/20 border border-accent-yellow/40 text-accent-yellow'
+                        : 'bg-bg-secondary text-text-muted'
+                    }`}
+                  >
+                    <div>{t.name}</div>
+                    <div className="font-display">{t.percent}%</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Bonus balance */}
+              <div className="rounded-xl bg-bg-card border border-border-subtle p-5">
+                <p className="text-text-muted text-xs uppercase tracking-wider mb-1">
+                  Бонусный баланс
+                </p>
+                <p className="font-display text-3xl text-accent-yellow">
+                  {profile?.bonus_balance || 0}
+                </p>
+                <p className="text-text-muted text-xs mt-1">
+                  1 бонус = 1 ₽ скидка
+                </p>
+              </div>
+
+              {/* Referral code */}
+              <div className="rounded-xl bg-bg-card border border-border-subtle p-5">
+                <p className="text-text-muted text-xs uppercase tracking-wider mb-1">
+                  Реферальный код
+                </p>
+                <p className="font-display text-xl text-accent-cyan break-all">
+                  {profile?.referral_code || '—'}
+                </p>
+                <p className="text-text-muted text-xs mt-1">
+                  Приведи друга — получи 500 бонусов
+                </p>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Recent orders */}
       <div>

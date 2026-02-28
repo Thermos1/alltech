@@ -169,6 +169,27 @@ export default function Footer() {
               &copy; 2022&ndash;2026 АЛТЕХ
             </p>
           </div>
+          <div className="mt-4 flex items-center justify-center gap-1.5 text-[11px] text-text-muted">
+            <span>Built by</span>
+            <a
+              href="https://techdab.net"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-accent-cyan hover:text-accent-cyan/80 transition-colors"
+            >
+              techdab.net
+            </a>
+            <span>&middot;</span>
+            <span>Powered by</span>
+            <a
+              href="https://sipmind.net"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-accent-cyan hover:text-accent-cyan/80 transition-colors"
+            >
+              sipmind.net
+            </a>
+          </div>
         </div>
       </div>
     </footer>

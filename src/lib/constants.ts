@@ -48,3 +48,21 @@ export const OIL_BASE_TYPES = {
   semi_synthetic: "Полусинтетика",
   mineral: "Минеральное",
 } as const;
+
+export const BONUS_TIERS = [
+  { name: "Старт", min: 0, max: 99_999, percent: 3, color: "text-text-secondary" },
+  { name: "Бронза", min: 100_000, max: 299_999, percent: 5, color: "text-amber-500" },
+  { name: "Серебро", min: 300_000, max: 499_999, percent: 7, color: "text-gray-300" },
+  { name: "Золото", min: 500_000, max: 999_999, percent: 10, color: "text-accent-yellow" },
+  { name: "Платина", min: 1_000_000, max: Infinity, percent: 15, color: "text-accent-cyan" },
+] as const;
+
+export function getBonusTier(totalSpent: number) {
+  return BONUS_TIERS.find((t) => totalSpent >= t.min && totalSpent <= t.max) ?? BONUS_TIERS[0];
+}
+
+export function getNextTier(totalSpent: number) {
+  const currentIndex = BONUS_TIERS.findIndex((t) => totalSpent >= t.min && totalSpent <= t.max);
+  if (currentIndex < BONUS_TIERS.length - 1) return BONUS_TIERS[currentIndex + 1];
+  return null;
+}

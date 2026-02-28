@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { formatPriceShort } from '@/lib/utils';
+import RepeatOrderButton from './RepeatOrderButton';
 
 const statusSteps = [
   { key: 'pending', label: 'Создан' },
@@ -43,8 +44,24 @@ export default async function OrderDetailPage({
 
   const { data: items } = await supabase
     .from('order_items')
-    .select('*')
+    .select('*, product_variants(product_id, products(id, image_url))')
     .eq('order_id', id);
+
+  // Build repeat-order items for the client component
+  const repeatItems = (items || []).map((item) => {
+    // variant_id may have bulk suffix like "uuid_5L" — strip it for product lookup
+    const rawVariantId = item.variant_id || '';
+    const pv = item.product_variants as { product_id?: string; products?: { id?: string; image_url?: string } } | null;
+    return {
+      variantId: rawVariantId,
+      productId: pv?.product_id || pv?.products?.id || rawVariantId,
+      productName: item.product_name,
+      variantLabel: item.variant_label,
+      unitPrice: item.unit_price,
+      quantity: item.quantity,
+      imageUrl: pv?.products?.image_url || undefined,
+    };
+  });
 
   const currentStep = statusIndex[order.status] ?? 0;
   const isCancelled = order.status === 'cancelled' || order.status === 'refunded';
@@ -182,6 +199,11 @@ export default async function OrderDetailPage({
           )}
         </div>
       </div>
+
+      {/* Repeat order */}
+      {repeatItems.length > 0 && (
+        <RepeatOrderButton items={repeatItems} />
+      )}
     </div>
   );
 }

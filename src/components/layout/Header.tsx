@@ -2,13 +2,18 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { useCartStore } from '@/stores/cart-store';
 
 export default function Header() {
+  const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const [mounted, setMounted] = useState(false);
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const { user, loading, signOut } = useAuth();
   const itemCount = useCartStore((s) => s.getItemCount());
 
@@ -25,9 +30,9 @@ export default function Header() {
             <Image
               src="/images/logo-white-full.png"
               alt="АЛТЕХ"
-              width={120}
-              height={32}
-              className="h-8 w-auto md:h-9"
+              width={160}
+              height={48}
+              className="h-10 w-auto md:h-12"
               priority
             />
           </Link>
@@ -99,6 +104,55 @@ export default function Header() {
                 </Link>
               )}
             </div>
+          )}
+
+          {/* Search */}
+          {searchOpen ? (
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (searchQuery.trim()) {
+                  router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+                  setSearchOpen(false);
+                  setSearchQuery('');
+                }
+              }}
+              className="flex items-center"
+            >
+              <input
+                ref={searchInputRef}
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Поиск..."
+                autoFocus
+                className="w-32 sm:w-48 bg-bg-secondary border border-border-subtle rounded-lg px-3 py-1.5 text-sm text-text-primary placeholder:text-text-muted focus:border-accent-yellow focus:outline-none"
+                onBlur={() => {
+                  if (!searchQuery.trim()) setSearchOpen(false);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Escape') {
+                    setSearchOpen(false);
+                    setSearchQuery('');
+                  }
+                }}
+              />
+            </form>
+          ) : (
+            <button
+              onClick={() => {
+                setSearchOpen(true);
+                setTimeout(() => searchInputRef.current?.focus(), 50);
+              }}
+              className="flex h-10 w-10 items-center justify-center rounded-lg transition-colors hover:bg-bg-card"
+              aria-label="Поиск"
+              title="Поиск по каталогу"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-text-primary">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+            </button>
           )}
 
           {/* Cart */}

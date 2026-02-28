@@ -20,6 +20,10 @@ interface ProductDetailClientProps {
   variants: Variant[];
 }
 
+function isBulk(volume: string) {
+  return volume === 'Розлив' || volume === 'bulk';
+}
+
 export default function ProductDetailClient({
   productId,
   productName,
@@ -31,21 +35,25 @@ export default function ProductDetailClient({
     variants[0]?.id ?? ''
   );
   const [added, setAdded] = useState(false);
+  const [bulkLiters, setBulkLiters] = useState(5);
 
   const selected = variants.find((v) => v.id === selectedId) ?? variants[0];
+  const selectedIsBulk = selected && isBulk(selected.volume);
+  const displayPrice = selectedIsBulk
+    ? (selected.price_per_liter ?? selected.price) * bulkLiters
+    : selected?.price ?? 0;
 
   function handleAddToCart() {
     if (!selected) return;
 
     addItem({
-      variantId: selected.id,
+      variantId: selectedIsBulk ? `${selected.id}_${bulkLiters}L` : selected.id,
       productId,
       productName,
-      variantLabel:
-        selected.volume === 'bulk'
-          ? 'Розлив'
-          : `${selected.volume} ${selected.unit}`,
-      price: selected.price,
+      variantLabel: selectedIsBulk
+        ? `Розлив ${bulkLiters} л`
+        : `${selected.volume} ${selected.unit}`,
+      price: displayPrice,
       imageUrl,
     });
 
@@ -74,6 +82,8 @@ export default function ProductDetailClient({
           variants={variants}
           selectedId={selectedId}
           onSelect={setSelectedId}
+          bulkLiters={bulkLiters}
+          onBulkLitersChange={setBulkLiters}
         />
       </div>
 
@@ -81,12 +91,18 @@ export default function ProductDetailClient({
       {selected && (
         <div className="space-y-1">
           <p className="text-3xl font-display text-text-primary">
-            {formatPriceShort(selected.price)}
+            {formatPriceShort(displayPrice)}
           </p>
-          {selected.price_per_liter != null && selected.price_per_liter > 0 && (
+          {selectedIsBulk ? (
             <p className="text-text-muted text-sm">
-              {formatPriceShort(selected.price_per_liter)} за литр
+              {formatPriceShort(selected.price_per_liter ?? selected.price)} за литр &times; {bulkLiters} л
             </p>
+          ) : (
+            selected.price_per_liter != null && selected.price_per_liter > 0 && (
+              <p className="text-text-muted text-sm">
+                {formatPriceShort(selected.price_per_liter)} за литр
+              </p>
+            )
           )}
         </div>
       )}

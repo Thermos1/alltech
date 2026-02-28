@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { getBonusTier } from '@/lib/constants';
 
 export async function POST(request: NextRequest) {
   try {
@@ -37,22 +38,48 @@ export async function POST(request: NextRequest) {
         })
         .eq('id', orderId);
 
-      // Load user profile for bonus operations
+      // Load user profile for bonus and CRM operations
       const { data: userProfile } = await admin
         .from('profiles')
-        .select('id, bonus_balance, referred_by')
+        .select('id, bonus_balance, referred_by, total_spent, manager_id')
         .eq('id', order.user_id)
         .single();
 
-      // Award bonuses (5% of total)
-      const bonusToAward = Math.floor(Number(order.total) * 0.05);
-      if (bonusToAward > 0 && userProfile) {
+      if (userProfile) {
+        // Update total_spent
+        const newTotalSpent = Number(userProfile.total_spent || 0) + Number(order.total);
+
+        // Award bonuses by tier (based on cumulative total_spent AFTER this order)
+        const tier = getBonusTier(newTotalSpent);
+        const bonusToAward = Math.floor(Number(order.total) * tier.percent / 100);
+
         await admin
           .from('profiles')
           .update({
             bonus_balance: userProfile.bonus_balance + bonusToAward,
+            total_spent: newTotalSpent,
           })
           .eq('id', order.user_id);
+      }
+
+      // Award manager commission
+      if (userProfile?.manager_id) {
+        const { data: manager } = await admin
+          .from('profiles')
+          .select('manager_commission, manager_commission_rate')
+          .eq('id', userProfile.manager_id)
+          .single();
+
+        if (manager) {
+          const commissionRate = Number(manager.manager_commission_rate || 3);
+          const commission = Math.floor(Number(order.total) * commissionRate / 100);
+          await admin
+            .from('profiles')
+            .update({
+              manager_commission: Number(manager.manager_commission || 0) + commission,
+            })
+            .eq('id', userProfile.manager_id);
+        }
       }
 
       // Check referral bonus (first purchase by referred user)

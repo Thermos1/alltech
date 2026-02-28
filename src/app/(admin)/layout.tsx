@@ -2,10 +2,16 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 
-const navItems = [
+const adminNavItems = [
   { href: '/admin', label: 'Дашборд' },
   { href: '/admin/orders', label: 'Заказы' },
+  { href: '/admin/clients', label: 'Клиенты' },
   { href: '/admin/products', label: 'Товары' },
+];
+
+const managerNavItems = [
+  { href: '/admin', label: 'Дашборд' },
+  { href: '/admin/clients', label: 'Мои клиенты' },
 ];
 
 export default async function AdminLayout({
@@ -26,9 +32,12 @@ export default async function AdminLayout({
     .eq('id', user.id)
     .single();
 
-  if (!profile || profile.role !== 'admin') {
+  if (!profile || (profile.role !== 'admin' && profile.role !== 'manager')) {
     redirect('/');
   }
+
+  const isAdmin = profile.role === 'admin';
+  const navItems = isAdmin ? adminNavItems : managerNavItems;
 
   return (
     <div className="min-h-screen bg-bg-primary flex">
