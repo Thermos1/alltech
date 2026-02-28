@@ -95,12 +95,20 @@ describe('checkoutSchema', () => {
     }
   });
 
-  it('rejects non-uuid variant ID', () => {
+  it('rejects empty variant ID', () => {
     const result = checkoutSchema.safeParse({
       ...validCheckout,
-      items: [{ ...validCheckout.items[0], variantId: 'not-a-uuid' }],
+      items: [{ ...validCheckout.items[0], variantId: '' }],
     });
     expect(result.success).toBe(false);
+  });
+
+  it('accepts uuid:bulk variant ID for bulk items', () => {
+    const result = checkoutSchema.safeParse({
+      ...validCheckout,
+      items: [{ ...validCheckout.items[0], variantId: '550e8400-e29b-41d4-a716-446655440000:bulk' }],
+    });
+    expect(result.success).toBe(true);
   });
 });
 

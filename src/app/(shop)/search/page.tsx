@@ -32,7 +32,7 @@ export default async function SearchPage({
     .select(`
       id, slug, name, viscosity, base_type, api_spec, acea_spec, image_url, approvals,
       brands (name, slug),
-      product_variants (id, price, volume, unit)
+      product_variants (id, price, price_per_liter, volume, unit)
     `)
     .eq('is_active', true)
     .or(`name.ilike.${searchPattern},viscosity.ilike.${searchPattern},approvals.ilike.${searchPattern}`)
@@ -44,7 +44,7 @@ export default async function SearchPage({
     .select(`
       id, slug, name, viscosity, base_type, api_spec, acea_spec, image_url, approvals,
       brands!inner (name, slug),
-      product_variants (id, price, volume, unit)
+      product_variants (id, price, price_per_liter, volume, unit)
     `)
     .eq('is_active', true)
     .ilike('brands.name', searchPattern);

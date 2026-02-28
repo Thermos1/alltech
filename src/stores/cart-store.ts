@@ -10,6 +10,7 @@ export interface CartItem {
   price: number;
   quantity: number;
   imageUrl?: string;
+  isBulk?: boolean;
 }
 
 interface CartState {

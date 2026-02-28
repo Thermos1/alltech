@@ -112,10 +112,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Ошибка создания заказа' }, { status: 500 });
     }
 
-    // Create order items
+    // Create order items (strip :bulk suffix from variantId for DB FK)
     const orderItems = data.items.map((item) => ({
       order_id: order.id,
-      variant_id: item.variantId,
+      variant_id: item.variantId.replace(/:bulk$/, ''),
       product_name: item.productName,
       variant_label: item.variantLabel,
       quantity: item.quantity,

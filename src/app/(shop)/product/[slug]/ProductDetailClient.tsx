@@ -46,16 +46,27 @@ export default function ProductDetailClient({
   function handleAddToCart() {
     if (!selected) return;
 
-    addItem({
-      variantId: selectedIsBulk ? `${selected.id}_${bulkLiters}L` : selected.id,
-      productId,
-      productName,
-      variantLabel: selectedIsBulk
-        ? `Розлив ${bulkLiters} л`
-        : `${selected.volume} ${selected.unit}`,
-      price: displayPrice,
-      imageUrl,
-    });
+    if (selectedIsBulk) {
+      const pricePerLiter = selected.price_per_liter ?? selected.price;
+      addItem({
+        variantId: `${selected.id}:bulk`,
+        productId,
+        productName,
+        variantLabel: `Розлив ${bulkLiters} л`,
+        price: pricePerLiter * bulkLiters,
+        imageUrl,
+        isBulk: true,
+      });
+    } else {
+      addItem({
+        variantId: selected.id,
+        productId,
+        productName,
+        variantLabel: `${selected.volume} ${selected.unit}`,
+        price: selected.price,
+        imageUrl,
+      });
+    }
 
     setAdded(true);
     setTimeout(() => setAdded(false), 1500);

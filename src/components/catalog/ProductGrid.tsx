@@ -11,7 +11,7 @@ interface Product {
   image_url?: string | null;
   min_price_per_liter?: number | null;
   brands?: { name: string; slug: string } | null;
-  product_variants?: { id: string; price: number; volume: string; unit: string }[];
+  product_variants?: { id: string; price: number; price_per_liter?: number | null; volume: string; unit: string }[];
 }
 
 interface ProductGridProps {

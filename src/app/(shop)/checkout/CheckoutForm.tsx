@@ -311,7 +311,7 @@ export default function CheckoutForm({ profile }: CheckoutFormProps) {
       {/* Total */}
       <div className="rounded-xl bg-bg-card border border-border-accent p-4 space-y-2">
         <div className="flex justify-between text-sm">
-          <span className="text-text-secondary">Подытог</span>
+          <span className="text-text-secondary">Сумма товаров</span>
           <span className="text-text-primary">{formatPriceShort(subtotal)}</span>
         </div>
         {promoDiscount > 0 && (

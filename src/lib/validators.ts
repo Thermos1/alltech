@@ -16,7 +16,7 @@ export const checkoutSchema = z.object({
   useBonuses: z.number().int().min(0).default(0),
   items: z.array(
     z.object({
-      variantId: z.string().uuid(),
+      variantId: z.string().min(1),
       productName: z.string(),
       variantLabel: z.string(),
       quantity: z.number().int().min(1),
