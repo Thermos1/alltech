@@ -6,6 +6,7 @@ const adminNavItems = [
   { href: '/admin', label: 'Дашборд' },
   { href: '/admin/orders', label: 'Заказы' },
   { href: '/admin/clients', label: 'Клиенты' },
+  { href: '/admin/managers', label: 'Менеджеры' },
   { href: '/admin/products', label: 'Товары' },
 ];
 
