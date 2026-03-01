@@ -80,3 +80,37 @@ export type VariantCreateInput = z.infer<typeof variantCreateSchema>;
 export const variantUpdateSchema = variantCreateSchema.partial();
 
 export type VariantUpdateInput = z.infer<typeof variantUpdateSchema>;
+
+// Brand CRUD schemas
+
+export const brandCreateSchema = z.object({
+  name: z.string().min(1, 'Введите название бренда'),
+  slug: z.string().optional(),
+  logo_url: z.string().optional(),
+  is_active: z.boolean().default(true),
+  sort_order: z.number().int().min(0).default(0),
+});
+
+export type BrandCreateInput = z.infer<typeof brandCreateSchema>;
+
+export const brandUpdateSchema = brandCreateSchema.partial();
+
+export type BrandUpdateInput = z.infer<typeof brandUpdateSchema>;
+
+// Category CRUD schemas
+
+export const categoryCreateSchema = z.object({
+  name: z.string().min(1, 'Введите название категории'),
+  slug: z.string().optional(),
+  section: z.enum(['lubricants', 'filters']),
+  parent_id: z.string().uuid().nullable().optional(),
+  icon_url: z.string().optional(),
+  is_active: z.boolean().default(true),
+  sort_order: z.number().int().min(0).default(0),
+});
+
+export type CategoryCreateInput = z.infer<typeof categoryCreateSchema>;
+
+export const categoryUpdateSchema = categoryCreateSchema.partial();
+
+export type CategoryUpdateInput = z.infer<typeof categoryUpdateSchema>;

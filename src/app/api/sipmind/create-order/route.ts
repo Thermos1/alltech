@@ -109,16 +109,21 @@ export async function POST(request: NextRequest) {
     const variantLabel = `${selectedVariant.volume} ${selectedVariant.unit}`;
     const orderNumber = generateOrderNumber();
 
-    // Create order
-    // NOTE: orders.user_id is NOT NULL in the schema. For SIPmind voice orders
-    // without an authenticated user, a migration is needed to make user_id nullable:
-    //   ALTER TABLE orders ALTER COLUMN user_id DROP NOT NULL;
-    // Until then, this insert will fail. Consider creating a system user for
-    // voice orders as an alternative.
+    // Look up existing user by phone (link order if found)
+    const cleanPhone = phone.replace(/\D/g, '');
+    const { data: existingProfile } = await admin
+      .from('profiles')
+      .select('id')
+      .eq('phone', cleanPhone)
+      .maybeSingle();
+
+    // Create order (user_id is nullable — voice orders may not have a registered user)
     const { data: order, error: orderError } = await admin
       .from('orders')
       .insert({
         order_number: orderNumber,
+        user_id: existingProfile?.id || null,
+        guest_phone: existingProfile ? null : cleanPhone,
         status: 'pending',
         contact_name: name,
         contact_phone: phone,

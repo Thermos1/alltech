@@ -10,6 +10,8 @@ const adminNavItems = [
   { href: '/admin/managers', label: 'Менеджеры' },
   { href: '/admin/commissions', label: 'Комиссии' },
   { href: '/admin/products', label: 'Товары' },
+  { href: '/admin/brands', label: 'Бренды' },
+  { href: '/admin/categories', label: 'Категории' },
 ];
 
 const managerNavItems = [

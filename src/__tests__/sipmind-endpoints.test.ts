@@ -370,6 +370,16 @@ describe('POST /api/sipmind/create-order', () => {
           }),
         };
       }
+      if (table === 'profiles') {
+        return {
+          select: () => ({
+            eq: () => ({
+              maybeSingle: () =>
+                Promise.resolve({ data: null, error: null }),
+            }),
+          }),
+        };
+      }
       if (table === 'orders') {
         return {
           insert: () => ({
