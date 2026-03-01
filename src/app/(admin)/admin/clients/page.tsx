@@ -106,7 +106,7 @@ export default async function ClientsPage() {
                   <th className="text-left px-4 py-3 font-medium">Телефон</th>
                   <th className="text-center px-4 py-3 font-medium">Заказы</th>
                   <th className="text-right px-4 py-3 font-medium">Покупки</th>
-                  <th className="text-center px-4 py-3 font-medium">Уровень</th>
+                  <th className="text-center px-4 py-3 font-medium">Кешбэк</th>
                   <th className="text-center px-4 py-3 font-medium">Статус</th>
                   {isAdmin && <th className="text-left px-4 py-3 font-medium">Менеджер</th>}
                 </tr>
