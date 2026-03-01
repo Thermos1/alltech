@@ -61,9 +61,7 @@ export async function POST(request: NextRequest) {
         base_type: data.base_type || null,
         api_spec: data.api_spec || null,
         acea_spec: data.acea_spec || null,
-        oem_approvals: data.oem_approvals
-          ? data.oem_approvals.split(/[;,]/).map((s: string) => s.trim()).filter(Boolean)
-          : null,
+        approvals: data.approvals || null,
         oem_number: data.oem_number || null,
         is_active: data.is_active,
         is_featured: data.is_featured,

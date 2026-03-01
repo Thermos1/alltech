@@ -19,7 +19,7 @@ type ProductData = {
   base_type: string;
   api_spec: string;
   acea_spec: string;
-  oem_approvals: string;
+  approvals: string;
   oem_number: string;
   is_active: boolean;
   is_featured: boolean;
@@ -43,7 +43,7 @@ const emptyProduct: ProductData = {
   base_type: '',
   api_spec: '',
   acea_spec: '',
-  oem_approvals: '',
+  approvals: '',
   oem_number: '',
   is_active: true,
   is_featured: false,
@@ -105,7 +105,7 @@ export default function ProductForm({ product, brands, categories }: ProductForm
       if (form.base_type) body.base_type = form.base_type;
       if (form.api_spec) body.api_spec = form.api_spec;
       if (form.acea_spec) body.acea_spec = form.acea_spec;
-      if (form.oem_approvals) body.oem_approvals = form.oem_approvals;
+      if (form.approvals) body.approvals = form.approvals;
       if (form.oem_number) body.oem_number = form.oem_number;
 
       const res = await fetch(url, {
@@ -290,12 +290,12 @@ export default function ProductForm({ product, brands, categories }: ProductForm
           </div>
 
           <div>
-            <label className={labelClass}>Допуски (OEM)</label>
+            <label className={labelClass}>Допуски</label>
             <input
               className={inputClass}
-              value={form.oem_approvals}
-              onChange={(e) => update('oem_approvals', e.target.value)}
-              placeholder="MB 229.5, VW 502.00/505.00"
+              value={form.approvals}
+              onChange={(e) => update('approvals', e.target.value)}
+              placeholder="MB 229.5; VW 502.00/505.00"
             />
           </div>
 

@@ -53,7 +53,7 @@ export const productCreateSchema = z.object({
   base_type: z.string().optional(),
   api_spec: z.string().optional(),
   acea_spec: z.string().optional(),
-  oem_approvals: z.string().optional(),
+  approvals: z.string().optional(),
   oem_number: z.string().optional(),
   is_active: z.boolean().default(true),
   is_featured: z.boolean().default(false),
