@@ -31,7 +31,7 @@ export default async function ManagersPage() {
   // Fetch all managers
   const { data: managers } = await admin
     .from('profiles')
-    .select('id, full_name, phone, email, manager_commission, manager_commission_rate, created_at')
+    .select('id, full_name, phone, manager_commission, manager_commission_rate, created_at')
     .eq('role', 'manager')
     .order('created_at', { ascending: false });
 
@@ -127,7 +127,7 @@ export default async function ManagersPage() {
                           {manager.full_name || 'Без имени'}
                         </p>
                         <p className="text-text-muted text-xs">
-                          {manager.phone || manager.email || manager.id.slice(0, 8)}
+                          {manager.phone || manager.id.slice(0, 8)}
                         </p>
                       </td>
                       <td className="px-4 py-3 text-center text-text-primary">
