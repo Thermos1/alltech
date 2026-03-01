@@ -42,6 +42,15 @@ export default async function ManagersPage() {
     .eq('role', 'customer')
     .order('full_name', { ascending: true });
 
+  // Fetch auth emails for managers from Supabase Auth
+  const managerEmailMap: Record<string, string> = {};
+  for (const m of managers || []) {
+    const { data: authData } = await admin.auth.admin.getUserById(m.id);
+    if (authData?.user?.email) {
+      managerEmailMap[m.id] = authData.user.email;
+    }
+  }
+
   // For each manager: count assigned clients and their total sales
   const managerIds = (managers || []).map((m) => m.id);
 
@@ -129,6 +138,11 @@ export default async function ManagersPage() {
                         <p className="text-text-muted text-xs">
                           {manager.phone || manager.id.slice(0, 8)}
                         </p>
+                        {managerEmailMap[manager.id] && (
+                          <p className="text-text-muted text-xs">
+                            {managerEmailMap[manager.id]}
+                          </p>
+                        )}
                       </td>
                       <td className="px-4 py-3 text-center text-text-primary">
                         {clients}
