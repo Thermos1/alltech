@@ -19,7 +19,7 @@ export default async function EditProductPage({
     await Promise.all([
       admin
         .from('products')
-        .select('id, name, slug, description, section, brand_id, category_id, viscosity, base_type, api_spec, acea_spec, approvals, oem_codes, is_active, is_featured, image_url')
+        .select('id, name, slug, description, section, brand_id, category_id, viscosity, base_type, api_spec, acea_spec, oem_approvals, oem_number, is_active, is_featured, image_url')
         .eq('id', id)
         .single(),
       admin.from('brands').select('id, name').order('name'),
@@ -45,8 +45,8 @@ export default async function EditProductPage({
     base_type: product.base_type || '',
     api_spec: product.api_spec || '',
     acea_spec: product.acea_spec || '',
-    approvals: product.approvals || '',
-    oem_codes: product.oem_codes || '',
+    oem_approvals: product.oem_approvals || '',
+    oem_number: product.oem_number || '',
     is_active: product.is_active ?? true,
     is_featured: product.is_featured ?? false,
     image_url: product.image_url,

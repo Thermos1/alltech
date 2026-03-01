@@ -19,8 +19,8 @@ type ProductData = {
   base_type: string;
   api_spec: string;
   acea_spec: string;
-  approvals: string;
-  oem_codes: string;
+  oem_approvals: string;
+  oem_number: string;
   is_active: boolean;
   is_featured: boolean;
   image_url?: string | null;
@@ -43,8 +43,8 @@ const emptyProduct: ProductData = {
   base_type: '',
   api_spec: '',
   acea_spec: '',
-  approvals: '',
-  oem_codes: '',
+  oem_approvals: '',
+  oem_number: '',
   is_active: true,
   is_featured: false,
 };
@@ -69,10 +69,14 @@ export default function ProductForm({ product, brands, categories }: ProductForm
     if (!pendingImage) return;
     const formData = new FormData();
     formData.append('image', pendingImage);
-    await fetch(`/api/admin/products/${productId}/image`, {
+    const res = await fetch(`/api/admin/products/${productId}/image`, {
       method: 'POST',
       body: formData,
     });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      setError(data.error || 'Ошибка загрузки изображения');
+    }
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -101,8 +105,8 @@ export default function ProductForm({ product, brands, categories }: ProductForm
       if (form.base_type) body.base_type = form.base_type;
       if (form.api_spec) body.api_spec = form.api_spec;
       if (form.acea_spec) body.acea_spec = form.acea_spec;
-      if (form.approvals) body.approvals = form.approvals;
-      if (form.oem_codes) body.oem_codes = form.oem_codes;
+      if (form.oem_approvals) body.oem_approvals = form.oem_approvals;
+      if (form.oem_number) body.oem_number = form.oem_number;
 
       const res = await fetch(url, {
         method,
@@ -289,18 +293,18 @@ export default function ProductForm({ product, brands, categories }: ProductForm
             <label className={labelClass}>Допуски (OEM)</label>
             <input
               className={inputClass}
-              value={form.approvals}
-              onChange={(e) => update('approvals', e.target.value)}
+              value={form.oem_approvals}
+              onChange={(e) => update('oem_approvals', e.target.value)}
               placeholder="MB 229.5, VW 502.00/505.00"
             />
           </div>
 
           <div>
-            <label className={labelClass}>OEM-коды</label>
+            <label className={labelClass}>OEM-номер</label>
             <input
               className={inputClass}
-              value={form.oem_codes}
-              onChange={(e) => update('oem_codes', e.target.value)}
+              value={form.oem_number}
+              onChange={(e) => update('oem_number', e.target.value)}
               placeholder="A000 989 69 01"
             />
           </div>

@@ -81,8 +81,8 @@ describe('productCreateSchema', () => {
       base_type: 'synthetic',
       api_spec: 'SN/CF',
       acea_spec: 'A3/B4',
-      approvals: 'MB 229.5',
-      oem_codes: 'A000 989 69 01',
+      oem_approvals: 'MB 229.5',
+      oem_number: 'A000 989 69 01',
       is_active: false,
       is_featured: true,
     });
