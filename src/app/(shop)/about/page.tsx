@@ -588,7 +588,7 @@ export default function AboutPage() {
         </h2>
         <div className="grid gap-4 sm:grid-cols-4 mb-6">
           {[
-            { value: '225', label: 'тестов', sub: '18 test suites' },
+            { value: '299', label: 'тестов', sub: '24 test suites' },
             { value: '0', label: 'ошибок TS', sub: 'strict mode' },
             { value: '< 1 мин', label: 'CI/CD', sub: 'push — deploy' },
             { value: '100%', label: 'крит. путей', sub: 'оплата, auth, CRM' },
