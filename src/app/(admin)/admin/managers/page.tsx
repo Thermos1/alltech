@@ -185,11 +185,21 @@ export default async function ManagersPage() {
         </div>
       )}
 
+      {/* Create new manager (no phone required) */}
+      <div className="rounded-xl bg-bg-card border border-border-subtle p-5">
+        <h2 className="text-text-primary font-medium mb-3">Создать нового менеджера</h2>
+        <p className="text-text-muted text-xs mb-4">
+          Создайте менеджера с нуля — только ФИО, корпоративный email и пароль.
+          Телефон не требуется.
+        </p>
+        <ManagerActions type="create" />
+      </div>
+
       {/* Promote customer to manager */}
       <div className="rounded-xl bg-bg-card border border-border-subtle p-5">
-        <h2 className="text-text-primary font-medium mb-3">Назначить менеджера</h2>
+        <h2 className="text-text-primary font-medium mb-3">Назначить из клиентов</h2>
         <p className="text-text-muted text-xs mb-4">
-          Выберите зарегистрированного клиента и назначьте его менеджером.
+          Или выберите зарегистрированного клиента и назначьте его менеджером.
           Он получит доступ в админку и сможет видеть привязанных к нему клиентов.
         </p>
         <ManagerActions

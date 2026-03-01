@@ -14,6 +14,15 @@ type ManagerActionsProps =
       clientCount?: never;
     }
   | {
+      type: 'create';
+      customers?: never;
+      managerId?: never;
+      currentRate?: never;
+      managerName?: never;
+      otherManagers?: never;
+      clientCount?: never;
+    }
+  | {
       type: 'demote';
       managerId: string;
       managerName: string;
@@ -34,8 +43,110 @@ type ManagerActionsProps =
 
 export default function ManagerActions(props: ManagerActionsProps) {
   if (props.type === 'promote') return <PromoteForm customers={props.customers} />;
+  if (props.type === 'create') return <CreateManagerForm />;
   if (props.type === 'demote') return <DemoteButton managerId={props.managerId} managerName={props.managerName} otherManagers={props.otherManagers} clientCount={props.clientCount} />;
   return <CommissionEditor managerId={props.managerId} currentRate={props.currentRate} />;
+}
+
+function CreateManagerForm() {
+  const router = useRouter();
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [rate, setRate] = useState('3');
+  const [loading, setLoading] = useState(false);
+  const [done, setDone] = useState(false);
+  const [error, setError] = useState('');
+
+  async function handleCreate() {
+    if (!fullName || !email || !password) return;
+    if (password.length < 6) { setError('Пароль минимум 6 символов'); return; }
+    setError('');
+    setLoading(true);
+    try {
+      const res = await fetch('/api/admin/create-manager', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fullName,
+          email,
+          password,
+          commissionRate: Number(rate),
+        }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setDone(true);
+        setTimeout(() => {
+          router.refresh();
+          setDone(false);
+          setFullName('');
+          setEmail('');
+          setPassword('');
+        }, 1000);
+      } else {
+        setError(data.error || 'Ошибка');
+      }
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const inputClass = 'rounded-lg bg-bg-secondary border border-border-subtle px-3 py-2 text-sm text-text-primary focus:border-accent-yellow focus:outline-none';
+
+  return (
+    <div className="space-y-3">
+      <div className="flex flex-col sm:flex-row gap-2">
+        <input
+          type="text"
+          value={fullName}
+          onChange={(e) => setFullName(e.target.value)}
+          placeholder="ФИО менеджера"
+          className={`flex-1 ${inputClass}`}
+        />
+        <div className="flex items-center gap-2">
+          <label className="text-text-muted text-xs whitespace-nowrap">Комиссия %</label>
+          <input
+            type="number"
+            value={rate}
+            onChange={(e) => setRate(e.target.value)}
+            min={0}
+            max={100}
+            step={0.5}
+            className={`w-16 text-center ${inputClass}`}
+          />
+        </div>
+      </div>
+      <div className="flex flex-col sm:flex-row gap-2">
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Email для входа"
+          className={`flex-1 ${inputClass}`}
+        />
+        <input
+          type="text"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Пароль"
+          className={`sm:w-40 ${inputClass}`}
+        />
+        <button
+          onClick={handleCreate}
+          disabled={!fullName || !email || !password || loading}
+          className={`rounded-lg px-4 py-2 text-sm font-medium transition-all whitespace-nowrap ${
+            done
+              ? 'bg-green-500 text-white'
+              : 'bg-accent-yellow text-bg-primary hover:brightness-110'
+          } disabled:opacity-50`}
+        >
+          {done ? 'Создан!' : loading ? '...' : 'Создать менеджера'}
+        </button>
+      </div>
+      {error && <p className="text-accent-magenta text-xs">{error}</p>}
+    </div>
+  );
 }
 
 function PromoteForm({ customers }: { customers: { id: string; label: string }[] }) {
