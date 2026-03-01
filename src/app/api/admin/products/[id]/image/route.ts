@@ -49,11 +49,16 @@ export async function POST(
       return NextResponse.json({ error: 'Product not found' }, { status: 404 });
     }
 
-    const brandSlug = Array.isArray(product.brand)
+    const rawBrandSlug = Array.isArray(product.brand)
       ? product.brand[0]?.slug
       : (product.brand as { slug: string } | null)?.slug || 'unknown';
 
-    const filePath = `${brandSlug}/${product.slug}.jpg`;
+    // Sanitize slugs for valid Storage key
+    const sanitize = (s: string) => s.replace(/[^a-z0-9_-]/gi, '-').replace(/-+/g, '-').replace(/^-|-$/g, '') || 'file';
+    const brandSlug = sanitize(rawBrandSlug);
+    const productSlug = sanitize(product.slug);
+
+    const filePath = `${brandSlug}/${productSlug}.jpg`;
     const buffer = Buffer.from(await file.arrayBuffer());
 
     // Upload (upsert to overwrite existing)

@@ -34,7 +34,8 @@ export async function POST(request: NextRequest) {
     }
 
     const data = parsed.data;
-    let slug = data.slug || slugify(data.name);
+    // Always run through slugify — even if user typed a custom slug
+    let slug = slugify(data.slug || data.name);
 
     // Ensure unique slug
     const admin = createAdminClient();
