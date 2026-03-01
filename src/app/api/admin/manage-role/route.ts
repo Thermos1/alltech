@@ -66,8 +66,20 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // If demoting from manager, transfer or unassign clients
+    // If demoting from manager: detach corporate email, transfer/unassign clients
     if (newRole === 'customer') {
+      // Detach corporate email so it can be reassigned to another manager
+      // Replace with a unique placeholder email and random password
+      const { data: authData } = await admin.auth.admin.getUserById(userId);
+      if (authData?.user?.email && !authData.user.email.endsWith('@placeholder.local')) {
+        const randomPass = crypto.randomUUID();
+        await admin.auth.admin.updateUserById(userId, {
+          email: `detached_${userId.slice(0, 8)}@placeholder.local`,
+          password: randomPass,
+          email_confirm: true,
+        });
+      }
+
       if (transferTo) {
         // Transfer clients to another manager
         await admin
