@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { formatPriceShort } from '@/lib/utils';
 import StatusChangeForm from './StatusChangeForm';
+import AssignManagerForm from '../../clients/[id]/AssignManagerForm';
 
 export const metadata = {
   title: 'Детали заказа — Админ АЛТЕХ',
@@ -54,14 +55,15 @@ export default async function AdminOrderDetailPage({
 
   if (!order) notFound();
 
+  // Fetch client profile
+  const { data: clientProfile } = await admin
+    .from('profiles')
+    .select('id, full_name, phone, manager_id')
+    .eq('id', order.user_id)
+    .single();
+
   // Manager can only view orders from their assigned clients
   if (!isAdmin) {
-    const { data: clientProfile } = await admin
-      .from('profiles')
-      .select('manager_id')
-      .eq('id', order.user_id)
-      .single();
-
     if (!clientProfile || clientProfile.manager_id !== user.id) {
       notFound();
     }
@@ -71,6 +73,18 @@ export default async function AdminOrderDetailPage({
     .from('order_items')
     .select('*')
     .eq('order_id', id);
+
+  // Fetch managers for assignment (admin only)
+  let managers: { id: string; full_name: string | null }[] = [];
+  if (isAdmin) {
+    const { data: mgrs } = await admin
+      .from('profiles')
+      .select('id, full_name')
+      .in('role', ['manager', 'admin']);
+    managers = mgrs || [];
+  }
+
+  const managerName = managers.find((m) => m.id === clientProfile?.manager_id)?.full_name;
 
   const status = statusLabels[order.status] || {
     label: order.status,
@@ -232,11 +246,32 @@ export default async function AdminOrderDetailPage({
           {/* Customer info */}
           <div className="rounded-xl bg-bg-card border border-border-subtle p-4 space-y-3">
             <h2 className="text-text-primary font-medium text-sm">Клиент</h2>
-            <div className="text-sm space-y-1">
-              <p className="text-text-secondary text-xs font-mono break-all">
-                User ID: {order.user_id}
-              </p>
+            <div className="text-sm space-y-2">
+              <Link
+                href={`/admin/clients/${order.user_id}`}
+                className="text-text-primary hover:text-accent-yellow transition-colors font-medium block"
+              >
+                {clientProfile?.full_name || 'Без имени'}
+              </Link>
+              {clientProfile?.phone && (
+                <p className="text-text-secondary text-xs">{clientProfile.phone}</p>
+              )}
+              {!isAdmin && managerName && (
+                <div className="pt-1 border-t border-border-subtle">
+                  <p className="text-text-muted text-xs">Менеджер: {managerName}</p>
+                </div>
+              )}
             </div>
+            {isAdmin && (
+              <div className="pt-2 border-t border-border-subtle">
+                <p className="text-text-muted text-xs mb-2">Менеджер</p>
+                <AssignManagerForm
+                  clientId={order.user_id}
+                  currentManagerId={clientProfile?.manager_id || null}
+                  managers={managers}
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>

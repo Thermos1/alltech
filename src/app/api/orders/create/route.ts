@@ -134,17 +134,25 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Ошибка создания позиций заказа' }, { status: 500 });
     }
 
-    // Deduct bonuses from profile
-    if (bonusUsed > 0) {
-      const { data: profile } = await admin
-        .from('profiles')
-        .select('bonus_balance')
-        .eq('id', user.id)
-        .single();
-      if (profile) {
+    // Deduct bonuses from profile + auto-fill full_name if empty
+    const { data: profile } = await admin
+      .from('profiles')
+      .select('bonus_balance, full_name')
+      .eq('id', user.id)
+      .single();
+
+    if (profile) {
+      const updates: Record<string, unknown> = {};
+      if (bonusUsed > 0) {
+        updates.bonus_balance = profile.bonus_balance - bonusUsed;
+      }
+      if (!profile.full_name && data.contactName) {
+        updates.full_name = data.contactName;
+      }
+      if (Object.keys(updates).length > 0) {
         await admin
           .from('profiles')
-          .update({ bonus_balance: profile.bonus_balance - bonusUsed })
+          .update(updates)
           .eq('id', user.id);
       }
     }

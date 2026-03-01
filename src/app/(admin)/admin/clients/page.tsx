@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { formatPriceShort } from '@/lib/utils';
 import { getBonusTier } from '@/lib/constants';
+import ClientManagerCell from './ClientManagerCell';
 
 export const metadata = {
   title: 'Клиенты — Админ АЛТЕХ',
@@ -119,8 +120,6 @@ export default async function ClientsPage() {
                   const isCooling = lastOrderDate
                     ? now - new Date(lastOrderDate).getTime() > thirtyDays
                     : orders > 0;
-                  const managerName = managers.find((m) => m.id === client.manager_id)?.full_name;
-
                   return (
                     <tr key={client.id} className="hover:bg-bg-card-hover transition-colors">
                       <td className="px-4 py-3">
@@ -161,8 +160,12 @@ export default async function ClientsPage() {
                         )}
                       </td>
                       {isAdmin && (
-                        <td className="px-4 py-3 text-text-secondary text-xs">
-                          {managerName || '—'}
+                        <td className="px-4 py-3">
+                          <ClientManagerCell
+                            clientId={client.id}
+                            currentManagerId={client.manager_id}
+                            managers={managers}
+                          />
                         </td>
                       )}
                     </tr>
