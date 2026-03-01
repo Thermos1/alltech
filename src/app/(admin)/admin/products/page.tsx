@@ -1,15 +1,17 @@
 import Image from 'next/image';
-import { createClient } from '@/lib/supabase/server';
+import Link from 'next/link';
+import { createAdminClient } from '@/lib/supabase/admin';
 import { formatPriceShort } from '@/lib/utils';
+import DeleteProductButton from './DeleteProductButton';
 
 export const metadata = {
   title: 'Товары — Админ АЛТЕХ',
 };
 
 export default async function AdminProductsPage() {
-  const supabase = await createClient();
+  const admin = createAdminClient();
 
-  const { data: products } = await supabase
+  const { data: products } = await admin
     .from('products')
     .select(`
       id,
@@ -28,9 +30,17 @@ export default async function AdminProductsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="font-display text-2xl text-text-primary">Товары</h1>
-        <p className="text-text-muted text-sm">
-          Всего: {products?.length ?? 0}
-        </p>
+        <div className="flex items-center gap-3">
+          <p className="text-text-muted text-sm">
+            Всего: {products?.length ?? 0}
+          </p>
+          <Link
+            href="/admin/products/new"
+            className="rounded-lg px-4 py-2 text-sm font-medium bg-accent-yellow text-bg-primary hover:brightness-110 transition-all"
+          >
+            + Добавить товар
+          </Link>
+        </div>
       </div>
 
       {!products || products.length === 0 ? (
@@ -49,6 +59,8 @@ export default async function AdminProductsPage() {
                   <th className="text-left px-4 py-3 font-medium">Категория</th>
                   <th className="text-center px-4 py-3 font-medium">Варианты</th>
                   <th className="text-right px-4 py-3 font-medium">Мин. цена</th>
+                  <th className="text-center px-4 py-3 font-medium">Статус</th>
+                  <th className="text-right px-4 py-3 font-medium">Действия</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border-subtle">
@@ -86,7 +98,12 @@ export default async function AdminProductsPage() {
                         </div>
                       </td>
                       <td className="px-4 py-3">
-                        <p className="text-text-primary font-medium">{product.name}</p>
+                        <Link
+                          href={`/admin/products/${product.id}`}
+                          className="text-text-primary font-medium hover:text-accent-yellow transition-colors"
+                        >
+                          {product.name}
+                        </Link>
                         <p className="text-text-muted text-xs">{product.slug}</p>
                       </td>
                       <td className="px-4 py-3 text-text-secondary whitespace-nowrap">
@@ -100,6 +117,28 @@ export default async function AdminProductsPage() {
                       </td>
                       <td className="px-4 py-3 text-right text-text-primary font-medium whitespace-nowrap">
                         {minPrice > 0 ? formatPriceShort(minPrice) : '—'}
+                      </td>
+                      <td className="px-4 py-3 text-center">
+                        <span
+                          className={`inline-block w-2 h-2 rounded-full ${
+                            product.is_active ? 'bg-green-500' : 'bg-text-muted'
+                          }`}
+                          title={product.is_active ? 'Активен' : 'Скрыт'}
+                        />
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          <Link
+                            href={`/admin/products/${product.id}`}
+                            className="rounded-lg px-2 py-1 text-xs font-medium text-accent-cyan bg-accent-cyan/10 hover:bg-accent-cyan/20 transition-colors"
+                          >
+                            Ред.
+                          </Link>
+                          <DeleteProductButton
+                            productId={product.id}
+                            productName={product.name}
+                          />
+                        </div>
                       </td>
                     </tr>
                   );

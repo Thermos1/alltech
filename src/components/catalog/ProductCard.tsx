@@ -47,16 +47,16 @@ export default function ProductCard({ product }: ProductCardProps) {
   const [showPicker, setShowPicker] = useState(false);
   const pickerRef = useRef<HTMLDivElement>(null);
 
-  const baseTypeLabel = product.base_type
-    ? OIL_BASE_TYPES[product.base_type as keyof typeof OIL_BASE_TYPES]
-    : null;
-
   const initials = product.name
     .split(' ')
     .slice(0, 2)
     .map((w) => w[0])
     .join('')
     .toUpperCase();
+
+  const baseTypeLabel = product.base_type
+    ? OIL_BASE_TYPES[product.base_type as keyof typeof OIL_BASE_TYPES]
+    : null;
 
   const specs = [product.api_spec, product.acea_spec]
     .filter(Boolean)
@@ -142,21 +142,24 @@ export default function ProductCard({ product }: ProductCardProps) {
           </span>
         )}
 
-        {/* Base type badge */}
-        {baseTypeLabel && (
-          <span className="absolute top-2 left-2 rounded-md bg-accent-yellow-dim text-accent-yellow text-[10px] font-medium px-2 py-0.5">
-            {baseTypeLabel}
-          </span>
-        )}
       </div>
 
       {/* Content */}
       <div className="flex flex-1 flex-col gap-1.5 p-3">
-        {/* Viscosity */}
-        {product.viscosity && (
-          <span className="text-accent-cyan text-xs font-medium tracking-wide">
-            {product.viscosity}
-          </span>
+        {/* Viscosity + Base type */}
+        {(product.viscosity || baseTypeLabel) && (
+          <div className="flex items-center gap-2">
+            {product.viscosity && (
+              <span className="text-accent-cyan text-xs font-medium tracking-wide">
+                {product.viscosity}
+              </span>
+            )}
+            {baseTypeLabel && (
+              <span className="text-text-muted text-[11px]">
+                {baseTypeLabel}
+              </span>
+            )}
+          </div>
         )}
 
         {/* Name */}
