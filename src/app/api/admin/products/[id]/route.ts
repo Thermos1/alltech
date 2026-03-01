@@ -41,7 +41,13 @@ export async function PATCH(
 
     for (const [key, value] of Object.entries(parsed.data)) {
       if (value !== undefined) {
-        updateData[key] = value === '' ? null : value;
+        if (key === 'oem_approvals') {
+          updateData[key] = value
+            ? String(value).split(/[;,]/).map((s: string) => s.trim()).filter(Boolean)
+            : null;
+        } else {
+          updateData[key] = value === '' ? null : value;
+        }
       }
     }
 

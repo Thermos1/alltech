@@ -261,7 +261,7 @@ export default function ProductForm({ product, brands, categories }: ProductForm
               >
                 <option value="">—</option>
                 <option value="synthetic">Синтетика</option>
-                <option value="semi-synthetic">Полусинтетика</option>
+                <option value="semi_synthetic">Полусинтетика</option>
                 <option value="mineral">Минеральное</option>
               </select>
             </div>

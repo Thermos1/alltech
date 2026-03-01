@@ -45,7 +45,9 @@ export default async function EditProductPage({
     base_type: product.base_type || '',
     api_spec: product.api_spec || '',
     acea_spec: product.acea_spec || '',
-    oem_approvals: product.oem_approvals || '',
+    oem_approvals: Array.isArray(product.oem_approvals)
+      ? product.oem_approvals.join('; ')
+      : product.oem_approvals || '',
     oem_number: product.oem_number || '',
     is_active: product.is_active ?? true,
     is_featured: product.is_featured ?? false,
