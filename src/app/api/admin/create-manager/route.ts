@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { logActivity } from '@/lib/activity-log';
 
 export async function POST(request: NextRequest) {
   try {
@@ -67,6 +68,14 @@ export async function POST(request: NextRequest) {
       await admin.auth.admin.deleteUser(newUser.user.id);
       return NextResponse.json({ error: 'Ошибка создания профиля' }, { status: 500 });
     }
+
+    await logActivity({
+      actorId: user.id,
+      action: 'manager.created',
+      entityType: 'profile',
+      entityId: newUser.user.id,
+      details: { fullName, email },
+    });
 
     return NextResponse.json({ success: true, userId: newUser.user.id });
   } catch (error) {

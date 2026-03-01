@@ -157,6 +157,15 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // If from shared cart, mark it as ordered
+    if (data.sharedCartCode) {
+      await admin
+        .from('shared_carts')
+        .update({ status: 'ordered', order_id: order.id })
+        .eq('code', data.sharedCartCode)
+        .in('status', ['pending', 'viewed']);
+    }
+
     return NextResponse.json({
       orderId: order.id,
       orderNumber: order.order_number,

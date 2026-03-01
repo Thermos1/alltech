@@ -18,7 +18,17 @@ vi.mock('@/lib/supabase/server', () => ({
 vi.mock('@/lib/supabase/admin', () => ({
   createAdminClient: () => ({
     from: mockAdminFrom,
+    auth: {
+      admin: {
+        updateUserById: vi.fn().mockResolvedValue({ data: { user: {} }, error: null }),
+        getUserById: vi.fn().mockResolvedValue({ data: { user: { email: 'test@example.com' } }, error: null }),
+      },
+    },
   }),
+}));
+
+vi.mock('@/lib/activity-log', () => ({
+  logActivity: vi.fn().mockResolvedValue(undefined),
 }));
 
 const { POST } = await import('@/app/api/admin/manage-role/route');

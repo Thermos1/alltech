@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { logActivity } from '@/lib/activity-log';
 
 export async function POST(request: NextRequest) {
   try {
@@ -34,6 +35,14 @@ export async function POST(request: NextRequest) {
       .from('profiles')
       .update({ manager_id: managerId || null })
       .eq('id', clientId);
+
+    await logActivity({
+      actorId: user.id,
+      action: 'client.assign_manager',
+      entityType: 'profile',
+      entityId: clientId,
+      details: { managerId: managerId || null },
+    });
 
     return NextResponse.json({ success: true });
   } catch (error) {

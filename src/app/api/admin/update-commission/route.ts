@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { logActivity } from '@/lib/activity-log';
 
 export async function POST(request: NextRequest) {
   try {
@@ -41,6 +42,14 @@ export async function POST(request: NextRequest) {
       console.error('Commission update error:', error);
       return NextResponse.json({ error: 'Failed to update' }, { status: 500 });
     }
+
+    await logActivity({
+      actorId: user.id,
+      action: 'manager.commission_updated',
+      entityType: 'profile',
+      entityId: managerId,
+      details: { rate: numRate },
+    });
 
     return NextResponse.json({ success: true });
   } catch (error) {

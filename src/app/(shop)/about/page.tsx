@@ -65,9 +65,9 @@ export default function AboutPage() {
             <p className="text-[11px] text-text-muted mt-1">Платформа напоминает менеджеру позвонить клиенту до того, как он уйдёт к конкуренту</p>
           </div>
           <div className="rounded-xl border border-accent-magenta/20 bg-accent-magenta/5 p-5">
-            <p className="font-display text-2xl text-accent-magenta mb-1">3%</p>
-            <p className="text-xs text-text-primary font-medium">Комиссия менеджера</p>
-            <p className="text-[11px] text-text-muted mt-1">Менеджеры зарабатывают на комиссии — прозрачно, мотивирует продавать</p>
+            <p className="font-display text-2xl text-accent-magenta mb-1">CRM</p>
+            <p className="text-xs text-text-primary font-medium">Полная воронка</p>
+            <p className="text-[11px] text-text-muted mt-1">Менеджер собирает корзину, отправляет ссылку в WhatsApp — клиент оплачивает за 30 секунд</p>
           </div>
         </div>
       </section>
@@ -160,6 +160,33 @@ export default function AboutPage() {
               </p>
             </div>
           </div>
+
+          <div className="rounded-xl border border-border-subtle bg-bg-card p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-500/10 text-green-400">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+                  <line x1="8" y1="21" x2="16" y2="21" />
+                  <line x1="12" y1="17" x2="12" y2="21" />
+                </svg>
+              </div>
+              <h3 className="text-sm font-semibold text-text-primary">CRM-система менеджера</h3>
+            </div>
+            <div className="space-y-3 text-xs text-text-secondary leading-relaxed">
+              <p>
+                <span className="text-green-400 font-medium">Корзина менеджера:</span> менеджер собирает корзину с товарами,
+                получает ссылку и отправляет клиенту в WhatsApp. Клиент открывает — товары уже в корзине — нажимает «Оплатить».
+              </p>
+              <p>
+                <span className="text-green-400 font-medium">Заметки и поиск:</span> к каждому клиенту можно оставить заметку.
+                Поиск по имени, телефону. Фильтры по менеджеру и статусу (активен, остывает, новый).
+              </p>
+              <p>
+                <span className="text-green-400 font-medium">Аналитика и склад:</span> дашборд с выручкой, средним чеком, топ товаров,
+                топ клиентов, менеджеры по выручке. Склад с цветокодом остатков и автосписанием при оплате.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -202,6 +229,11 @@ export default function AboutPage() {
               alternative: 'Скидки 5-10% всем: снижают маржу без удержания. Клиент берёт скидку и уходит к конкуренту на следующий заказ.',
             },
             {
+              decision: 'Корзина менеджера с WhatsApp-доставкой',
+              why: 'Менеджер собирает корзину в CRM → получает уникальную ссылку → отправляет в WhatsApp → клиент открывает, видит товары и оплачивает. Весь цикл — 30 секунд.',
+              alternative: 'Клиент сам ищет товары: долго, ошибки, уход к конкуренту. Менеджер диктует по телефону: неэффективно при 50+ клиентах.',
+            },
+            {
               decision: 'Песочница ЮKassa вместо заглушки',
               why: 'Реальный платёжный flow: инициация — страница оплаты — webhook — статус. Для запуска в продакшн — только поменять ключи. Ноль доработок.',
               alternative: 'Мок-оплата с кнопкой «Оплачено»: не даёт понимания реального UX. Требует переписывания при интеграции.',
@@ -239,12 +271,15 @@ export default function AboutPage() {
             { title: 'Личный кабинет', description: 'История заказов со статусами, бонусный уровень с прогресс-баром, реферальный код, повтор заказа, профиль.', status: 'live' as const },
             { title: 'Тиерная бонусная программа', description: 'Растущий кэшбэк: Старт 3% — Бронза 5% — Серебро 7% — Золото 10% — Платина 15%. Уровень растёт с накоплением покупок.', status: 'live' as const },
             { title: 'Промокоды', description: 'Процентные и фиксированные скидки. Контроль сроков, лимитов использования и минимальной суммы.', status: 'live' as const },
-            { title: 'Мини-CRM', description: 'Привязка клиентов к менеджерам. Прогноз замены масла (4 мес.), блок «Требуют внимания». WhatsApp-связь с клиентом из карточки.', status: 'live' as const },
-            { title: 'Комиссии менеджеров', description: 'Автоматическое начисление 3% с каждого оплаченного заказа. Разбивка по месяцам, история по заказам. Настраиваемая ставка.', status: 'live' as const },
-            { title: 'Панель администратора', description: 'Два уровня: Админ видит всё, Менеджер — только своих клиентов. Управление заказами, назначение менеджеров, настройка комиссий.', status: 'live' as const },
+            { title: 'CRM-система', description: 'Привязка клиентов к менеджерам. Поиск по имени/телефону, фильтры по менеджеру и статусу. Заметки к клиенту. Прогноз замены масла (обратный отсчёт в днях). WhatsApp из карточки.', status: 'live' as const },
+            { title: 'Корзина менеджера', description: 'Менеджер собирает корзину из каталога, выбирает клиента, получает уникальную ссылку. Отправляет в WhatsApp — клиент открывает и оплачивает. Статусы: ожидает → просмотрена → оформлена.', status: 'live' as const },
+            { title: 'Склад и инвентаризация', description: 'Таблица всех вариантов с цветокодом остатков: красный (0), жёлтый (<5), зелёный (5+). Фильтр по бренду, toggle «низкий остаток». Автосписание при оплате заказа.', status: 'live' as const },
+            { title: 'Аналитика', description: 'Выручка по месяцам, средний чек, топ товаров, топ клиентов, менеджеры по выручке, заказы по статусам. CSS-only графики без внешних библиотек.', status: 'live' as const },
+            { title: 'Журнал действий', description: 'Аудит: кто назначил менеджера, кто создал корзину, кто оплатил заказ. Таблица: дата, автор, действие, детали. Логирование в 6 API-эндпоинтах.', status: 'live' as const },
+            { title: 'Комиссии менеджеров', description: 'Автоматическое начисление с каждого оплаченного заказа. Разбивка по месяцам, история по заказам, номер и сумма. Настраиваемая ставка (по умолчанию 3%).', status: 'live' as const },
+            { title: 'Панель администратора', description: 'Два уровня: Админ — 12 разделов (заказы, клиенты, менеджеры, корзины, склад, аналитика, журнал, комиссии, товары, бренды, категории). Менеджер — 5 разделов.', status: 'live' as const },
             { title: 'REST API (FastAPI)', description: 'Серверный бэкенд на FastAPI: эндпоинты для внешних систем, поиск товаров, проверка остатков, создание заказов. Bearer-авторизация, Pydantic-валидация.', status: 'live' as const },
             { title: 'SIPmind — голосовой AI', description: 'Потенциальная интеграция: клиент звонит — AI-ассистент принимает, находит товар и оформляет заказ через подготовленный API.', status: 'next' as const },
-            { title: 'WhatsApp-заказы', description: 'Оператор или бот формирует заказ в мессенджере и отправляет ссылку на готовую корзину.', status: 'next' as const },
           ].map((m) => (
             <div
               key={m.title}
@@ -327,19 +362,23 @@ export default function AboutPage() {
               </div>
               <div className="flex gap-3">
                 <span className="text-accent-cyan font-bold shrink-0">2.</span>
-                <p>На дашборде: заказы ваших клиентов, комиссия за месяц и за всё время. Блок «Требуют внимания» — клиенты, которым пора менять масло.</p>
+                <p>На дашборде: заказы ваших клиентов, комиссия за месяц и за всё время. Блок «Требуют внимания» — «Через 12 дней» или «Просрочено на 5 дней» с конкретными клиентами.</p>
               </div>
               <div className="flex gap-3">
                 <span className="text-accent-cyan font-bold shrink-0">3.</span>
-                <p>Откройте <Link href="/admin/clients" className="text-accent-cyan hover:text-accent-yellow transition-colors">«Мои клиенты»</Link> — карточку клиента. Внутри: история покупок, прогноз замены масла, кнопка WhatsApp для связи.</p>
+                <p>Откройте <Link href="/admin/clients" className="text-accent-cyan hover:text-accent-yellow transition-colors">«Мои клиенты»</Link> — используйте поиск по имени/телефону, фильтр по статусу. В карточке клиента: заметки, прогноз замены масла, WhatsApp.</p>
               </div>
               <div className="flex gap-3">
                 <span className="text-accent-cyan font-bold shrink-0">4.</span>
+                <p>Откройте <Link href="/admin/shared-cart" className="text-accent-cyan hover:text-accent-yellow transition-colors">«Корзины»</Link> → «Собрать корзину». Найдите товары, добавьте, нажмите «Создать». Скопируйте ссылку или отправьте через WhatsApp.</p>
+              </div>
+              <div className="flex gap-3">
+                <span className="text-accent-cyan font-bold shrink-0">5.</span>
                 <p>Откройте <Link href="/admin/commissions" className="text-accent-cyan hover:text-accent-yellow transition-colors">«Комиссии»</Link> — разбивка по месяцам: за какой заказ, какая сумма, какой процент. Прозрачно для бухгалтерии.</p>
               </div>
             </div>
             <p className="text-[10px] text-text-muted mt-4 border-t border-accent-cyan/10 pt-3">
-              Обратите внимание: менеджер видит только своих привязанных клиентов. В шапке — «АЛТЕХ Менеджер», не «Admin».
+              Обратите внимание: менеджер видит только своих привязанных клиентов. Корзину может собрать и отправить любому клиенту. В шапке — «АЛТЕХ Менеджер», не «Admin».
             </p>
           </div>
 
@@ -363,15 +402,19 @@ export default function AboutPage() {
               </div>
               <div className="flex gap-3">
                 <span className="text-accent-magenta font-bold shrink-0">3.</span>
-                <p>Откройте <Link href="/admin/clients" className="text-accent-cyan hover:text-accent-yellow transition-colors">«Клиенты»</Link> — назначьте менеджера. Откройте <Link href="/admin/orders" className="text-accent-cyan hover:text-accent-yellow transition-colors">заказ</Link> — смените статус (оплачен — в обработке — отправлен).</p>
+                <p>Откройте <Link href="/admin/clients" className="text-accent-cyan hover:text-accent-yellow transition-colors">«Клиенты»</Link> — поиск, фильтр по менеджеру/статусу, назначение менеджера. <Link href="/admin/orders" className="text-accent-cyan hover:text-accent-yellow transition-colors">Заказ</Link> — смена статуса (оплачен → в обработке → отправлен).</p>
               </div>
               <div className="flex gap-3">
                 <span className="text-accent-magenta font-bold shrink-0">4.</span>
-                <p>Откройте <Link href="/admin/managers" className="text-accent-cyan hover:text-accent-yellow transition-colors">«Менеджеры»</Link> — продажи, клиенты, ставка комиссии (можно изменить). <Link href="/admin/commissions" className="text-accent-cyan hover:text-accent-yellow transition-colors">«Комиссии»</Link> — полный аудит начислений по всем менеджерам.</p>
+                <p>Откройте <Link href="/admin/stock" className="text-accent-cyan hover:text-accent-yellow transition-colors">«Склад»</Link> — все позиции с цветокодом остатков. <Link href="/admin/analytics" className="text-accent-cyan hover:text-accent-yellow transition-colors">«Аналитика»</Link> — выручка по месяцам, топ товаров, топ клиентов, менеджеры по выручке.</p>
+              </div>
+              <div className="flex gap-3">
+                <span className="text-accent-magenta font-bold shrink-0">5.</span>
+                <p><Link href="/admin/managers" className="text-accent-cyan hover:text-accent-yellow transition-colors">«Менеджеры»</Link> — создать нового или назначить из клиентов. <Link href="/admin/activity" className="text-accent-cyan hover:text-accent-yellow transition-colors">«Журнал»</Link> — полный аудит действий в системе.</p>
               </div>
             </div>
             <p className="text-[10px] text-text-muted mt-4 border-t border-accent-magenta/10 pt-3">
-              Обратите внимание: админ видит ВСЕ заказы и клиентов. Может назначить любого покупателя менеджером и задать ему ставку комиссии.
+              Обратите внимание: админ видит ВСЕ заказы, клиентов, корзины и действия. 12 разделов панели управления. Может создать менеджера с нуля или назначить из клиентов.
             </p>
           </div>
         </div>
@@ -405,7 +448,7 @@ export default function AboutPage() {
             </div>
             <p className="text-xs text-text-secondary mb-1"><span className="font-mono text-text-primary select-all">manager@altech-store.ru</span> / <span className="font-mono text-text-primary select-all">manager2025</span></p>
             <p className="text-xs text-text-secondary mb-2"><span className="font-mono text-text-primary select-all">hello@alltech.ru</span> / <span className="font-mono text-text-primary select-all">manager26</span></p>
-            <p className="text-[11px] text-text-muted">CRM: клиенты, заказы, комиссия, прогноз замены</p>
+            <p className="text-[11px] text-text-muted">CRM: клиенты, заказы, корзины, комиссия, прогноз замены, заметки</p>
             <div className="mt-3 flex gap-3 text-[11px]">
               <Link href="/admin-login" className="text-accent-cyan hover:text-accent-yellow transition-colors">Вход →</Link>
               <Link href="/admin" className="text-accent-cyan hover:text-accent-yellow transition-colors">Панель →</Link>
@@ -419,7 +462,7 @@ export default function AboutPage() {
             </div>
             <p className="text-xs text-text-secondary mb-1"><span className="font-mono text-text-primary select-all">admin@altech-store.ru</span></p>
             <p className="text-xs text-text-secondary mb-2">Пароль: <span className="font-mono text-text-primary select-all">admin2025</span></p>
-            <p className="text-[11px] text-text-muted">Полный доступ: заказы, клиенты, менеджеры, комиссии</p>
+            <p className="text-[11px] text-text-muted">Полный доступ: заказы, клиенты, менеджеры, корзины, склад, аналитика, журнал</p>
             <div className="mt-3 flex gap-3 text-[11px]">
               <Link href="/admin-login" className="text-accent-cyan hover:text-accent-yellow transition-colors">Вход →</Link>
               <Link href="/admin" className="text-accent-cyan hover:text-accent-yellow transition-colors">Панель →</Link>
@@ -457,8 +500,8 @@ export default function AboutPage() {
             },
             {
               title: 'WhatsApp-канал продаж',
-              impact: '70% B2B-коммуникаций',
-              desc: 'Кнопка WhatsApp уже в карточках клиентов. Следующий шаг: бот формирует заказ в мессенджере и отправляет ссылку на готовую корзину.',
+              impact: 'Реализовано',
+              desc: 'Менеджер собирает корзину в CRM, нажимает «WhatsApp» — клиент получает ссылку, открывает и оплачивает. Следующий шаг: чат-бот для автоматической обработки входящих запросов.',
               accent: 'text-green-400',
               bg: 'bg-green-500/10 border-green-500/20',
             },
@@ -545,7 +588,7 @@ export default function AboutPage() {
         </h2>
         <div className="grid gap-4 sm:grid-cols-4 mb-6">
           {[
-            { value: '138', label: 'тестов', sub: '13 test suites' },
+            { value: '225', label: 'тестов', sub: '18 test suites' },
             { value: '0', label: 'ошибок TS', sub: 'strict mode' },
             { value: '< 1 мин', label: 'CI/CD', sub: 'push — deploy' },
             { value: '100%', label: 'крит. путей', sub: 'оплата, auth, CRM' },
@@ -559,7 +602,7 @@ export default function AboutPage() {
         </div>
         <div className="rounded-xl border border-border-subtle bg-bg-card overflow-hidden">
           {[
-            { label: 'Фронтенд', value: 'Next.js 16, React 19, TypeScript 5, Tailwind CSS 4' },
+            { label: 'Фронтенд', value: 'Next.js 16, React 19, TypeScript 5, Tailwind CSS 4, Zustand 5, Zod 4' },
             { label: 'Бэкенд API', value: 'FastAPI (Python 3.11+), Pydantic v2, async, structlog' },
             { label: 'База данных', value: 'Supabase PostgreSQL 15, Row Level Security, RBAC' },
             { label: 'Авторизация', value: 'SMS OTP + Supabase Auth, JWT, HttpOnly cookies' },

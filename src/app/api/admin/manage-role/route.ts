@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { logActivity } from '@/lib/activity-log';
 
 export async function POST(request: NextRequest) {
   try {
@@ -104,6 +105,14 @@ export async function POST(request: NextRequest) {
       console.error('Role update error:', error);
       return NextResponse.json({ error: 'Failed to update role' }, { status: 500 });
     }
+
+    await logActivity({
+      actorId: user.id,
+      action: newRole === 'manager' ? 'manager.promoted' : 'manager.demoted',
+      entityType: 'profile',
+      entityId: userId,
+      details: { newRole, transferTo: transferTo || null },
+    });
 
     return NextResponse.json({ success: true });
   } catch (error) {

@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
-import { formatPriceShort } from '@/lib/utils';
+import { formatPriceShort, daysFromNow, pluralize } from '@/lib/utils';
 
 export const metadata = {
   title: 'Админ-панель — АЛТЕХ',
@@ -294,14 +294,20 @@ export default async function AdminDashboardPage() {
                     </div>
                   </div>
                   <div className="text-right shrink-0">
-                    <p className={`text-xs font-medium ${
-                      client.status === 'overdue' ? 'text-accent-magenta' : 'text-accent-yellow'
-                    }`}>
-                      {client.status === 'overdue' ? 'Просрочено' : 'Скоро'}
-                    </p>
-                    <p className="text-text-muted text-[10px]">
-                      ~{client.forecastDate.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })}
-                    </p>
+                    {(() => {
+                      const days = daysFromNow(client.forecastDate);
+                      const absDays = Math.abs(days);
+                      const dayWord = pluralize(absDays, 'день', 'дня', 'дней');
+                      return client.status === 'overdue' ? (
+                        <p className="text-xs font-medium text-accent-magenta">
+                          Просрочено на {absDays} {dayWord}
+                        </p>
+                      ) : (
+                        <p className="text-xs font-medium text-accent-yellow">
+                          Через {absDays} {dayWord}
+                        </p>
+                      );
+                    })()}
                   </div>
                 </div>
               </Link>

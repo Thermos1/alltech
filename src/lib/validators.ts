@@ -13,6 +13,7 @@ export const checkoutSchema = z.object({
     .min(5, 'Введите адрес доставки'),
   deliveryNotes: z.string().optional(),
   promoCode: z.string().optional(),
+  sharedCartCode: z.string().optional(),
   useBonuses: z.number().int().min(0).default(0),
   items: z.array(
     z.object({

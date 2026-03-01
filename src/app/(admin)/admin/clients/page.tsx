@@ -1,15 +1,22 @@
 import Link from 'next/link';
+import { Suspense } from 'react';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { formatPriceShort } from '@/lib/utils';
 import { getBonusTier } from '@/lib/constants';
 import ClientManagerCell from './ClientManagerCell';
+import ClientFilters from './ClientFilters';
 
 export const metadata = {
   title: 'Клиенты — Админ АЛТЕХ',
 };
 
-export default async function ClientsPage() {
+export default async function ClientsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string; manager?: string; status?: string }>;
+}) {
+  const { q, manager, status: statusFilter } = await searchParams;
   const supabase = await createClient();
   const admin = createAdminClient();
 
@@ -33,6 +40,20 @@ export default async function ClientsPage() {
 
   if (!isAdmin) {
     clientsQuery = clientsQuery.eq('manager_id', user.id);
+  }
+
+  // Search filter
+  if (q) {
+    clientsQuery = clientsQuery.or(`full_name.ilike.%${q}%,phone.ilike.%${q}%`);
+  }
+
+  // Manager filter (admin only)
+  if (isAdmin && manager) {
+    if (manager === 'none') {
+      clientsQuery = clientsQuery.is('manager_id', null);
+    } else {
+      clientsQuery = clientsQuery.eq('manager_id', manager);
+    }
   }
 
   const { data: clients } = await clientsQuery;
@@ -81,6 +102,22 @@ export default async function ClientsPage() {
   const now = Date.now();
   const thirtyDays = 30 * 24 * 60 * 60 * 1000;
 
+  // Post-query status filter (status is computed, not stored)
+  let filteredClients = clients || [];
+  if (statusFilter) {
+    filteredClients = filteredClients.filter((client) => {
+      const orders = orderCountMap[client.id] || 0;
+      const lastOrderDate = lastOrderMap[client.id];
+      const isCooling = lastOrderDate
+        ? now - new Date(lastOrderDate).getTime() > thirtyDays
+        : orders > 0;
+      if (statusFilter === 'active') return orders > 0 && !isCooling;
+      if (statusFilter === 'cooling') return orders > 0 && isCooling;
+      if (statusFilter === 'new') return orders === 0;
+      return true;
+    });
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -88,11 +125,15 @@ export default async function ClientsPage() {
           {isAdmin ? 'Все клиенты' : 'Мои клиенты'}
         </h1>
         <span className="text-text-muted text-sm">
-          {(clients || []).length} клиентов
+          {filteredClients.length} клиентов
         </span>
       </div>
 
-      {!clients || clients.length === 0 ? (
+      <Suspense fallback={null}>
+        <ClientFilters managers={managers} isAdmin={isAdmin} />
+      </Suspense>
+
+      {filteredClients.length === 0 ? (
         <div className="rounded-xl bg-bg-card border border-border-subtle p-10 text-center">
           <p className="text-text-muted text-sm">Клиентов пока нет</p>
         </div>
@@ -112,7 +153,7 @@ export default async function ClientsPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border-subtle">
-                {clients.map((client) => {
+                {filteredClients.map((client) => {
                   const totalSpent = Number(client.total_spent || 0);
                   const tier = getBonusTier(totalSpent);
                   const orders = orderCountMap[client.id] || 0;

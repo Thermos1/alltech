@@ -1,10 +1,11 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
-import { formatPriceShort } from '@/lib/utils';
+import { formatPriceShort, daysFromNow, pluralize } from '@/lib/utils';
 import { getBonusTier, getNextTier, BONUS_TIERS } from '@/lib/constants';
 import { notFound } from 'next/navigation';
 import AssignManagerForm from './AssignManagerForm';
+import ClientNotes from './ClientNotes';
 
 export const metadata = {
   title: 'Карточка клиента — Админ АЛТЕХ',
@@ -239,11 +240,18 @@ export default async function ClientDetailPage({
                     ? 'text-accent-yellow'
                     : 'text-text-primary'
                 }`}>
-                  {replacementForecast.status === 'overdue'
-                    ? 'Пора менять масло!'
-                    : replacementForecast.status === 'soon'
-                    ? 'Скоро замена масла'
-                    : 'Прогноз замены масла'}
+                  {(() => {
+                    const days = daysFromNow(replacementForecast.forecastDate);
+                    const absDays = Math.abs(days);
+                    const dayWord = pluralize(absDays, 'день', 'дня', 'дней');
+                    if (replacementForecast.status === 'overdue') {
+                      return `Просрочено на ${absDays} ${dayWord}!`;
+                    }
+                    if (replacementForecast.status === 'soon') {
+                      return `Замена масла через ${absDays} ${dayWord}`;
+                    }
+                    return `Замена масла через ${absDays} ${dayWord}`;
+                  })()}
                 </p>
               </div>
               <p className="text-text-secondary text-xs">
@@ -251,7 +259,7 @@ export default async function ClientDetailPage({
               </p>
               <div className="flex gap-4 mt-2 text-xs text-text-muted">
                 <span>Покупка: {replacementForecast.purchaseDate.toLocaleDateString('ru-RU')}</span>
-                <span>Замена ~{replacementForecast.forecastDate.toLocaleDateString('ru-RU')}</span>
+                <span>Прогноз: {replacementForecast.forecastDate.toLocaleDateString('ru-RU')}</span>
               </div>
             </div>
             {client.phone && (
@@ -270,6 +278,9 @@ export default async function ClientDetailPage({
           </div>
         </div>
       )}
+
+      {/* Client Notes */}
+      <ClientNotes clientId={client.id} />
 
       {/* Orders */}
       <div>

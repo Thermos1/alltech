@@ -18,6 +18,10 @@ vi.mock('@/lib/supabase/admin', () => ({
   }),
 }));
 
+vi.mock('@/lib/activity-log', () => ({
+  logActivity: vi.fn().mockResolvedValue(undefined),
+}));
+
 const { POST } = await import('@/app/api/admin/assign-manager/route');
 
 function createRequest(body: Record<string, unknown>) {

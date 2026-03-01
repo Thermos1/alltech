@@ -8,7 +8,11 @@ const adminNavItems = [
   { href: '/admin/orders', label: 'Заказы' },
   { href: '/admin/clients', label: 'Клиенты' },
   { href: '/admin/managers', label: 'Менеджеры' },
+  { href: '/admin/shared-cart', label: 'Корзины' },
+  { href: '/admin/stock', label: 'Склад' },
   { href: '/admin/commissions', label: 'Комиссии' },
+  { href: '/admin/analytics', label: 'Аналитика' },
+  { href: '/admin/activity', label: 'Журнал' },
   { href: '/admin/products', label: 'Товары' },
   { href: '/admin/brands', label: 'Бренды' },
   { href: '/admin/categories', label: 'Категории' },
@@ -18,6 +22,7 @@ const managerNavItems = [
   { href: '/admin', label: 'Дашборд' },
   { href: '/admin/orders', label: 'Заказы' },
   { href: '/admin/clients', label: 'Мои клиенты' },
+  { href: '/admin/shared-cart', label: 'Корзины' },
   { href: '/admin/commissions', label: 'Комиссии' },
 ];
 

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { getBonusTier } from '@/lib/constants';
+import { logActivity } from '@/lib/activity-log';
 
 export async function POST(request: NextRequest) {
   try {
@@ -91,6 +92,21 @@ export async function POST(request: NextRequest) {
         }
       }
 
+      // Decrement stock for ordered items
+      const { data: orderItems } = await admin
+        .from('order_items')
+        .select('variant_id, quantity')
+        .eq('order_id', orderId);
+
+      for (const item of orderItems || []) {
+        if (item.variant_id) {
+          await admin.rpc('decrement_stock', {
+            p_variant_id: item.variant_id,
+            p_quantity: item.quantity,
+          });
+        }
+      }
+
       // Check referral bonus (first purchase by referred user)
       if (userProfile?.referred_by) {
         // Check if user already has a referral event (prevents double-award)
@@ -124,6 +140,14 @@ export async function POST(request: NextRequest) {
           }
         }
       }
+
+      await logActivity({
+        actorId: order.user_id,
+        action: 'order.paid',
+        entityType: 'order',
+        entityId: orderId,
+        details: { total: Number(order.total), orderNumber: order.order_number },
+      });
 
       return NextResponse.json({
         success: true,

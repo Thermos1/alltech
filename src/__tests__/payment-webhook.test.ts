@@ -11,7 +11,12 @@ const mockSingle = vi.fn();
 vi.mock('@/lib/supabase/admin', () => ({
   createAdminClient: () => ({
     from: mockFrom,
+    rpc: vi.fn().mockResolvedValue({ data: null, error: null }),
   }),
+}));
+
+vi.mock('@/lib/activity-log', () => ({
+  logActivity: vi.fn().mockResolvedValue(undefined),
 }));
 
 // Import after mocks
@@ -120,6 +125,13 @@ describe('POST /api/payment/webhook', () => {
           }),
           update: () => ({
             eq: () => Promise.resolve({ error: null }),
+          }),
+        };
+      }
+      if (table === 'order_items') {
+        return {
+          select: () => ({
+            eq: () => Promise.resolve({ data: [], error: null }),
           }),
         };
       }

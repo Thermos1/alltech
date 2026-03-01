@@ -34,3 +34,9 @@ export function pluralize(
   if (mod10 >= 2 && mod10 <= 4 && (mod100 < 10 || mod100 >= 20)) return few;
   return many;
 }
+
+export function daysFromNow(date: Date): number {
+  const now = new Date();
+  const diff = date.getTime() - now.getTime();
+  return Math.round(diff / (1000 * 60 * 60 * 24));
+}
