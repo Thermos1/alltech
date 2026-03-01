@@ -8,6 +8,7 @@ export default async function PopularProducts() {
     .from('products')
     .select('*, brands(name, slug), product_variants(id, price, price_per_liter, volume, unit)')
     .eq('is_active', true)
+    .eq('is_featured', true)
     .order('sort_order')
     .limit(8);
 

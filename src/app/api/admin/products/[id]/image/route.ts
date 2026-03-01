@@ -65,8 +65,11 @@ export async function POST(
       });
 
     if (uploadError) {
-      console.error('Image upload error:', uploadError);
-      return NextResponse.json({ error: 'Failed to upload image' }, { status: 500 });
+      console.error('Image upload error:', uploadError.message, 'path:', filePath, 'size:', buffer.length);
+      return NextResponse.json(
+        { error: `Ошибка загрузки в хранилище: ${uploadError.message}` },
+        { status: 500 }
+      );
     }
 
     // Get public URL

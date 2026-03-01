@@ -86,17 +86,25 @@ export default function ProductForm({ product, brands, categories }: ProductForm
     setSaved(false);
   }
 
-  async function uploadImage(productId: string) {
-    if (!pendingImage) return;
-    const formData = new FormData();
-    formData.append('image', pendingImage);
-    const res = await fetch(`/api/admin/products/${productId}/image`, {
-      method: 'POST',
-      body: formData,
-    });
-    if (!res.ok) {
-      const data = await res.json().catch(() => ({}));
-      setError(data.error || 'Ошибка загрузки изображения');
+  async function uploadImage(productId: string): Promise<boolean> {
+    if (!pendingImage) return true;
+    try {
+      const formData = new FormData();
+      formData.append('image', pendingImage);
+      const res = await fetch(`/api/admin/products/${productId}/image`, {
+        method: 'POST',
+        body: formData,
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setError(data.error || 'Ошибка загрузки изображения');
+        return false;
+      }
+      setPendingImage(null);
+      return true;
+    } catch {
+      setError('Ошибка сети при загрузке изображения');
+      return false;
     }
   }
 
@@ -142,10 +150,16 @@ export default function ProductForm({ product, brands, categories }: ProductForm
       }
 
       const data = await res.json();
+      const productId = isEdit ? product!.id : data.product?.id;
 
-      // Upload pending image for new products
-      if (!isEdit && pendingImage && data.product?.id) {
-        await uploadImage(data.product.id);
+      // Upload pending image
+      if (pendingImage && productId) {
+        const uploaded = await uploadImage(productId);
+        if (!uploaded && !isEdit) {
+          // Product created but image failed — redirect anyway, show error on edit page
+          router.push(`/admin/products/${productId}`);
+          return;
+        }
       }
 
       setSaved(true);
@@ -153,8 +167,7 @@ export default function ProductForm({ product, brands, categories }: ProductForm
       setServerData({ ...form });
 
       if (!isEdit) {
-        // Redirect to edit page after creation
-        router.push(`/admin/products/${data.product.id}`);
+        router.push(`/admin/products/${productId}`);
       } else {
         router.refresh();
         setTimeout(() => setSaved(false), 2000);
