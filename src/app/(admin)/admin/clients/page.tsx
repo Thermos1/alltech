@@ -26,7 +26,7 @@ export default async function ClientsPage() {
   // Fetch clients: admin sees all, manager sees only their assigned
   let clientsQuery = admin
     .from('profiles')
-    .select('id, full_name, phone, email, bonus_balance, total_spent, referral_code, manager_id, created_at, role')
+    .select('id, full_name, phone, bonus_balance, total_spent, referral_code, manager_id, created_at, role')
     .eq('role', 'customer')
     .order('created_at', { ascending: false });
 
@@ -130,9 +130,6 @@ export default async function ClientsPage() {
                         >
                           {client.full_name || 'Без имени'}
                         </Link>
-                        {client.email && (
-                          <p className="text-text-muted text-xs">{client.email}</p>
-                        )}
                       </td>
                       <td className="px-4 py-3 text-text-secondary whitespace-nowrap">
                         {client.phone || '—'}
