@@ -78,11 +78,11 @@ export default function ImageUpload({
       try {
         blob = await resizeImage(file, 800, 0.85);
         // If still too large, try lower quality
-        if (blob.size > 50_000) {
-          blob = await resizeImage(file, 800, 0.7);
+        if (blob.size > 500_000) {
+          blob = await resizeImage(file, 600, 0.75);
         }
-        if (blob.size > 50_000) {
-          blob = await resizeImage(file, 800, 0.6);
+        if (blob.size > 500_000) {
+          blob = await resizeImage(file, 500, 0.6);
         }
       } catch {
         setError('Ошибка обработки изображения');
@@ -116,8 +116,8 @@ export default function ImageUpload({
         });
 
         if (!res.ok) {
-          const data = await res.json();
-          setError(data.error || 'Ошибка загрузки');
+          const data = await res.json().catch(() => ({}));
+          setError(data.error || `Ошибка загрузки (${res.status})`);
           return;
         }
 

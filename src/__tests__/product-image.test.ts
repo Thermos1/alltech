@@ -96,12 +96,12 @@ describe('POST /api/admin/products/[id]/image', () => {
   });
 
   it('returns 400 for oversized image', async () => {
-    const bigContent = new Uint8Array(600_000);
+    const bigContent = new Uint8Array(3_000_000);
     const file = createMockFile(bigContent, 'big.jpg');
     const res = await POST(createMockRequest(file) as never, { params } as never);
     expect(res.status).toBe(400);
     const data = await res.json();
-    expect(data.error).toContain('too large');
+    expect(data.error).toContain('большой');
   });
 
   it('returns 404 when product not found', async () => {

@@ -32,6 +32,25 @@ type ProductFormProps = {
   categories: Category[];
 };
 
+function hasChanges(a: ProductData, b: ProductData): boolean {
+  return (
+    a.name !== b.name ||
+    a.slug !== b.slug ||
+    a.description !== b.description ||
+    a.section !== b.section ||
+    a.brand_id !== b.brand_id ||
+    a.category_id !== b.category_id ||
+    a.viscosity !== b.viscosity ||
+    a.base_type !== b.base_type ||
+    a.api_spec !== b.api_spec ||
+    a.acea_spec !== b.acea_spec ||
+    a.approvals !== b.approvals ||
+    a.oem_number !== b.oem_number ||
+    a.is_active !== b.is_active ||
+    a.is_featured !== b.is_featured
+  );
+}
+
 const emptyProduct: ProductData = {
   name: '',
   slug: '',
@@ -57,6 +76,8 @@ export default function ProductForm({ product, brands, categories }: ProductForm
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [pendingImage, setPendingImage] = useState<File | null>(null);
+  // Track the server state to detect real changes after save
+  const [serverData, setServerData] = useState<ProductData>(product || emptyProduct);
 
   const filteredCategories = categories.filter((c) => c.section === form.section);
 
@@ -128,6 +149,8 @@ export default function ProductForm({ product, brands, categories }: ProductForm
       }
 
       setSaved(true);
+      // Update server state so button doesn't reappear
+      setServerData({ ...form });
 
       if (!isEdit) {
         // Redirect to edit page after creation
@@ -354,14 +377,14 @@ export default function ProductForm({ product, brands, categories }: ProductForm
       <div className="flex items-center gap-3">
         <button
           type="submit"
-          disabled={loading}
+          disabled={loading || (isEdit && saved && !hasChanges(form, serverData))}
           className={`rounded-lg px-6 py-2.5 text-sm font-medium transition-all ${
-            saved
+            saved && !hasChanges(form, serverData)
               ? 'bg-green-500 text-white'
               : 'bg-accent-yellow text-bg-primary hover:brightness-110'
           } disabled:opacity-50`}
         >
-          {saved
+          {saved && !hasChanges(form, serverData)
             ? 'Сохранено!'
             : loading
               ? 'Сохранение...'

@@ -32,8 +32,8 @@ export async function POST(
       return NextResponse.json({ error: 'No image provided' }, { status: 400 });
     }
 
-    if (file.size > 500_000) {
-      return NextResponse.json({ error: 'Image too large (max 500KB)' }, { status: 400 });
+    if (file.size > 2_000_000) {
+      return NextResponse.json({ error: 'Файл слишком большой (макс. 2 МБ)' }, { status: 400 });
     }
 
     const admin = createAdminClient();
