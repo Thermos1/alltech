@@ -323,7 +323,7 @@ export default function AboutPage() {
             <div className="space-y-3 text-xs text-text-secondary leading-relaxed">
               <div className="flex gap-3">
                 <span className="text-accent-cyan font-bold shrink-0">1.</span>
-                <p>Войдите через <Link href="/admin-login" className="text-accent-cyan hover:text-accent-yellow transition-colors">/admin-login</Link>: <span className="font-mono text-text-primary">manager@altech-store.ru</span> / <span className="font-mono text-text-primary">manager2025</span></p>
+                <p>Войдите через <Link href="/admin-login" className="text-accent-cyan hover:text-accent-yellow transition-colors">/admin-login</Link>: <span className="font-mono text-text-primary">manager@altech-store.ru</span> / <span className="font-mono text-text-primary">manager2025</span> или <span className="font-mono text-text-primary">hello@alltech.ru</span> / <span className="font-mono text-text-primary">manager26</span></p>
               </div>
               <div className="flex gap-3">
                 <span className="text-accent-cyan font-bold shrink-0">2.</span>
@@ -403,8 +403,8 @@ export default function AboutPage() {
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-accent-cyan"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 00-3-3.87" /><path d="M16 3.13a4 4 0 010 7.75" /></svg>
               <h3 className="text-sm font-semibold text-accent-cyan">Менеджер</h3>
             </div>
-            <p className="text-xs text-text-secondary mb-1"><span className="font-mono text-text-primary select-all">manager@altech-store.ru</span></p>
-            <p className="text-xs text-text-secondary mb-2">Пароль: <span className="font-mono text-text-primary select-all">manager2025</span></p>
+            <p className="text-xs text-text-secondary mb-1"><span className="font-mono text-text-primary select-all">manager@altech-store.ru</span> / <span className="font-mono text-text-primary select-all">manager2025</span></p>
+            <p className="text-xs text-text-secondary mb-2"><span className="font-mono text-text-primary select-all">hello@alltech.ru</span> / <span className="font-mono text-text-primary select-all">manager26</span></p>
             <p className="text-[11px] text-text-muted">CRM: клиенты, заказы, комиссия, прогноз замены</p>
             <div className="mt-3 flex gap-3 text-[11px]">
               <Link href="/admin-login" className="text-accent-cyan hover:text-accent-yellow transition-colors">Вход →</Link>
