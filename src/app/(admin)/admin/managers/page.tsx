@@ -151,6 +151,10 @@ export default async function ManagersPage() {
                           type="demote"
                           managerId={manager.id}
                           managerName={manager.full_name || 'Менеджер'}
+                          otherManagers={(managers || [])
+                            .filter((m) => m.id !== manager.id)
+                            .map((m) => ({ id: m.id, full_name: m.full_name }))}
+                          clientCount={clients}
                         />
                       </td>
                     </tr>

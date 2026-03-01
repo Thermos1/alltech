@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const { userId, newRole, commissionRate } = await request.json();
+    const { userId, newRole, commissionRate, email, password, transferTo } = await request.json();
 
     if (!userId || !newRole) {
       return NextResponse.json({ error: 'Missing userId or newRole' }, { status: 400 });
@@ -40,17 +40,47 @@ export async function POST(request: NextRequest) {
 
     const updateData: Record<string, unknown> = { role: newRole };
 
-    // If promoting to manager, set commission rate
-    if (newRole === 'manager' && commissionRate !== undefined) {
-      updateData.manager_commission_rate = Math.max(0, Math.min(100, Number(commissionRate)));
+    // If promoting to manager, set commission rate and add email/password login
+    if (newRole === 'manager') {
+      if (commissionRate !== undefined) {
+        updateData.manager_commission_rate = Math.max(0, Math.min(100, Number(commissionRate)));
+      }
+
+      // Add email + password for admin-login access
+      if (email && password) {
+        if (password.length < 6) {
+          return NextResponse.json({ error: 'Пароль минимум 6 символов' }, { status: 400 });
+        }
+
+        const authUpdate: Record<string, unknown> = { email, password };
+        const { error: authError } = await admin.auth.admin.updateUserById(userId, authUpdate);
+        if (authError) {
+          console.error('Auth update error:', authError);
+          return NextResponse.json(
+            { error: authError.message.includes('already been registered')
+                ? 'Этот email уже занят'
+                : 'Ошибка обновления авторизации' },
+            { status: 400 }
+          );
+        }
+      }
     }
 
-    // If demoting from manager, unassign all clients
+    // If demoting from manager, transfer or unassign clients
     if (newRole === 'customer') {
-      await admin
-        .from('profiles')
-        .update({ manager_id: null })
-        .eq('manager_id', userId);
+      if (transferTo) {
+        // Transfer clients to another manager
+        await admin
+          .from('profiles')
+          .update({ manager_id: transferTo })
+          .eq('manager_id', userId);
+      } else {
+        // Unassign all clients
+        await admin
+          .from('profiles')
+          .update({ manager_id: null })
+          .eq('manager_id', userId);
+      }
     }
 
     const { error } = await admin
