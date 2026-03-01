@@ -500,22 +500,22 @@ export default function AboutPage() {
             },
             {
               title: 'WhatsApp-канал продаж',
-              impact: 'Реализовано',
-              desc: 'Менеджер собирает корзину в CRM, нажимает «WhatsApp» — клиент получает ссылку, открывает и оплачивает. Следующий шаг: чат-бот для автоматической обработки входящих запросов.',
-              accent: 'text-green-400',
-              bg: 'bg-green-500/10 border-green-500/20',
+              impact: 'Частично',
+              desc: 'Менеджер собирает корзину в CRM и отправляет ссылку клиенту через WhatsApp. Следующий шаг: полноценный чат-бот для автоматической обработки входящих запросов и приёма заказов.',
+              accent: 'text-amber-400',
+              bg: 'bg-amber-500/10 border-amber-500/20',
             },
             {
               title: 'Мобильное приложение',
-              impact: 'Retention через push',
-              desc: 'API-first архитектура позволяет подключить нативное приложение к тому же бэкенду. Push-уведомления: «Пора менять масло» вместо SMS.',
+              impact: 'При масштабировании',
+              desc: 'Сейчас: PWA с mobile-first дизайном покрывает 100% сценариев (заказ раз в 3-4 мес.). Push-напоминания через WhatsApp/SMS/SIPmind дешевле и эффективнее (open rate 90%+). Нативное приложение — при базе 500+ клиентов с еженедельными заказами.',
               accent: 'text-blue-400',
               bg: 'bg-blue-500/10 border-blue-500/20',
             },
             {
-              title: 'Доставка — СДЭК и другие',
+              title: 'Доставка — СДЭК / Энергия',
               impact: 'Вся РФ',
-              desc: 'Подключение агрегатора доставки (СДЭК, DPD, Boxberry): расчёт стоимости в корзине, трекинг, пункты выдачи. Федеральный масштаб без своей логистики.',
+              desc: 'Интеграция с API СДЭК (бесплатное подключение): расчёт стоимости в корзине, пункты выдачи, трекинг. Крупные грузы (бочки) — ТК Энергия. Федеральный масштаб без своей логистики.',
               accent: 'text-amber-400',
               bg: 'bg-amber-500/10 border-amber-500/20',
             },
@@ -539,7 +539,126 @@ export default function AboutPage() {
       </section>
 
       {/* ═══════════════════════════════════════════════
-          8. МАСШТАБИРОВАНИЕ
+          8. АНАЛИТИКА РЫНКА
+      ═══════════════════════════════════════════════ */}
+      <section className="mb-14 md:mb-20">
+        <h2 className="font-display text-xs uppercase tracking-wider text-text-muted mb-2">
+          Аналитика рынка
+        </h2>
+        <p className="font-display text-lg md:text-xl text-text-primary mb-6">
+          Почему ГСМ — это растущий рынок
+        </p>
+
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-6">
+          {[
+            { value: '~200 млрд', label: 'руб./год', sub: 'рынок моторных масел РФ' },
+            { value: '+5-8%', label: 'рост в деньгах', sub: 'ежегодно (сдвиг к синтетике)' },
+            { value: '70-80%', label: 'российские бренды', sub: 'было 50% в 2022' },
+            { value: '15-25%', label: 'валовая маржа', sub: 'оптово-розничная торговля' },
+          ].map((m) => (
+            <div key={m.label} className="rounded-xl border border-accent-cyan/20 bg-accent-cyan/5 p-4 text-center">
+              <p className="font-display text-xl text-accent-cyan">{m.value}</p>
+              <p className="text-xs text-text-primary mt-0.5">{m.label}</p>
+              <p className="text-[10px] text-text-muted">{m.sub}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-2">
+          <div className="rounded-xl border border-border-subtle bg-bg-card p-5">
+            <h3 className="text-sm font-semibold text-accent-yellow mb-3">Импортозамещение</h3>
+            <div className="space-y-2 text-xs text-text-secondary leading-relaxed">
+              <p>Shell, Castrol, Mobil официально ушли с рынка. Вакуум заполняют российские производители: <span className="text-text-primary font-medium">Лукойл, Sintec, Rolf, Роснефть</span> — ТОП-5 по продажам.</p>
+              <p>Корейские поставки (KIXX, GS Caltex) выросли на <span className="text-accent-cyan font-medium">+54 млн $</span> в 2024. АЛТЕХ работает с лидерами обоих направлений.</p>
+              <p>Доля синтетики выросла с 30% до ~60% — это <span className="text-accent-yellow font-medium">сдвиг в премиум</span>, выше маржа, выше средний чек.</p>
+            </div>
+          </div>
+
+          <div className="rounded-xl border border-border-subtle bg-bg-card p-5">
+            <h3 className="text-sm font-semibold text-accent-yellow mb-3">Экономика дистрибьютора</h3>
+            <div className="space-y-2 text-xs text-text-secondary leading-relaxed">
+              <p><span className="text-text-primary font-medium">Средний B2B-чек:</span> 150 000 — 300 000 руб. (автопарки, СТО, субдистрибьюторы). Мелкий опт — от 50 000 руб.</p>
+              <p><span className="text-text-primary font-medium">Маржинальность:</span> оптовая наценка 10-15%, мелкооптовая 20-30%, розничная до 50%. Премиальные бренды +3-5 п.п.</p>
+              <p><span className="text-text-primary font-medium">Для входа нужен:</span> договор с производителем + склад (аренда) + менеджеры. Всё остальное — платформа.</p>
+            </div>
+          </div>
+        </div>
+
+        <p className="text-[10px] text-text-muted mt-4">
+          Источники: Автостат, Mordor Intelligence, CStore, Kolesa.ru, Data Insight. Данные за 2024-2025.
+        </p>
+      </section>
+
+      {/* ═══════════════════════════════════════════════
+          9. ЭКОНОМИКА ДОСТАВКИ
+      ═══════════════════════════════════════════════ */}
+      <section className="mb-14 md:mb-20">
+        <h2 className="font-display text-xs uppercase tracking-wider text-text-muted mb-2">
+          Экономика доставки
+        </h2>
+        <p className="font-display text-lg md:text-xl text-text-primary mb-6">
+          Готовы к федеральной доставке
+        </p>
+
+        <div className="overflow-x-auto mb-5">
+          <table className="w-full text-xs border-collapse">
+            <thead>
+              <tr className="border-b border-border-subtle">
+                <th className="text-left py-2 px-3 text-text-muted font-medium uppercase tracking-wider">Маршрут</th>
+                <th className="text-left py-2 px-3 text-text-muted font-medium uppercase tracking-wider">Канистра 5л</th>
+                <th className="text-left py-2 px-3 text-text-muted font-medium uppercase tracking-wider">Канистра 20л</th>
+                <th className="text-left py-2 px-3 text-text-muted font-medium uppercase tracking-wider">Бочка 200л</th>
+                <th className="text-left py-2 px-3 text-text-muted font-medium uppercase tracking-wider">Срок</th>
+              </tr>
+            </thead>
+            <tbody className="text-text-secondary">
+              <tr className="border-b border-border-subtle/50">
+                <td className="py-2 px-3 text-text-primary font-medium">По Якутии</td>
+                <td className="py-2 px-3">500-800 &#8381;</td>
+                <td className="py-2 px-3">~1 000 &#8381;</td>
+                <td className="py-2 px-3">4 000-5 000 &#8381;</td>
+                <td className="py-2 px-3">2-5 дн.</td>
+              </tr>
+              <tr className="border-b border-border-subtle/50">
+                <td className="py-2 px-3 text-text-primary font-medium">Якутск &rarr; Новосибирск</td>
+                <td className="py-2 px-3">900-1 400 &#8381;</td>
+                <td className="py-2 px-3">~1 500 &#8381;</td>
+                <td className="py-2 px-3">9 000-10 000 &#8381;</td>
+                <td className="py-2 px-3">5-10 дн.</td>
+              </tr>
+              <tr className="border-b border-border-subtle/50">
+                <td className="py-2 px-3 text-text-primary font-medium">Якутск &rarr; Москва</td>
+                <td className="py-2 px-3">1 200-1 800 &#8381;</td>
+                <td className="py-2 px-3">~1 500 &#8381;</td>
+                <td className="py-2 px-3">9 000-12 000 &#8381;</td>
+                <td className="py-2 px-3">7-14 дн.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-3">
+          <div className="rounded-xl border border-accent-cyan/20 bg-accent-cyan/5 p-4">
+            <h3 className="text-sm font-semibold text-accent-cyan mb-2">СДЭК</h3>
+            <p className="text-xs text-text-secondary leading-relaxed">Канистры до 30 кг. Бесплатное API для расчёта стоимости прямо в корзине. 38 000+ ПВЗ по России.</p>
+          </div>
+          <div className="rounded-xl border border-accent-yellow/20 bg-accent-yellow/5 p-4">
+            <h3 className="text-sm font-semibold text-accent-yellow mb-2">ТК Энергия</h3>
+            <p className="text-xs text-text-secondary leading-relaxed">Бочки и крупный опт (20-200+ кг). Надёжный партнёр, отработанные маршруты. Уже работаем.</p>
+          </div>
+          <div className="rounded-xl border border-border-subtle bg-bg-card p-4">
+            <h3 className="text-sm font-semibold text-text-primary mb-2">Почта России</h3>
+            <p className="text-xs text-text-secondary leading-relaxed">Мелкие заказы до 20 кг, эконом. От 1 000 руб. Покрытие: любой населённый пункт РФ.</p>
+          </div>
+        </div>
+
+        <p className="text-[10px] text-text-muted mt-4">
+          Масло — только наземная доставка (не авиа). Цены по тарифам СДЭК и ТК на март 2026.
+        </p>
+      </section>
+
+      {/* ═══════════════════════════════════════════════
+          10. МАСШТАБИРОВАНИЕ
       ═══════════════════════════════════════════════ */}
       <section className="mb-14 md:mb-20">
         <h2 className="font-display text-xs uppercase tracking-wider text-text-muted mb-4">
@@ -547,14 +666,14 @@ export default function AboutPage() {
         </h2>
         <div className="rounded-xl border border-accent-yellow/20 bg-accent-yellow/5 p-6">
           <p className="text-xs text-text-secondary leading-relaxed mb-5 max-w-2xl">
-            Боль покупателя очевидна: люди давно привыкли заказывать продукты домой, потому что берегут время.
-            ГСМ — не исключение. Меньше кликов, лучше цены, больше бонусов, доставка до двери — и клиент не уходит.
+            Для масштабирования нужен только договор с производителем и склад (аренда).
+            Платформа, CRM, бонусная система, аналитика — всё уже готово и работает удалённо.
           </p>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             <div>
               <h3 className="text-sm font-semibold text-accent-yellow mb-2">Доставка по всей РФ</h3>
               <p className="text-xs text-text-secondary leading-relaxed">
-                СДЭК, DPD, Boxberry — расчёт стоимости в корзине, пункты выдачи, трекинг. Якутск сегодня, вся Россия завтра.
+                СДЭК (канистры) + ТК Энергия (бочки) — расчёт стоимости в корзине, пункты выдачи, трекинг. Якутск сегодня, вся Россия завтра.
               </p>
             </div>
             <div>
@@ -566,13 +685,13 @@ export default function AboutPage() {
             <div>
               <h3 className="text-sm font-semibold text-accent-yellow mb-2">Каналы продаж</h3>
               <p className="text-xs text-text-secondary leading-relaxed">
-                Сайт, WhatsApp, Telegram, мобильное приложение — все каналы через один API и одну БД.
+                Сайт, WhatsApp, Telegram, голосовой AI — все каналы через один API и одну БД.
               </p>
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-accent-yellow mb-2">Мобильное приложение</h3>
+              <h3 className="text-sm font-semibold text-accent-yellow mb-2">Тиражируемая платформа</h3>
               <p className="text-xs text-text-secondary leading-relaxed">
-                API-first: нативное приложение подключается к тому же бэкенду. Push вместо SMS. Заказ за 3 тапа.
+                Архитектура позволяет развернуть копию для другого дистрибьютора за дни, не месяцы. Каталог, бонусы, CRM — настраиваются, не переписываются.
               </p>
             </div>
           </div>
@@ -580,7 +699,7 @@ export default function AboutPage() {
       </section>
 
       {/* ═══════════════════════════════════════════════
-          9. ПОД КАПОТОМ
+          11. ПОД КАПОТОМ
       ═══════════════════════════════════════════════ */}
       <section className="mb-14 md:mb-20">
         <h2 className="font-display text-xs uppercase tracking-wider text-text-muted mb-4">
@@ -623,7 +742,7 @@ export default function AboutPage() {
       </section>
 
       {/* ═══════════════════════════════════════════════
-          10. CTA — ГОТОВЫ ЗАПУСТИТЬ?
+          12. CTA — ГОТОВЫ ЗАПУСТИТЬ?
       ═══════════════════════════════════════════════ */}
       <section className="mb-8">
         <div className="rounded-2xl border border-accent-yellow/30 bg-gradient-to-br from-accent-yellow/10 to-accent-yellow/5 p-8 md:p-10 text-center">
