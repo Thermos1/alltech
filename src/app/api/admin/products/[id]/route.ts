@@ -87,7 +87,48 @@ export async function DELETE(
 
     const admin = createAdminClient();
 
-    // Delete variants first (cascade)
+    // Check if any variant is referenced in order_items or shared_cart_items
+    const { data: variants } = await admin
+      .from('product_variants')
+      .select('id')
+      .eq('product_id', id);
+
+    const variantIds = (variants || []).map((v) => v.id);
+
+    let hasOrders = false;
+    if (variantIds.length > 0) {
+      const { count } = await admin
+        .from('order_items')
+        .select('id', { count: 'exact', head: true })
+        .in('variant_id', variantIds);
+
+      hasOrders = (count ?? 0) > 0;
+    }
+
+    if (hasOrders) {
+      // Soft delete: deactivate product and all its variants
+      await admin
+        .from('products')
+        .update({ is_active: false })
+        .eq('id', id);
+
+      await admin
+        .from('product_variants')
+        .update({ is_active: false })
+        .eq('product_id', id);
+
+      return NextResponse.json({ success: true, soft: true });
+    }
+
+    // Clean shared_cart_items referencing these variants
+    if (variantIds.length > 0) {
+      await admin
+        .from('shared_cart_items')
+        .delete()
+        .in('variant_id', variantIds);
+    }
+
+    // Hard delete: no orders reference this product
     await admin
       .from('product_variants')
       .delete()
@@ -100,12 +141,12 @@ export async function DELETE(
 
     if (error) {
       console.error('Product delete error:', error);
-      return NextResponse.json({ error: 'Failed to delete product' }, { status: 500 });
+      return NextResponse.json({ error: 'Не удалось удалить товар' }, { status: 500 });
     }
 
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Product delete error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ error: 'Внутренняя ошибка сервера' }, { status: 500 });
   }
 }

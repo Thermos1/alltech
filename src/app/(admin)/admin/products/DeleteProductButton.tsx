@@ -23,9 +23,20 @@ export default function DeleteProductButton({ productId, productName }: DeletePr
         method: 'DELETE',
       });
 
-      if (res.ok) {
-        router.refresh();
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        alert(data?.error || 'Ошибка при удалении товара');
+        return;
       }
+
+      const data = await res.json();
+      if (data.soft) {
+        alert(`«${productName}» скрыт из каталога (товар есть в заказах, полное удаление невозможно)`);
+      }
+
+      router.refresh();
+    } catch {
+      alert('Ошибка сети при удалении товара');
     } finally {
       setLoading(false);
     }
