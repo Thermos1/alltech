@@ -590,6 +590,127 @@ export default function AboutPage() {
       </section>
 
       {/* ═══════════════════════════════════════════════
+          8b. КОНКУРЕНТНЫЙ ЛАНДШАФТ
+      ═══════════════════════════════════════════════ */}
+      <section className="mb-14 md:mb-20">
+        <h2 className="font-display text-xs uppercase tracking-wider text-text-muted mb-2">
+          Конкурентный ландшафт
+        </h2>
+        <p className="font-display text-lg md:text-xl text-text-primary mb-6">
+          Кто продаёт масла онлайн и почему у нас есть окно
+        </p>
+
+        {/* Counterfeit alert */}
+        <div className="rounded-xl border border-accent-magenta/20 bg-accent-magenta/5 p-5 mb-6">
+          <h3 className="text-sm font-semibold text-accent-magenta mb-2">Контрафакт — главная проблема отрасли</h3>
+          <div className="grid gap-4 sm:grid-cols-3">
+            <div className="text-center">
+              <p className="font-display text-2xl text-accent-magenta">54%</p>
+              <p className="text-xs text-text-secondary mt-1">масел на рынке — подделки</p>
+              <p className="text-[10px] text-text-muted">Autonews, август 2024</p>
+            </div>
+            <div className="text-center">
+              <p className="font-display text-2xl text-accent-magenta">43%</p>
+              <p className="text-xs text-text-secondary mt-1">контрафакт в онлайн-канале</p>
+              <p className="text-[10px] text-text-muted">рост с 29% за год (Коммерсант)</p>
+            </div>
+            <div className="text-center">
+              <p className="font-display text-2xl text-accent-yellow">03.2025</p>
+              <p className="text-xs text-text-secondary mt-1">обязательная маркировка</p>
+              <p className="text-[10px] text-text-muted">&laquo;Честный знак&raquo; (Logirus)</p>
+            </div>
+          </div>
+          <p className="text-xs text-text-secondary leading-relaxed mt-4">
+            <span className="text-accent-yellow font-medium">Преимущество АЛТЕХ:</span> прямые договоры с производителями (Rolf, Sintec, KIXX, RhinOIL) —
+            гарантия оригинальности каждой единицы. Специализированный магазин с прозрачной цепочкой поставок
+            vs маркетплейс, где 43% товара — подделки.
+          </p>
+        </div>
+
+        {/* Online competitors table */}
+        <div className="rounded-xl border border-border-subtle bg-bg-card overflow-hidden mb-6">
+          <div className="px-5 py-3 border-b border-border-subtle">
+            <h3 className="text-sm font-semibold text-text-primary">Крупнейшие онлайн-игроки</h3>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="border-b border-border-subtle text-text-muted">
+                  <th className="text-left px-4 py-2.5 font-medium">Компания</th>
+                  <th className="text-right px-4 py-2.5 font-medium">Выручка</th>
+                  <th className="text-left px-4 py-2.5 font-medium">Тип</th>
+                  <th className="text-left px-4 py-2.5 font-medium">Ограничения</th>
+                </tr>
+              </thead>
+              <tbody className="text-text-secondary">
+                <tr className="border-b border-border-subtle/50">
+                  <td className="px-4 py-2.5 text-text-primary font-medium">Exist.ru</td>
+                  <td className="px-4 py-2.5 text-right text-accent-yellow font-medium">~50 млрд &#8381;</td>
+                  <td className="px-4 py-2.5">Автозапчасти</td>
+                  <td className="px-4 py-2.5">Масла — одна из сотен категорий, нет CRM для ГСМ</td>
+                </tr>
+                <tr className="border-b border-border-subtle/50">
+                  <td className="px-4 py-2.5 text-text-primary font-medium">Autodoc.ru</td>
+                  <td className="px-4 py-2.5 text-right text-accent-yellow font-medium">~28 млрд &#8381;</td>
+                  <td className="px-4 py-2.5">Автозапчасти</td>
+                  <td className="px-4 py-2.5">6 млн пользователей, но без специализации на ГСМ</td>
+                </tr>
+                <tr className="border-b border-border-subtle/50">
+                  <td className="px-4 py-2.5 text-text-primary font-medium">Emex.ru</td>
+                  <td className="px-4 py-2.5 text-right text-accent-yellow font-medium">~17 млрд &#8381;</td>
+                  <td className="px-4 py-2.5">Маркетплейс</td>
+                  <td className="px-4 py-2.5">Оценка Forbes $360 млн, но нет фокуса на масла</td>
+                </tr>
+                <tr className="border-b border-border-subtle/50">
+                  <td className="px-4 py-2.5 text-text-primary font-medium">Ozon / WB</td>
+                  <td className="px-4 py-2.5 text-right text-text-muted">маркетплейсы</td>
+                  <td className="px-4 py-2.5">Универсальные</td>
+                  <td className="px-4 py-2.5"><span className="text-accent-magenta font-medium">43% контрафакта</span>, нет экспертизы</td>
+                </tr>
+                <tr className="border-b border-border-subtle/50">
+                  <td className="px-4 py-2.5 text-text-primary font-medium">МаслоМаркет</td>
+                  <td className="px-4 py-2.5 text-right text-text-muted">61 магазин</td>
+                  <td className="px-4 py-2.5">Специализированный</td>
+                  <td className="px-4 py-2.5">Офлайн-сеть с 1996 г., слабый e-commerce</td>
+                </tr>
+                <tr>
+                  <td className="px-4 py-2.5 text-text-primary font-medium">Лукойл-Shop</td>
+                  <td className="px-4 py-2.5 text-right text-text-muted">D2C</td>
+                  <td className="px-4 py-2.5">Монобренд</td>
+                  <td className="px-4 py-2.5">Только Лукойл, нет мультибрендовости</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Yakutsk competitors */}
+        <div className="grid gap-4 md:grid-cols-2 mb-6">
+          <div className="rounded-xl border border-accent-cyan/20 bg-accent-cyan/5 p-5">
+            <h3 className="text-sm font-semibold text-accent-cyan mb-3">Конкуренция в Якутске</h3>
+            <div className="space-y-2 text-xs text-text-secondary leading-relaxed">
+              <p><span className="text-text-primary font-medium">Онлайн — пусто.</span> &laquo;Родные масла&raquo; доставляют ТК без локального склада. Exist.ru работает через партнёров. Остальные — мелкие офлайн-точки без e-commerce.</p>
+              <p><span className="text-accent-cyan font-medium">АЛТЕХ — единственный</span> специализированный интернет-магазин масел в Якутске с полноценной CRM, бонусной программой и складом на месте.</p>
+            </div>
+          </div>
+          <div className="rounded-xl border border-accent-yellow/20 bg-accent-yellow/5 p-5">
+            <h3 className="text-sm font-semibold text-accent-yellow mb-3">Наше преимущество</h3>
+            <div className="space-y-2 text-xs text-text-secondary leading-relaxed">
+              <p><span className="text-text-primary font-medium">Гарантия оригинала:</span> прямые договоры с Rolf, Sintec, KIXX, RhinOIL. Прозрачная цепочка: производитель &rarr; наш склад &rarr; клиент.</p>
+              <p><span className="text-text-primary font-medium">CRM для ГСМ:</span> прогноз замены масла, корзина менеджера через WhatsApp, тиерные бонусы — ни у одного конкурента этого нет.</p>
+              <p><span className="text-text-primary font-medium">B2B + B2C:</span> один магазин для автопарков (бочки 200л) и частных клиентов (канистры 5л).</p>
+            </div>
+          </div>
+        </div>
+
+        <p className="text-[10px] text-text-muted mt-4">
+          Источники: Autonews (контрафакт 54%), Коммерсант (43% онлайн), Logirus (маркировка &laquo;Честный знак&raquo;),
+          Wikipedia/Forbes (выручка Exist, Emex), 5 Колесо (рейтинг магазинов), Data Insight (рост автотоваров +125%).
+          Данные за 2024-2025.
+        </p>
+      </section>
+
+      {/* ═══════════════════════════════════════════════
           9. ЭКОНОМИКА ДОСТАВКИ
       ═══════════════════════════════════════════════ */}
       <section className="mb-14 md:mb-20">
