@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
-import { formatPriceShort, daysFromNow, pluralize } from '@/lib/utils';
+import { formatPriceShort, daysFromNow, pluralize, topProductsFromItems, groupByStatus, calcAvgCheck } from '@/lib/utils';
 
 export const metadata = {
   title: 'Админ-панель — АЛТЕХ',
@@ -176,15 +176,55 @@ export default async function AdminDashboardPage() {
     }
   }
 
-  // Also for admin: count unassigned clients
+  // Also for admin: count unassigned clients + extra stats
   let unassignedCount = 0;
+  let productCount = 0;
+  let clientCount = 0;
+  let brandCount = 0;
+  let outOfStockCount = 0;
+  let lowStockCount = 0;
+  let topProducts: { product_name: string; total_qty: number }[] = [];
+  let orderStatusSummary: Record<string, number> = {};
+
   if (isAdmin) {
-    const { count } = await admin
-      .from('profiles')
-      .select('id', { count: 'exact', head: true })
-      .eq('role', 'customer')
-      .is('manager_id', null);
-    unassignedCount = count || 0;
+    const [
+      { count: unassigned },
+      { count: products },
+      { count: clients },
+      { count: brands },
+      { count: outOfStock },
+      { count: lowStock },
+    ] = await Promise.all([
+      admin.from('profiles').select('id', { count: 'exact', head: true }).eq('role', 'customer').is('manager_id', null),
+      admin.from('products').select('id', { count: 'exact', head: true }).eq('is_active', true),
+      admin.from('profiles').select('id', { count: 'exact', head: true }).eq('role', 'customer'),
+      admin.from('brands').select('id', { count: 'exact', head: true }).eq('is_active', true),
+      admin.from('product_variants').select('id', { count: 'exact', head: true }).eq('is_active', true).eq('stock_qty', 0),
+      admin.from('product_variants').select('id', { count: 'exact', head: true }).eq('is_active', true).gt('stock_qty', 0).lt('stock_qty', 5),
+    ]);
+
+    unassignedCount = unassigned || 0;
+    productCount = products || 0;
+    clientCount = clients || 0;
+    brandCount = brands || 0;
+    outOfStockCount = outOfStock || 0;
+    lowStockCount = lowStock || 0;
+
+    // Top 5 products by quantity sold (from paid orders)
+    const { data: paidOrdersForTop } = await admin
+      .from('orders')
+      .select('id')
+      .eq('payment_status', 'succeeded');
+
+    const paidIds = (paidOrdersForTop || []).map((o) => o.id);
+    if (paidIds.length > 0) {
+      const { data: allOrderItems } = await admin
+        .from('order_items')
+        .select('product_name, quantity')
+        .in('order_id', paidIds);
+
+      topProducts = topProductsFromItems(allOrderItems || []);
+    }
   }
 
   const [ordersResult, paidResult, latestOrdersResult] = await Promise.all([
@@ -194,22 +234,35 @@ export default async function AdminDashboardPage() {
   ]);
 
   const totalOrders = (ordersResult.data || []).length;
-  const paidOrders = (paidResult.data || []).length;
+  const paidOrdersCount = (paidResult.data || []).length;
   const revenue = (paidResult.data || []).reduce(
     (sum, order) => sum + Number(order.total),
     0
   );
+  const avgCheck = calcAvgCheck(revenue, paidOrdersCount);
   const latestOrders = latestOrdersResult.data || [];
+
+  // Build order status summary from all orders (admin only)
+  if (isAdmin) {
+    const { data: allOrderStatuses } = await admin
+      .from('orders')
+      .select('status');
+    orderStatusSummary = groupByStatus(allOrderStatuses || []);
+  }
 
   const stats = isAdmin
     ? [
-        { label: 'Всего заказов', value: totalOrders.toString(), accent: 'text-text-primary' },
-        { label: 'Оплачено', value: paidOrders.toString(), accent: 'text-accent-cyan' },
         { label: 'Выручка', value: formatPriceShort(revenue), accent: 'text-accent-yellow' },
+        { label: 'Заказов', value: totalOrders.toString(), accent: 'text-text-primary' },
+        { label: 'Оплачено', value: paidOrdersCount.toString(), accent: 'text-accent-cyan' },
+        { label: 'Средний чек', value: formatPriceShort(avgCheck), accent: 'text-accent-yellow' },
+        { label: 'Товаров', value: productCount.toString(), accent: 'text-text-primary' },
+        { label: 'Клиентов', value: clientCount.toString(), accent: 'text-accent-cyan' },
+        { label: 'Брендов', value: brandCount.toString(), accent: 'text-text-primary' },
       ]
     : [
         { label: 'Заказы клиентов', value: totalOrders.toString(), accent: 'text-text-primary' },
-        { label: 'Оплачено', value: paidOrders.toString(), accent: 'text-accent-cyan' },
+        { label: 'Оплачено', value: paidOrdersCount.toString(), accent: 'text-accent-cyan' },
         { label: 'За месяц', value: formatPriceShort(commissionThisMonth), accent: 'text-accent-yellow' },
         { label: 'Всего заработано', value: formatPriceShort(commissionAllTime), accent: 'text-accent-cyan' },
       ];
@@ -219,21 +272,102 @@ export default async function AdminDashboardPage() {
       <h1 className="font-display text-2xl text-text-primary">Дашборд</h1>
 
       {/* Stats grid */}
-      <div className={`grid grid-cols-1 gap-4 ${isAdmin ? 'sm:grid-cols-3' : 'sm:grid-cols-2 lg:grid-cols-4'}`}>
+      <div className={`grid grid-cols-2 gap-3 ${isAdmin ? 'sm:grid-cols-4 lg:grid-cols-7' : 'sm:grid-cols-2 lg:grid-cols-4'}`}>
         {stats.map((stat) => (
           <div
             key={stat.label}
-            className="rounded-xl bg-bg-card border border-border-subtle p-5"
+            className="rounded-xl bg-bg-card border border-border-subtle p-4"
           >
-            <p className="text-text-muted text-xs uppercase tracking-wider mb-1">
+            <p className="text-text-muted text-[10px] uppercase tracking-wider mb-1">
               {stat.label}
             </p>
-            <p className={`font-display text-2xl ${stat.accent}`}>
+            <p className={`font-display text-xl ${stat.accent}`}>
               {stat.value}
             </p>
           </div>
         ))}
       </div>
+
+      {/* Stock alerts + Order status summary (admin only) */}
+      {isAdmin && (outOfStockCount > 0 || lowStockCount > 0 || Object.keys(orderStatusSummary).length > 0) && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* Stock alerts */}
+          {(outOfStockCount > 0 || lowStockCount > 0) && (
+            <Link
+              href="/admin/stock?low=1"
+              className="rounded-xl bg-bg-card border border-border-subtle p-5 hover:border-accent-yellow/40 transition-colors"
+            >
+              <h3 className="text-text-muted text-xs uppercase tracking-wider mb-3">Склад</h3>
+              <div className="flex items-center gap-4">
+                {outOfStockCount > 0 && (
+                  <div className="flex items-center gap-2">
+                    <span className="inline-block w-2 h-2 rounded-full bg-accent-magenta" />
+                    <span className="text-accent-magenta text-sm font-medium">{outOfStockCount} нет</span>
+                  </div>
+                )}
+                {lowStockCount > 0 && (
+                  <div className="flex items-center gap-2">
+                    <span className="inline-block w-2 h-2 rounded-full bg-accent-yellow" />
+                    <span className="text-accent-yellow text-sm font-medium">{lowStockCount} мало</span>
+                  </div>
+                )}
+              </div>
+            </Link>
+          )}
+
+          {/* Order status summary */}
+          {Object.keys(orderStatusSummary).length > 0 && (
+            <Link
+              href="/admin/orders"
+              className="rounded-xl bg-bg-card border border-border-subtle p-5 hover:border-accent-cyan/40 transition-colors"
+            >
+              <h3 className="text-text-muted text-xs uppercase tracking-wider mb-3">Заказы по статусам</h3>
+              <div className="flex flex-wrap gap-2">
+                {Object.entries(orderStatusSummary).map(([status, count]) => {
+                  const info = statusLabels[status] || { label: status, color: 'bg-bg-secondary text-text-muted' };
+                  return (
+                    <span key={status} className={`inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[11px] font-medium ${info.color}`}>
+                      {info.label} <span className="font-bold">{count}</span>
+                    </span>
+                  );
+                })}
+              </div>
+            </Link>
+          )}
+        </div>
+      )}
+
+      {/* Top 5 products (admin only) */}
+      {isAdmin && topProducts.length > 0 && (
+        <div>
+          <h2 className="text-text-primary font-medium text-lg mb-4">Топ товаров по продажам</h2>
+          <div className="rounded-xl bg-bg-card border border-border-subtle p-5">
+            <div className="space-y-3">
+              {topProducts.map((item, idx) => {
+                const maxQty = topProducts[0].total_qty;
+                const barWidth = maxQty > 0 ? (item.total_qty / maxQty) * 100 : 0;
+                return (
+                  <div key={item.product_name} className="flex items-center gap-3">
+                    <span className="text-text-muted text-xs w-4 text-right shrink-0">{idx + 1}</span>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between mb-1">
+                        <p className="text-text-primary text-sm truncate">{item.product_name}</p>
+                        <span className="text-accent-cyan text-xs font-medium shrink-0 ml-2">{item.total_qty} шт</span>
+                      </div>
+                      <div className="h-1.5 bg-bg-secondary rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-accent-cyan rounded-full transition-all"
+                          style={{ width: `${barWidth}%` }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Attention block */}
       {(attentionClients.length > 0 || (isAdmin && unassignedCount > 0)) && (

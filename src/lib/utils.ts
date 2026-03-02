@@ -40,3 +40,31 @@ export function daysFromNow(date: Date): number {
   const diff = date.getTime() - now.getTime();
   return Math.round(diff / (1000 * 60 * 60 * 24));
 }
+
+export function topProductsFromItems(
+  items: { product_name: string; quantity: number }[],
+  limit = 5
+): { product_name: string; total_qty: number }[] {
+  const map: Record<string, number> = {};
+  for (const item of items) {
+    map[item.product_name] = (map[item.product_name] || 0) + item.quantity;
+  }
+  return Object.entries(map)
+    .map(([product_name, total_qty]) => ({ product_name, total_qty }))
+    .sort((a, b) => b.total_qty - a.total_qty)
+    .slice(0, limit);
+}
+
+export function groupByStatus(
+  orders: { status: string }[]
+): Record<string, number> {
+  const summary: Record<string, number> = {};
+  for (const o of orders) {
+    summary[o.status] = (summary[o.status] || 0) + 1;
+  }
+  return summary;
+}
+
+export function calcAvgCheck(revenue: number, paidCount: number): number {
+  return paidCount > 0 ? Math.round(revenue / paidCount) : 0;
+}

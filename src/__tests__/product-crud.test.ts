@@ -300,17 +300,35 @@ describe('DELETE /api/admin/products/[id]', () => {
     expect(res.status).toBe(403);
   });
 
-  it('deletes product and variants successfully', async () => {
+  it('hard-deletes product when no orders reference it', async () => {
     const mockVariantDelete = vi.fn().mockReturnValue({
       eq: () => Promise.resolve({ error: null }),
     });
     const mockProductDelete = vi.fn().mockReturnValue({
       eq: () => Promise.resolve({ error: null }),
     });
+    const mockSharedCartItemsDelete = vi.fn().mockReturnValue({
+      in: () => Promise.resolve({ error: null }),
+    });
 
     mockAdminFrom.mockImplementation((table: string) => {
       if (table === 'product_variants') {
-        return { delete: mockVariantDelete };
+        return {
+          select: () => ({
+            eq: () => Promise.resolve({ data: [{ id: 'v1' }, { id: 'v2' }], error: null }),
+          }),
+          delete: mockVariantDelete,
+        };
+      }
+      if (table === 'order_items') {
+        return {
+          select: () => ({
+            in: () => Promise.resolve({ count: 0, error: null }),
+          }),
+        };
+      }
+      if (table === 'shared_cart_items') {
+        return { delete: mockSharedCartItemsDelete };
       }
       if (table === 'products') {
         return { delete: mockProductDelete };
@@ -323,16 +341,74 @@ describe('DELETE /api/admin/products/[id]', () => {
     const data = await res.json();
     expect(res.status).toBe(200);
     expect(data.success).toBe(true);
+    expect(data.soft).toBeUndefined();
     expect(mockVariantDelete).toHaveBeenCalled();
     expect(mockProductDelete).toHaveBeenCalled();
+  });
+
+  it('soft-deletes product when orders reference it', async () => {
+    const mockProductUpdate = vi.fn().mockReturnValue({
+      eq: () => Promise.resolve({ error: null }),
+    });
+    const mockVariantUpdate = vi.fn().mockReturnValue({
+      eq: () => Promise.resolve({ error: null }),
+    });
+
+    mockAdminFrom.mockImplementation((table: string) => {
+      if (table === 'product_variants') {
+        return {
+          select: () => ({
+            eq: () => Promise.resolve({ data: [{ id: 'v1' }], error: null }),
+          }),
+          update: mockVariantUpdate,
+        };
+      }
+      if (table === 'order_items') {
+        return {
+          select: () => ({
+            in: () => Promise.resolve({ count: 3, error: null }),
+          }),
+        };
+      }
+      if (table === 'products') {
+        return { update: mockProductUpdate };
+      }
+      return {};
+    });
+
+    const req = new Request('http://localhost/api/admin/products/prod-1', { method: 'DELETE' });
+    const res = await DELETE(req as never, { params } as never);
+    const data = await res.json();
+    expect(res.status).toBe(200);
+    expect(data.success).toBe(true);
+    expect(data.soft).toBe(true);
+    expect(mockProductUpdate).toHaveBeenCalled();
+    expect(mockVariantUpdate).toHaveBeenCalled();
   });
 
   it('returns 500 when product delete fails', async () => {
     mockAdminFrom.mockImplementation((table: string) => {
       if (table === 'product_variants') {
         return {
+          select: () => ({
+            eq: () => Promise.resolve({ data: [{ id: 'v1' }], error: null }),
+          }),
           delete: () => ({
             eq: () => Promise.resolve({ error: null }),
+          }),
+        };
+      }
+      if (table === 'order_items') {
+        return {
+          select: () => ({
+            in: () => Promise.resolve({ count: 0, error: null }),
+          }),
+        };
+      }
+      if (table === 'shared_cart_items') {
+        return {
+          delete: () => ({
+            in: () => Promise.resolve({ error: null }),
           }),
         };
       }

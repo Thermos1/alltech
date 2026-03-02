@@ -5,6 +5,9 @@ import {
   cn,
   generateOrderNumber,
   pluralize,
+  topProductsFromItems,
+  groupByStatus,
+  calcAvgCheck,
 } from '@/lib/utils';
 
 describe('formatPrice', () => {
@@ -121,5 +124,91 @@ describe('pluralize', () => {
     expect(pluralize(100, 'товар', 'товара', 'товаров')).toBe('товаров');
     expect(pluralize(101, 'товар', 'товара', 'товаров')).toBe('товар');
     expect(pluralize(111, 'товар', 'товара', 'товаров')).toBe('товаров');
+  });
+});
+
+describe('topProductsFromItems', () => {
+  it('groups by product_name and sums quantities', () => {
+    const items = [
+      { product_name: 'Масло A', quantity: 3 },
+      { product_name: 'Масло B', quantity: 1 },
+      { product_name: 'Масло A', quantity: 2 },
+    ];
+    const result = topProductsFromItems(items);
+    expect(result[0]).toEqual({ product_name: 'Масло A', total_qty: 5 });
+    expect(result[1]).toEqual({ product_name: 'Масло B', total_qty: 1 });
+  });
+
+  it('sorts by total_qty descending', () => {
+    const items = [
+      { product_name: 'X', quantity: 1 },
+      { product_name: 'Y', quantity: 10 },
+      { product_name: 'Z', quantity: 5 },
+    ];
+    const result = topProductsFromItems(items);
+    expect(result.map((r) => r.product_name)).toEqual(['Y', 'Z', 'X']);
+  });
+
+  it('limits to 5 by default', () => {
+    const items = Array.from({ length: 10 }, (_, i) => ({
+      product_name: `Product ${i}`,
+      quantity: 10 - i,
+    }));
+    const result = topProductsFromItems(items);
+    expect(result).toHaveLength(5);
+    expect(result[0].product_name).toBe('Product 0');
+  });
+
+  it('respects custom limit', () => {
+    const items = [
+      { product_name: 'A', quantity: 3 },
+      { product_name: 'B', quantity: 2 },
+      { product_name: 'C', quantity: 1 },
+    ];
+    const result = topProductsFromItems(items, 2);
+    expect(result).toHaveLength(2);
+  });
+
+  it('returns empty array for empty input', () => {
+    expect(topProductsFromItems([])).toEqual([]);
+  });
+});
+
+describe('groupByStatus', () => {
+  it('groups orders by status', () => {
+    const orders = [
+      { status: 'pending' },
+      { status: 'paid' },
+      { status: 'pending' },
+      { status: 'delivered' },
+    ];
+    expect(groupByStatus(orders)).toEqual({
+      pending: 2,
+      paid: 1,
+      delivered: 1,
+    });
+  });
+
+  it('returns empty object for empty input', () => {
+    expect(groupByStatus([])).toEqual({});
+  });
+
+  it('handles single status', () => {
+    expect(groupByStatus([{ status: 'shipped' }])).toEqual({ shipped: 1 });
+  });
+});
+
+describe('calcAvgCheck', () => {
+  it('calculates average check correctly', () => {
+    expect(calcAvgCheck(10000, 4)).toBe(2500);
+  });
+
+  it('rounds to nearest integer', () => {
+    expect(calcAvgCheck(10000, 3)).toBe(3333);
+  });
+
+  it('returns 0 when no paid orders', () => {
+    expect(calcAvgCheck(0, 0)).toBe(0);
+    expect(calcAvgCheck(5000, 0)).toBe(0);
   });
 });
