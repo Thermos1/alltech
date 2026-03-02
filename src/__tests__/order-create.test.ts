@@ -80,8 +80,18 @@ describe('POST /api/orders/create', () => {
   });
 
   it('creates order successfully without promo or bonuses', async () => {
-    // Mock order insert
+    const variantId = validItem.variantId;
     mockAdminFrom.mockImplementation((table: string) => {
+      if (table === 'product_variants') {
+        return {
+          select: () => ({
+            in: () => Promise.resolve({
+              data: [{ id: variantId, price: 10000, is_active: true }],
+              error: null,
+            }),
+          }),
+        };
+      }
       if (table === 'orders') {
         return {
           insert: () => ({
@@ -113,7 +123,18 @@ describe('POST /api/orders/create', () => {
   });
 
   it('applies percent promo code', async () => {
+    const variantId = validItem.variantId;
     mockAdminFrom.mockImplementation((table: string) => {
+      if (table === 'product_variants') {
+        return {
+          select: () => ({
+            in: () => Promise.resolve({
+              data: [{ id: variantId, price: 10000, is_active: true }],
+              error: null,
+            }),
+          }),
+        };
+      }
       if (table === 'promo_codes') {
         return {
           select: () => ({
@@ -139,7 +160,13 @@ describe('POST /api/orders/create', () => {
             }),
           }),
           update: () => ({
-            eq: () => Promise.resolve({ error: null }),
+            eq: () => ({
+              eq: () => ({
+                select: () => ({
+                  maybeSingle: () => Promise.resolve({ data: { id: 'promo-1' }, error: null }),
+                }),
+              }),
+            }),
           }),
         };
       }
@@ -170,7 +197,18 @@ describe('POST /api/orders/create', () => {
   });
 
   it('applies bonuses with 30% max cap', async () => {
+    const variantId = validItem.variantId;
     mockAdminFrom.mockImplementation((table: string) => {
+      if (table === 'product_variants') {
+        return {
+          select: () => ({
+            in: () => Promise.resolve({
+              data: [{ id: variantId, price: 10000, is_active: true }],
+              error: null,
+            }),
+          }),
+        };
+      }
       if (table === 'profiles') {
         return {
           select: () => ({
@@ -215,11 +253,22 @@ describe('POST /api/orders/create', () => {
   });
 
   it('rolls back order if items creation fails', async () => {
+    const variantId = validItem.variantId;
     const mockDelete = vi.fn().mockReturnValue({
       eq: () => Promise.resolve({ error: null }),
     });
 
     mockAdminFrom.mockImplementation((table: string) => {
+      if (table === 'product_variants') {
+        return {
+          select: () => ({
+            in: () => Promise.resolve({
+              data: [{ id: variantId, price: 10000, is_active: true }],
+              error: null,
+            }),
+          }),
+        };
+      }
       if (table === 'orders') {
         return {
           insert: () => ({

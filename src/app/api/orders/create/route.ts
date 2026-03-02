@@ -27,11 +27,39 @@ export async function POST(request: NextRequest) {
     const data = parsed.data;
     const admin = createAdminClient();
 
-    // Calculate subtotal from items
-    const subtotal = data.items.reduce(
-      (sum, item) => sum + item.price * item.quantity,
-      0
-    );
+    // Re-fetch prices from DB to prevent client-side tampering
+    const variantIds = [...new Set(data.items.map((item) => item.variantId.replace(/:bulk$/, '')))];
+    const { data: dbVariants, error: variantsError } = await admin
+      .from('product_variants')
+      .select('id, price, is_active')
+      .in('id', variantIds);
+
+    if (variantsError || !dbVariants) {
+      return NextResponse.json({ error: 'Ошибка загрузки товаров' }, { status: 500 });
+    }
+
+    const priceMap = new Map(dbVariants.map((v) => [v.id, v]));
+
+    // Validate all variants exist, are active, and recalculate subtotal with DB prices
+    let subtotal = 0;
+    for (const item of data.items) {
+      const cleanId = item.variantId.replace(/:bulk$/, '');
+      const dbVariant = priceMap.get(cleanId);
+      if (!dbVariant) {
+        return NextResponse.json(
+          { error: `Товар "${item.productName}" не найден` },
+          { status: 400 }
+        );
+      }
+      if (!dbVariant.is_active) {
+        return NextResponse.json(
+          { error: `Товар "${item.productName}" больше не доступен` },
+          { status: 400 }
+        );
+      }
+      // Use DB price, not client price
+      subtotal += dbVariant.price * item.quantity;
+    }
 
     // Validate and apply promo code
     let discountAmount = 0;
@@ -53,17 +81,26 @@ export async function POST(request: NextRequest) {
         const minMet = subtotal >= (promo.min_order_amount || 0);
 
         if (validFrom && validUntil && underLimit && minMet) {
-          promoCodeId = promo.id;
           if (promo.discount_type === 'percent') {
             discountAmount = Math.floor(subtotal * promo.discount_value / 100);
           } else {
             discountAmount = Math.min(promo.discount_value, subtotal);
           }
-          // Increment usage
-          await admin
+          // Atomic increment with optimistic lock (prevents race condition on max_uses)
+          const { data: updated } = await admin
             .from('promo_codes')
             .update({ used_count: promo.used_count + 1 })
-            .eq('id', promo.id);
+            .eq('id', promo.id)
+            .eq('used_count', promo.used_count)
+            .select('id')
+            .maybeSingle();
+
+          if (updated) {
+            promoCodeId = promo.id;
+          } else {
+            // Race condition: another order grabbed the last use
+            discountAmount = 0;
+          }
         }
       }
     }
@@ -113,16 +150,20 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Ошибка создания заказа' }, { status: 500 });
     }
 
-    // Create order items (strip :bulk suffix from variantId for DB FK)
-    const orderItems = data.items.map((item) => ({
-      order_id: order.id,
-      variant_id: item.variantId.replace(/:bulk$/, ''),
-      product_name: item.productName,
-      variant_label: item.variantLabel,
-      quantity: item.quantity,
-      unit_price: item.price,
-      total_price: item.price * item.quantity,
-    }));
+    // Create order items (strip :bulk suffix from variantId for DB FK, use DB prices)
+    const orderItems = data.items.map((item) => {
+      const cleanId = item.variantId.replace(/:bulk$/, '');
+      const dbPrice = priceMap.get(cleanId)!.price;
+      return {
+        order_id: order.id,
+        variant_id: cleanId,
+        product_name: item.productName,
+        variant_label: item.variantLabel,
+        quantity: item.quantity,
+        unit_price: dbPrice,
+        total_price: dbPrice * item.quantity,
+      };
+    });
 
     const { error: itemsError } = await admin
       .from('order_items')

@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     // Verify order exists and payment matches
     const { data: order, error: orderError } = await admin
       .from('orders')
-      .select('id, order_number, yookassa_payment_id, total, user_id')
+      .select('id, order_number, yookassa_payment_id, payment_status, total, user_id')
       .eq('id', orderId)
       .single();
 
@@ -29,6 +29,16 @@ export async function POST(request: NextRequest) {
     }
 
     if (action === 'pay') {
+      // Idempotency: skip if already processed
+      if (order.payment_status === 'succeeded') {
+        return NextResponse.json({
+          success: true,
+          orderNumber: order.order_number,
+          status: 'paid',
+          alreadyProcessed: true,
+        });
+      }
+
       // Mark as paid
       await admin
         .from('orders')
@@ -120,8 +130,8 @@ export async function POST(request: NextRequest) {
         });
       }
 
-      // Check referral bonus (first purchase by referred user)
-      if (userProfile?.referred_by) {
+      // Check referral bonus (first purchase by referred user, no self-referral)
+      if (userProfile?.referred_by && userProfile.referred_by !== order.user_id) {
         // Check if user already has a referral event (prevents double-award)
         const { count: existingReferralCount } = await admin
           .from('referral_events')

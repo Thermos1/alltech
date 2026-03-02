@@ -97,6 +97,23 @@ function orderItemsStub() {
   };
 }
 
+/** Product variants stub for server-side price verification. */
+function productVariantsStub(
+  variants: { id: string; price: number; is_active?: boolean }[] = [
+    { id: 'v1', price: 2500, is_active: true },
+  ]
+) {
+  return {
+    select: () => ({
+      in: () =>
+        Promise.resolve({
+          data: variants.map((v) => ({ ...v, is_active: v.is_active ?? true })),
+          error: null,
+        }),
+    }),
+  };
+}
+
 // ---------------------------------------------------------------------------
 // Suite
 // ---------------------------------------------------------------------------
@@ -153,6 +170,7 @@ describe('POST /api/orders/create — full checkout flow + sharedCartCode', () =
   // -----------------------------------------------------------------------
   it('creates order successfully without promo or bonuses', async () => {
     mockAdminFrom.mockImplementation((table: string) => {
+      if (table === 'product_variants') return productVariantsStub();
       if (table === 'orders') return ordersInsertStub('o1', 'ALT-2026-0001');
       if (table === 'order_items') return orderItemsStub();
       if (table === 'profiles') return profilesStub();
@@ -176,6 +194,7 @@ describe('POST /api/orders/create — full checkout flow + sharedCartCode', () =
   // -----------------------------------------------------------------------
   it('applies promo code discount (percent type)', async () => {
     mockAdminFrom.mockImplementation((table: string) => {
+      if (table === 'product_variants') return productVariantsStub();
       if (table === 'promo_codes') {
         return {
           select: () => ({
@@ -201,7 +220,13 @@ describe('POST /api/orders/create — full checkout flow + sharedCartCode', () =
             }),
           }),
           update: () => ({
-            eq: () => Promise.resolve({ error: null }),
+            eq: () => ({
+              eq: () => ({
+                select: () => ({
+                  maybeSingle: () => Promise.resolve({ data: { id: 'promo-1' }, error: null }),
+                }),
+              }),
+            }),
           }),
         };
       }
@@ -230,6 +255,7 @@ describe('POST /api/orders/create — full checkout flow + sharedCartCode', () =
     let profileCallCount = 0;
 
     mockAdminFrom.mockImplementation((table: string) => {
+      if (table === 'product_variants') return productVariantsStub();
       if (table === 'profiles') {
         profileCallCount++;
         // Both calls return the same structure; the route reads
@@ -279,6 +305,7 @@ describe('POST /api/orders/create — full checkout flow + sharedCartCode', () =
     });
 
     mockAdminFrom.mockImplementation((table: string) => {
+      if (table === 'product_variants') return productVariantsStub();
       if (table === 'orders') return ordersInsertStub('o4', 'ALT-2026-0004');
       if (table === 'order_items') return orderItemsStub();
       if (table === 'profiles') return profilesStub();
@@ -312,6 +339,10 @@ describe('POST /api/orders/create — full checkout flow + sharedCartCode', () =
     const capturedItems: Record<string, unknown>[] = [];
 
     mockAdminFrom.mockImplementation((table: string) => {
+      if (table === 'product_variants') return productVariantsStub([
+        { id: 'v1', price: 12000, is_active: true },
+        { id: 'v2', price: 2000, is_active: true },
+      ]);
       if (table === 'orders') return ordersInsertStub('o5', 'ALT-2026-0005');
       if (table === 'order_items') {
         return {
@@ -361,6 +392,7 @@ describe('POST /api/orders/create — full checkout flow + sharedCartCode', () =
     const capturedUpdates: Record<string, unknown>[] = [];
 
     mockAdminFrom.mockImplementation((table: string) => {
+      if (table === 'product_variants') return productVariantsStub();
       if (table === 'orders') return ordersInsertStub('o6', 'ALT-2026-0006');
       if (table === 'order_items') return orderItemsStub();
       if (table === 'profiles') {
@@ -399,6 +431,7 @@ describe('POST /api/orders/create — full checkout flow + sharedCartCode', () =
   // -----------------------------------------------------------------------
   it('returns 500 on order insert error', async () => {
     mockAdminFrom.mockImplementation((table: string) => {
+      if (table === 'product_variants') return productVariantsStub();
       if (table === 'orders') {
         return {
           insert: () => ({
@@ -430,6 +463,7 @@ describe('POST /api/orders/create — full checkout flow + sharedCartCode', () =
     const mockDeleteEq = vi.fn().mockResolvedValue({ error: null });
 
     mockAdminFrom.mockImplementation((table: string) => {
+      if (table === 'product_variants') return productVariantsStub();
       if (table === 'orders') {
         return {
           insert: () => ({
@@ -471,6 +505,7 @@ describe('POST /api/orders/create — full checkout flow + sharedCartCode', () =
   // -----------------------------------------------------------------------
   it('applies fixed-amount promo code', async () => {
     mockAdminFrom.mockImplementation((table: string) => {
+      if (table === 'product_variants') return productVariantsStub();
       if (table === 'promo_codes') {
         return {
           select: () => ({
@@ -496,7 +531,13 @@ describe('POST /api/orders/create — full checkout flow + sharedCartCode', () =
             }),
           }),
           update: () => ({
-            eq: () => Promise.resolve({ error: null }),
+            eq: () => ({
+              eq: () => ({
+                select: () => ({
+                  maybeSingle: () => Promise.resolve({ data: { id: 'promo-fix' }, error: null }),
+                }),
+              }),
+            }),
           }),
         };
       }
@@ -521,6 +562,7 @@ describe('POST /api/orders/create — full checkout flow + sharedCartCode', () =
   // -----------------------------------------------------------------------
   it('ignores promo code that exceeded max_uses', async () => {
     mockAdminFrom.mockImplementation((table: string) => {
+      if (table === 'product_variants') return productVariantsStub();
       if (table === 'promo_codes') {
         return {
           select: () => ({
@@ -571,6 +613,7 @@ describe('POST /api/orders/create — full checkout flow + sharedCartCode', () =
     // balance = 800, 30% of 5000 = 1500, useBonuses = 2000
     // expected: min(2000, 800, 1500) = 800
     mockAdminFrom.mockImplementation((table: string) => {
+      if (table === 'product_variants') return productVariantsStub();
       if (table === 'profiles') {
         return {
           select: () => ({
@@ -607,6 +650,7 @@ describe('POST /api/orders/create — full checkout flow + sharedCartCode', () =
   // -----------------------------------------------------------------------
   it('does not touch shared_carts when sharedCartCode is absent', async () => {
     mockAdminFrom.mockImplementation((table: string) => {
+      if (table === 'product_variants') return productVariantsStub();
       if (table === 'orders') return ordersInsertStub('o10', 'ALT-2026-0010');
       if (table === 'order_items') return orderItemsStub();
       if (table === 'profiles') return profilesStub();
@@ -628,6 +672,11 @@ describe('POST /api/orders/create — full checkout flow + sharedCartCode', () =
   // -----------------------------------------------------------------------
   it('calculates subtotal correctly with multiple items', async () => {
     mockAdminFrom.mockImplementation((table: string) => {
+      if (table === 'product_variants') return productVariantsStub([
+        { id: 'v1', price: 2500, is_active: true },
+        { id: 'v2', price: 800, is_active: true },
+        { id: 'v3', price: 1200, is_active: true },
+      ]);
       if (table === 'orders') return ordersInsertStub('o11', 'ALT-2026-0011');
       if (table === 'order_items') return orderItemsStub();
       if (table === 'profiles') return profilesStub();
