@@ -597,63 +597,147 @@ export default function AboutPage() {
           Экономика доставки
         </h2>
         <p className="font-display text-lg md:text-xl text-text-primary mb-6">
-          Готовы к федеральной доставке
+          Два контура: Якутия + федеральный хаб
         </p>
 
-        <div className="overflow-x-auto mb-5">
-          <table className="w-full text-xs border-collapse">
-            <thead>
-              <tr className="border-b border-border-subtle">
-                <th className="text-left py-2 px-3 text-text-muted font-medium uppercase tracking-wider">Маршрут</th>
-                <th className="text-left py-2 px-3 text-text-muted font-medium uppercase tracking-wider">Канистра 5л</th>
-                <th className="text-left py-2 px-3 text-text-muted font-medium uppercase tracking-wider">Канистра 20л</th>
-                <th className="text-left py-2 px-3 text-text-muted font-medium uppercase tracking-wider">Бочка 200л</th>
-                <th className="text-left py-2 px-3 text-text-muted font-medium uppercase tracking-wider">Срок</th>
-              </tr>
-            </thead>
-            <tbody className="text-text-secondary">
-              <tr className="border-b border-border-subtle/50">
-                <td className="py-2 px-3 text-text-primary font-medium">По Якутии</td>
-                <td className="py-2 px-3">500-800 &#8381;</td>
-                <td className="py-2 px-3">~1 000 &#8381;</td>
-                <td className="py-2 px-3">4 000-5 000 &#8381;</td>
-                <td className="py-2 px-3">2-5 дн.</td>
-              </tr>
-              <tr className="border-b border-border-subtle/50">
-                <td className="py-2 px-3 text-text-primary font-medium">Якутск &rarr; Новосибирск</td>
-                <td className="py-2 px-3">900-1 400 &#8381;</td>
-                <td className="py-2 px-3">~1 500 &#8381;</td>
-                <td className="py-2 px-3">9 000-10 000 &#8381;</td>
-                <td className="py-2 px-3">5-10 дн.</td>
-              </tr>
-              <tr className="border-b border-border-subtle/50">
-                <td className="py-2 px-3 text-text-primary font-medium">Якутск &rarr; Москва</td>
-                <td className="py-2 px-3">1 200-1 800 &#8381;</td>
-                <td className="py-2 px-3">~1 500 &#8381;</td>
-                <td className="py-2 px-3">9 000-12 000 &#8381;</td>
-                <td className="py-2 px-3">7-14 дн.</td>
-              </tr>
-            </tbody>
-          </table>
+        {/* Why hub is needed */}
+        <div className="rounded-xl border border-accent-magenta/20 bg-accent-magenta/5 p-5 mb-6">
+          <h3 className="text-sm font-semibold text-accent-magenta mb-2">Почему нужен хаб вне Якутска</h3>
+          <p className="text-xs text-text-secondary leading-relaxed">
+            Якутск — логистический тупик: нет ЖД, река Лена встаёт зимой (ледоход/ледостав — только авиация ×10 к цене),
+            единственная федеральная трасса. Из Якутска можно обслуживать только Якутию.
+            Для федеральных продаж нужен хаб в транспортном узле — <span className="text-text-primary font-medium">Новосибирск</span> (крупнейший
+            логистический центр Сибири, все ТК, ЖД, ежедневные отправки).
+          </p>
         </div>
 
+        {/* Two tables side by side */}
+        <div className="grid gap-4 md:grid-cols-2 mb-6">
+          {/* Local: Yakutia */}
+          <div>
+            <h3 className="text-xs font-semibold text-accent-cyan uppercase tracking-wider mb-3">Контур 1: Якутия (из Якутска)</h3>
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs border-collapse">
+                <thead>
+                  <tr className="border-b border-border-subtle">
+                    <th className="text-left py-2 px-3 text-text-muted font-medium">Маршрут</th>
+                    <th className="text-right py-2 px-3 text-text-muted font-medium">5 л</th>
+                    <th className="text-right py-2 px-3 text-text-muted font-medium">20 л</th>
+                    <th className="text-right py-2 px-3 text-text-muted font-medium">200 л</th>
+                    <th className="text-right py-2 px-3 text-text-muted font-medium">Срок</th>
+                  </tr>
+                </thead>
+                <tbody className="text-text-secondary">
+                  <tr className="border-b border-border-subtle/50">
+                    <td className="py-2 px-3 text-text-primary font-medium">По Якутии</td>
+                    <td className="py-2 px-3 text-right">500-800 &#8381;</td>
+                    <td className="py-2 px-3 text-right">~1 000 &#8381;</td>
+                    <td className="py-2 px-3 text-right">4-5 тыс &#8381;</td>
+                    <td className="py-2 px-3 text-right">2-5 дн.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p className="text-[10px] text-text-muted mt-2">ТК Энергия — уже работаем. СДЭК — для канистр.</p>
+          </div>
+
+          {/* Federal: from Novosibirsk hub */}
+          <div>
+            <h3 className="text-xs font-semibold text-accent-yellow uppercase tracking-wider mb-3">Контур 2: РФ (из хаба Новосибирск)</h3>
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs border-collapse">
+                <thead>
+                  <tr className="border-b border-border-subtle">
+                    <th className="text-left py-2 px-3 text-text-muted font-medium">Направление</th>
+                    <th className="text-right py-2 px-3 text-text-muted font-medium">5 л</th>
+                    <th className="text-right py-2 px-3 text-text-muted font-medium">20 л</th>
+                    <th className="text-right py-2 px-3 text-text-muted font-medium">200 л</th>
+                    <th className="text-right py-2 px-3 text-text-muted font-medium">Срок</th>
+                  </tr>
+                </thead>
+                <tbody className="text-text-secondary">
+                  <tr className="border-b border-border-subtle/50">
+                    <td className="py-2 px-3 text-text-primary font-medium">Екатеринбург</td>
+                    <td className="py-2 px-3 text-right">60-90 &#8381;</td>
+                    <td className="py-2 px-3 text-right">220-320 &#8381;</td>
+                    <td className="py-2 px-3 text-right">2-3 тыс &#8381;</td>
+                    <td className="py-2 px-3 text-right">2-3 дн.</td>
+                  </tr>
+                  <tr className="border-b border-border-subtle/50">
+                    <td className="py-2 px-3 text-text-primary font-medium">Москва</td>
+                    <td className="py-2 px-3 text-right">100-150 &#8381;</td>
+                    <td className="py-2 px-3 text-right">360-540 &#8381;</td>
+                    <td className="py-2 px-3 text-right">3,6-4,5 тыс &#8381;</td>
+                    <td className="py-2 px-3 text-right">3-5 дн.</td>
+                  </tr>
+                  <tr className="border-b border-border-subtle/50">
+                    <td className="py-2 px-3 text-text-primary font-medium">Краснодар</td>
+                    <td className="py-2 px-3 text-right">110-175 &#8381;</td>
+                    <td className="py-2 px-3 text-right">400-630 &#8381;</td>
+                    <td className="py-2 px-3 text-right">4-6 тыс &#8381;</td>
+                    <td className="py-2 px-3 text-right">5-7 дн.</td>
+                  </tr>
+                  <tr className="border-b border-border-subtle/50">
+                    <td className="py-2 px-3 text-text-primary font-medium">Якутск</td>
+                    <td className="py-2 px-3 text-right">225-310 &#8381;</td>
+                    <td className="py-2 px-3 text-right">810-1 100 &#8381;</td>
+                    <td className="py-2 px-3 text-right">8-11 тыс &#8381;</td>
+                    <td className="py-2 px-3 text-right">8-10 дн.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p className="text-[10px] text-text-muted mt-2">Тарифы сборного груза. При партии 1-5 т — на 20-30% дешевле.</p>
+          </div>
+        </div>
+
+        {/* Hub economics */}
+        <div className="rounded-xl border border-accent-yellow/20 bg-accent-yellow/5 p-5 mb-6">
+          <h3 className="text-sm font-semibold text-accent-yellow mb-3">Экономика хаба: Новосибирск vs Барнаул</h3>
+          <div className="grid gap-4 sm:grid-cols-3">
+            <div>
+              <p className="text-[10px] text-text-muted uppercase tracking-wider mb-1">Аренда склада</p>
+              <p className="text-xs text-text-secondary leading-relaxed">
+                Новосибирск: <span className="text-text-primary font-medium">250-350 &#8381;/м²</span>.
+                Барнаул: <span className="text-text-primary font-medium">150-220 &#8381;/м²</span> (на 40% дешевле, но +3,5 ч до транспортного узла).
+                Якутск: 700-1 800 &#8381;/м² (в 3-6 раз дороже).
+              </p>
+            </div>
+            <div>
+              <p className="text-[10px] text-text-muted uppercase tracking-wider mb-1">Завоз от производителя</p>
+              <p className="text-xs text-text-secondary leading-relaxed">
+                Москва &rarr; Новосибирск: <span className="text-text-primary font-medium">13-30 &#8381;/кг</span>, 3-5 дн.
+                Москва &rarr; Якутск: 35-69 &#8381;/кг, 12-20 дн. Экономия на завозе: <span className="text-accent-yellow font-medium">до ×2,5</span>.
+              </p>
+            </div>
+            <div>
+              <p className="text-[10px] text-text-muted uppercase tracking-wider mb-1">Рекомендация</p>
+              <p className="text-xs text-text-secondary leading-relaxed">
+                <span className="text-text-primary font-medium">Новосибирск</span> — при масштабировании за пределы Якутии.
+                Все ТК, ЖД, ежедневные отправки. Барнаул — резерв для удешевления хранения при больших объёмах (1 000+ м²).
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Carriers */}
         <div className="grid gap-4 sm:grid-cols-3">
           <div className="rounded-xl border border-accent-cyan/20 bg-accent-cyan/5 p-4">
             <h3 className="text-sm font-semibold text-accent-cyan mb-2">СДЭК</h3>
-            <p className="text-xs text-text-secondary leading-relaxed">Канистры до 30 кг. Бесплатное API для расчёта стоимости прямо в корзине. 38 000+ ПВЗ по России.</p>
+            <p className="text-xs text-text-secondary leading-relaxed">Канистры до 30 кг. Бесплатное API для расчёта стоимости в корзине. 38 000+ ПВЗ по России.</p>
           </div>
           <div className="rounded-xl border border-accent-yellow/20 bg-accent-yellow/5 p-4">
             <h3 className="text-sm font-semibold text-accent-yellow mb-2">ТК Энергия</h3>
-            <p className="text-xs text-text-secondary leading-relaxed">Бочки и крупный опт (20-200+ кг). Надёжный партнёр, отработанные маршруты. Уже работаем.</p>
+            <p className="text-xs text-text-secondary leading-relaxed">Бочки и крупный опт (20-200+ кг). 410 городов. Надёжный партнёр, уже работаем.</p>
           </div>
           <div className="rounded-xl border border-border-subtle bg-bg-card p-4">
-            <h3 className="text-sm font-semibold text-text-primary mb-2">Почта России</h3>
-            <p className="text-xs text-text-secondary leading-relaxed">Мелкие заказы до 20 кг, эконом. От 1 000 руб. Покрытие: любой населённый пункт РФ.</p>
+            <h3 className="text-sm font-semibold text-text-primary mb-2">Фастранс / СТЕИЛ</h3>
+            <p className="text-xs text-text-secondary leading-relaxed">Сборные грузы из Новосибирска. Конкурентные тарифы на федеральные маршруты, 3-10 дн.</p>
           </div>
         </div>
 
         <p className="text-[10px] text-text-muted mt-4">
-          Масло — только наземная доставка (не авиа). Цены по тарифам СДЭК и ТК на март 2026.
+          Масло — только наземная доставка (не авиа). Тарифы СТЕИЛ, Фастранс, ТК Энергия, март 2026. Rolf/Sintec — производство Обнинск (Калужская обл.).
         </p>
       </section>
 
@@ -666,14 +750,15 @@ export default function AboutPage() {
         </h2>
         <div className="rounded-xl border border-accent-yellow/20 bg-accent-yellow/5 p-6">
           <p className="text-xs text-text-secondary leading-relaxed mb-5 max-w-2xl">
-            Для масштабирования нужен только договор с производителем и склад (аренда).
-            Платформа, CRM, бонусная система, аналитика — всё уже готово и работает удалённо.
+            Двухконтурная модель: склад в Якутске обслуживает Якутию, хаб в Новосибирске — федеральные продажи.
+            Для запуска нового региона нужен только договор с производителем и аренда склада. Платформа, CRM, бонусная система — уже готовы.
           </p>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             <div>
-              <h3 className="text-sm font-semibold text-accent-yellow mb-2">Доставка по всей РФ</h3>
+              <h3 className="text-sm font-semibold text-accent-yellow mb-2">Два контура доставки</h3>
               <p className="text-xs text-text-secondary leading-relaxed">
-                СДЭК (канистры) + ТК Энергия (бочки) — расчёт стоимости в корзине, пункты выдачи, трекинг. Якутск сегодня, вся Россия завтра.
+                Якутск &rarr; Якутия (ТК Энергия, 2-5 дн.). Новосибирск &rarr; вся РФ (СДЭК, Фастранс, СТЕИЛ, 2-10 дн.).
+                Завоз от производителя в Новосибирск в 2,5 раза дешевле, чем в Якутск.
               </p>
             </div>
             <div>
