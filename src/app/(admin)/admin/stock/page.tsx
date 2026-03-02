@@ -1,8 +1,8 @@
 import { Suspense } from 'react';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
-import { formatPriceShort } from '@/lib/utils';
 import StockFilters from './StockFilters';
+import StockTable from './StockTable';
 
 export const metadata = {
   title: 'Склад — Админ АЛТЕХ',
@@ -123,57 +123,17 @@ export default async function StockPage({
           <p className="text-text-muted text-sm">Товаров не найдено</p>
         </div>
       ) : (
-        <div className="rounded-xl bg-bg-card border border-border-subtle overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-border-subtle text-text-muted text-xs uppercase tracking-wider">
-                  <th className="text-left px-4 py-3 font-medium">Товар</th>
-                  <th className="text-left px-4 py-3 font-medium">Бренд</th>
-                  <th className="text-left px-4 py-3 font-medium">Объём</th>
-                  <th className="text-center px-4 py-3 font-medium">Остаток</th>
-                  <th className="text-right px-4 py-3 font-medium">Цена</th>
-                  <th className="text-left px-4 py-3 font-medium">SKU</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border-subtle">
-                {filtered.map((v) => {
-                  const stockColor =
-                    v.stock_qty === 0
-                      ? 'text-accent-magenta bg-accent-magenta-dim'
-                      : v.stock_qty < 5
-                      ? 'text-accent-yellow bg-accent-yellow-dim'
-                      : 'text-green-400 bg-green-500/15';
-
-                  return (
-                    <tr key={v.id} className="hover:bg-bg-card-hover transition-colors">
-                      <td className="px-4 py-3 text-text-primary font-medium">
-                        {v.productName}
-                      </td>
-                      <td className="px-4 py-3 text-text-secondary">
-                        {v.brandName}
-                      </td>
-                      <td className="px-4 py-3 text-text-secondary">
-                        {v.volume}
-                      </td>
-                      <td className="px-4 py-3 text-center">
-                        <span className={`inline-block rounded-md px-2.5 py-1 text-[11px] font-bold ${stockColor}`}>
-                          {v.stock_qty}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3 text-right text-text-primary whitespace-nowrap">
-                        {formatPriceShort(v.price)}
-                      </td>
-                      <td className="px-4 py-3 text-text-muted text-xs font-mono">
-                        {v.sku || '—'}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        </div>
+        <StockTable
+          items={filtered.map((v) => ({
+            id: v.id,
+            productName: v.productName,
+            brandName: v.brandName,
+            volume: v.volume,
+            stock_qty: v.stock_qty,
+            price: v.price,
+            sku: v.sku,
+          }))}
+        />
       )}
     </div>
   );
