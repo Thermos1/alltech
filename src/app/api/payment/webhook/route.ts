@@ -95,7 +95,7 @@ export async function POST(request: NextRequest) {
       // Decrement stock for ordered items
       const { data: orderItems } = await admin
         .from('order_items')
-        .select('variant_id, quantity')
+        .select('variant_id, quantity, product_name')
         .eq('order_id', orderId);
 
       for (const item of orderItems || []) {
@@ -105,6 +105,19 @@ export async function POST(request: NextRequest) {
             p_quantity: item.quantity,
           });
         }
+      }
+
+      if ((orderItems || []).length > 0) {
+        await logActivity({
+          actorId: order.user_id,
+          action: 'stock.decremented',
+          entityType: 'order',
+          entityId: orderId,
+          details: {
+            orderNumber: order.order_number,
+            items: (orderItems || []).map((i) => `${i.product_name} ×${i.quantity}`).join(', '),
+          },
+        });
       }
 
       // Check referral bonus (first purchase by referred user)

@@ -16,6 +16,10 @@ vi.mock('@/lib/supabase/admin', () => ({
   }),
 }));
 
+vi.mock('@/lib/activity-log', () => ({
+  logActivity: vi.fn(),
+}));
+
 const { POST } = await import('@/app/api/orders/create/route');
 
 const validItem = {

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { logActivity } from '@/lib/activity-log';
 
 const validStatuses = ['pending', 'paid', 'processing', 'shipped', 'delivered', 'cancelled'];
 
@@ -62,6 +63,14 @@ export async function PATCH(
         { status: 404 }
       );
     }
+
+    await logActivity({
+      actorId: user.id,
+      action: 'order.status_change',
+      entityType: 'order',
+      entityId: id,
+      details: { status, orderNumber: order.order_number },
+    });
 
     return NextResponse.json({ order });
   } catch (error) {

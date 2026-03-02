@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { checkoutSchema } from '@/lib/validators';
 import { generateOrderNumber } from '@/lib/utils';
+import { logActivity } from '@/lib/activity-log';
 
 export async function POST(request: NextRequest) {
   try {
@@ -164,7 +165,22 @@ export async function POST(request: NextRequest) {
         .update({ status: 'ordered', order_id: order.id })
         .eq('code', data.sharedCartCode)
         .in('status', ['pending', 'viewed']);
+
+      await logActivity({
+        actorId: user.id,
+        action: 'shared_cart.ordered',
+        entityType: 'shared_cart',
+        details: { code: data.sharedCartCode, orderNumber: order.order_number },
+      });
     }
+
+    await logActivity({
+      actorId: user.id,
+      action: 'order.created',
+      entityType: 'order',
+      entityId: order.id,
+      details: { total, orderNumber: order.order_number },
+    });
 
     return NextResponse.json({
       orderId: order.id,

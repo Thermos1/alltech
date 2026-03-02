@@ -37,17 +37,19 @@ export async function POST(request: NextRequest) {
       .update({ verified: true })
       .eq('id', otpRecord.id);
 
-    // Check if user exists with this phone
-    const { data: existingUsers } = await admin.auth.admin.listUsers();
-    const existingUser = existingUsers?.users?.find(
-      (u) => u.phone === cleanPhone || u.user_metadata?.phone === cleanPhone
-    );
+    // Check if user exists with this phone (query profiles directly — O(1), no pagination issues)
+    const { data: existingProfile } = await admin
+      .from('profiles')
+      .select('id')
+      .eq('phone', cleanPhone)
+      .limit(1)
+      .maybeSingle();
 
     let userId: string;
     let isNewUser = false;
 
-    if (existingUser) {
-      userId = existingUser.id;
+    if (existingProfile) {
+      userId = existingProfile.id;
     } else {
       // Create new user via admin API
       const email = `${cleanPhone}@phone.altech.local`;
@@ -69,10 +71,15 @@ export async function POST(request: NextRequest) {
       isNewUser = true;
     }
 
+    // Get the user's email for magic link generation
+    const userEmail = existingProfile
+      ? (await admin.auth.admin.getUserById(userId)).data.user?.email || `${cleanPhone}@phone.altech.local`
+      : `${cleanPhone}@phone.altech.local`;
+
     // Generate magic link / session token for the user
     const { data: sessionData, error: sessionError } = await admin.auth.admin.generateLink({
       type: 'magiclink',
-      email: existingUser?.email || `${cleanPhone}@phone.altech.local`,
+      email: userEmail,
     });
 
     if (sessionError || !sessionData) {
@@ -85,7 +92,7 @@ export async function POST(request: NextRequest) {
       success: true,
       isNewUser,
       userId,
-      email: existingUser?.email || `${cleanPhone}@phone.altech.local`,
+      email: userEmail,
       token_hash: sessionData.properties?.hashed_token,
     });
   } catch (error) {
