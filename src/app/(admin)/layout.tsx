@@ -11,6 +11,7 @@ const adminNavItems = [
   { href: '/admin/shared-cart', label: 'Корзины' },
   { href: '/admin/stock', label: 'Склад' },
   { href: '/admin/commissions', label: 'Комиссии' },
+  { href: '/admin/promo', label: 'Промокоды' },
   { href: '/admin/analytics', label: 'Аналитика' },
   { href: '/admin/activity', label: 'Журнал' },
   { href: '/admin/products', label: 'Товары' },
