@@ -25,6 +25,11 @@
     "zod": "^4.3.6",
     "zustand": "^5.0.11"
   },
+  "overrides": {
+    "@imgly/background-removal": {
+      "onnxruntime-web": "$onnxruntime-web"
+    }
+  },
   "devDependencies": {
     "@playwright/test": "^1.58.2",
     "@tailwindcss/postcss": "^4",
