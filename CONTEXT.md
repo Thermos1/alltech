@@ -17,7 +17,7 @@
 - [x] Карточка товара: изображения, варианты (объём/ед./цена), спеки (API, ACEA, тип базы), add to cart
 - [x] Корзина: Zustand v5 с persist middleware, localStorage, SSR hydration guard
 - [x] Checkout: валидация форм (Zod), промокоды, бонусы, создание заказа
-- [x] ЮKassa payment: реальный API (POST /v3/payments), тестовый магазин (Shop ID 1291070), webhook
+- [x] ЮKassa payment: реальный API (POST /v3/payments), **production магазин** (Shop ID 1291070), webhook
 - [x] Управление заказами: номера (ALT-YYYY-XXXX), статусы, история
 
 #### Auth & Users
@@ -44,7 +44,7 @@
 - [x] Дата, лимит использований, минимальная сумма
 - [x] Тестовые коды: WELCOME10 (10%), АЛТЕХ500 (500₽)
 
-#### Админ-панель (/admin) — 13 секций admin, 5 manager
+#### Админ-панель (/admin) — 14 секций admin, 5 manager
 - [x] Dashboard: заказы, выручка, новые заказы (admin); заказы, оплаченные, комиссия (manager)
 - [x] Обратный отсчёт замены масла на дашборде и карточке клиента
 - [x] Заказы: таблица с фильтром по статусу + dropdown изменения статуса
@@ -57,6 +57,7 @@
 - [x] Аналитика (/admin/analytics): выручка по месяцам, средний чек, топ товаров/клиентов
 - [x] Журнал (/admin/activity): audit trail
 - [x] Товары, Бренды, Категории — read-only с изображениями
+- [x] **Карточки** (/admin/image-tools): генератор карточек — удаление фона (browser WASM @imgly/background-removal) + AI-распознавание характеристик (Claude Vision API)
 
 #### SIPmind API
 - [x] search-products, check-stock, create-order (Bearer token auth)
@@ -77,7 +78,7 @@
 - [x] Credits: techdab.net + sipmind.net
 
 #### Тесты
-- [x] 428 unit tests (Vitest), 32 suites, 100% API route coverage (33 routes)
+- [x] 438 unit tests (Vitest), 33 suites, 100% API route coverage (34 routes)
 
 #### Инфраструктура
 - [x] Docker standalone build, Coolify на PS.KZ VPS
@@ -86,8 +87,9 @@
 
 ### Что следующее
 
-- [ ] ЮKassa production (тестовый магазин работает, нужна верификация Сбер ID + HMAC webhook signature)
-- [ ] SMS.ru: зарегистрировать отправителя "ALTECH" (сейчас "Good Remont") — не срочно
+- [x] ЮKassa production — подключена, работает
+- [ ] ЮKassa HMAC webhook signature verification (безопасность)
+- [ ] SMS.ru: sender "Alteh" создан, регистрация Билайн/МТС/Мегафон в процессе. Dev mode (devCode показывается на экране)
 - [ ] СДЭК API интеграция (доставка — сделано в online-trade, можно перенести)
 - [ ] Product CRUD в admin (сейчас read-only)
 - [ ] Подбор фильтров по авто (FAW, SITRAK, HOWO, SHACMAN, HINO)
@@ -140,7 +142,7 @@
 | Secret Key (test) | `test_9KJK8Wkb2V5yh4xEMvgLWi11zYWzigzlalwgudJlIIE` |
 | Webhook URL | `https://altehspec.ru/api/payment/webhook` |
 | Events | payment.succeeded, payment.waiting_for_capture, payment.canceled, refund.succeeded |
-| Mode | **Тестовый** — для production нужна верификация Сбер ID |
+| Mode | **Production** — подключена и работает |
 
 ### Рег.ру (Domain)
 
@@ -217,6 +219,7 @@ NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_K
 YOOKASSA_SHOP_ID=1291070, YOOKASSA_SECRET_KEY=test_9KJK8...
 SMS_RU_API_KEY=7FF81873-...
 SIPMIND_API_SECRET=altech-sipmind-secret-2026
+ANTHROPIC_API_KEY=... (для AI-распознавания характеристик товаров в /admin/image-tools)
 NEXT_PUBLIC_APP_URL=https://altehspec.ru
 ```
 

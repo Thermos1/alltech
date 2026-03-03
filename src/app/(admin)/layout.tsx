@@ -17,6 +17,7 @@ const adminNavItems = [
   { href: '/admin/products', label: 'Товары' },
   { href: '/admin/brands', label: 'Бренды' },
   { href: '/admin/categories', label: 'Категории' },
+  { href: '/admin/image-tools', label: 'Карточки' },
 ];
 
 const managerNavItems = [
