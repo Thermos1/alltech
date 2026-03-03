@@ -12,35 +12,20 @@ const MAX_DISPLAY_SIZE = 800; // max canvas display dimension
 type Point = { x: number; y: number };
 
 export type UseCanvasMaskReturn = {
-  /** Ref for the visible canvas element */
   canvasRef: React.RefObject<HTMLCanvasElement | null>;
-  /** Current brush size in pixels */
   brushSize: number;
-  /** Set brush size (clamped to 10-100) */
   setBrushSize: (size: number) => void;
-  /** Undo last stroke */
   undo: () => void;
-  /** Redo undone stroke */
   redo: () => void;
-  /** Clear all mask strokes */
   clearMask: () => void;
-  /** Whether undo is available */
   canUndo: boolean;
-  /** Whether redo is available */
   canRedo: boolean;
-  /** Get the hidden mask canvas (black=keep, white=inpaint) */
   getMaskCanvas: () => HTMLCanvasElement | null;
-  /** Get canvas with source image at display resolution */
   getImageCanvas: () => HTMLCanvasElement | null;
-  /** Canvas display dimensions */
   displaySize: { width: number; height: number };
-  /** Load an image onto the canvas */
   loadImage: (src: string) => void;
-  /** Whether an image is loaded */
   isImageLoaded: boolean;
-  /** Mouse position for cursor overlay */
   cursorPos: Point | null;
-  /** Whether currently drawing */
   isDrawing: boolean;
 };
 
@@ -50,24 +35,27 @@ export function useCanvasMask(): UseCanvasMaskReturn {
   const imageCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const imageRef = useRef<HTMLImageElement | null>(null);
 
-  const [brushSize, setBrushSizeRaw] = useState(DEFAULT_BRUSH);
+  const [brushSize, setBrushSizeState] = useState(DEFAULT_BRUSH);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const [displaySize, setDisplaySize] = useState({ width: 0, height: 0 });
   const [cursorPos, setCursorPos] = useState<Point | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
 
-  // Undo/redo history (ImageData snapshots of mask canvas)
+  // Use refs for values that event handlers need, to avoid re-creating listeners
+  const brushSizeRef = useRef(DEFAULT_BRUSH);
+  const drawingRef = useRef(false);
+  const lastPointRef = useRef<Point | null>(null);
+
+  // Undo/redo history
   const historyRef = useRef<ImageData[]>([]);
   const historyIndexRef = useRef(-1);
   const [canUndo, setCanUndo] = useState(false);
   const [canRedo, setCanRedo] = useState(false);
 
-  // Drawing state refs (non-reactive for performance)
-  const drawingRef = useRef(false);
-  const lastPointRef = useRef<Point | null>(null);
-
   const setBrushSize = useCallback((size: number) => {
-    setBrushSizeRaw(Math.max(MIN_BRUSH, Math.min(MAX_BRUSH, Math.round(size))));
+    const clamped = Math.max(MIN_BRUSH, Math.min(MAX_BRUSH, Math.round(size)));
+    brushSizeRef.current = clamped;
+    setBrushSizeState(clamped);
   }, []);
 
   const updateHistoryFlags = useCallback(() => {
@@ -78,14 +66,14 @@ export function useCanvasMask(): UseCanvasMaskReturn {
   const saveHistory = useCallback(() => {
     const maskCanvas = maskCanvasRef.current;
     if (!maskCanvas) return;
-    const ctx = maskCanvas.getContext('2d')!;
+    const ctx = maskCanvas.getContext('2d');
+    if (!ctx) return;
     const data = ctx.getImageData(0, 0, maskCanvas.width, maskCanvas.height);
 
     // Truncate forward history
     historyRef.current = historyRef.current.slice(0, historyIndexRef.current + 1);
     historyRef.current.push(data);
 
-    // Limit history size
     if (historyRef.current.length > MAX_HISTORY) {
       historyRef.current.shift();
     }
@@ -93,61 +81,90 @@ export function useCanvasMask(): UseCanvasMaskReturn {
     updateHistoryFlags();
   }, [updateHistoryFlags]);
 
+  // Redraw visible canvas: image + mask overlay
   const redrawOverlay = useCallback(() => {
     const canvas = canvasRef.current;
     const maskCanvas = maskCanvasRef.current;
     const image = imageRef.current;
     if (!canvas || !maskCanvas || !image) return;
 
-    const ctx = canvas.getContext('2d')!;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
 
     // Draw original image
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
 
-    // Draw semi-transparent magenta mask overlay
-    const overlayCanvas = document.createElement('canvas');
-    overlayCanvas.width = canvas.width;
-    overlayCanvas.height = canvas.height;
-    const overlayCtx = overlayCanvas.getContext('2d')!;
+    // Read mask pixel data to find white areas and tint them
+    const maskCtx = maskCanvas.getContext('2d');
+    if (!maskCtx) return;
+    const maskData = maskCtx.getImageData(0, 0, maskCanvas.width, maskCanvas.height);
 
-    // Copy mask and colorize
-    overlayCtx.drawImage(maskCanvas, 0, 0);
-    overlayCtx.globalCompositeOperation = 'source-in';
-    overlayCtx.fillStyle = MASK_COLOR;
-    overlayCtx.fillRect(0, 0, overlayCanvas.width, overlayCanvas.height);
+    // Create overlay only where mask is white
+    const overlay = ctx.createImageData(canvas.width, canvas.height);
+    for (let i = 0; i < maskData.data.length; i += 4) {
+      // Mask is white where user painted (R=255)
+      if (maskData.data[i] > 128) {
+        overlay.data[i] = 255;     // R
+        overlay.data[i + 1] = 45;  // G
+        overlay.data[i + 2] = 120; // B
+        overlay.data[i + 3] = 102; // A (0.4 * 255)
+      }
+      // else leave transparent (0,0,0,0)
+    }
 
-    ctx.drawImage(overlayCanvas, 0, 0);
+    ctx.putImageData(overlay, 0, 0, 0, 0, canvas.width, canvas.height);
+
+    // putImageData replaces pixels, so we need to composite properly
+    // Let's use a temp canvas approach instead
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+    // Draw overlay onto a temp canvas, then composite
+    const tempCanvas = document.createElement('canvas');
+    tempCanvas.width = canvas.width;
+    tempCanvas.height = canvas.height;
+    const tempCtx = tempCanvas.getContext('2d')!;
+    tempCtx.putImageData(overlay, 0, 0);
+
+    ctx.globalAlpha = 1;
+    ctx.drawImage(tempCanvas, 0, 0);
   }, []);
 
-  const drawBrushStroke = useCallback((x: number, y: number) => {
+  // Draw a circle on the mask canvas at (x, y)
+  const drawAtPoint = useCallback((x: number, y: number) => {
     const maskCanvas = maskCanvasRef.current;
     if (!maskCanvas) return;
-    const ctx = maskCanvas.getContext('2d')!;
+    const ctx = maskCanvas.getContext('2d');
+    if (!ctx) return;
+    const radius = brushSizeRef.current / 2;
     ctx.fillStyle = '#FFFFFF';
     ctx.beginPath();
-    ctx.arc(x, y, brushSize / 2, 0, Math.PI * 2);
+    ctx.arc(x, y, radius, 0, Math.PI * 2);
     ctx.fill();
-  }, [brushSize]);
+  }, []);
 
+  // Interpolate between two points and draw
   const interpolateAndDraw = useCallback((from: Point, to: Point) => {
     const dx = to.x - from.x;
     const dy = to.y - from.y;
     const dist = Math.sqrt(dx * dx + dy * dy);
-    const steps = Math.max(1, Math.ceil(dist / (brushSize / 4)));
+    const step = Math.max(1, brushSizeRef.current / 4);
+    const steps = Math.max(1, Math.ceil(dist / step));
 
     for (let i = 0; i <= steps; i++) {
       const t = i / steps;
-      drawBrushStroke(from.x + dx * t, from.y + dy * t);
+      drawAtPoint(from.x + dx * t, from.y + dy * t);
     }
     redrawOverlay();
-  }, [brushSize, drawBrushStroke, redrawOverlay]);
+  }, [drawAtPoint, redrawOverlay]);
 
-  // Get canvas-space coordinates from mouse/touch event
+  // Convert mouse/touch event to canvas coordinates
   const getCanvasPoint = useCallback((e: MouseEvent | Touch): Point | null => {
     const canvas = canvasRef.current;
     if (!canvas) return null;
     const rect = canvas.getBoundingClientRect();
+    if (rect.width === 0 || rect.height === 0) return null;
     const scaleX = canvas.width / rect.width;
     const scaleY = canvas.height / rect.height;
     return {
@@ -156,27 +173,26 @@ export function useCanvasMask(): UseCanvasMaskReturn {
     };
   }, []);
 
-  // Mouse/touch handlers
+  // Attach event listeners — use refs for mutable state to avoid re-creating
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas || !isImageLoaded) return;
 
     const handleMouseDown = (e: MouseEvent) => {
-      if (e.button !== 0) return; // left click only
+      if (e.button !== 0) return;
       const point = getCanvasPoint(e);
       if (!point) return;
       drawingRef.current = true;
       setIsDrawing(true);
       lastPointRef.current = point;
       saveHistory();
-      drawBrushStroke(point.x, point.y);
+      drawAtPoint(point.x, point.y);
       redrawOverlay();
     };
 
     const handleMouseMove = (e: MouseEvent) => {
       const point = getCanvasPoint(e);
       if (point) setCursorPos(point);
-
       if (!drawingRef.current || !lastPointRef.current || !point) return;
       interpolateAndDraw(lastPointRef.current, point);
       lastPointRef.current = point;
@@ -199,7 +215,9 @@ export function useCanvasMask(): UseCanvasMaskReturn {
     const handleWheel = (e: WheelEvent) => {
       e.preventDefault();
       const delta = e.deltaY > 0 ? -5 : 5;
-      setBrushSize(brushSize + delta);
+      const newSize = Math.max(MIN_BRUSH, Math.min(MAX_BRUSH, brushSizeRef.current + delta));
+      brushSizeRef.current = newSize;
+      setBrushSizeState(newSize);
     };
 
     // Touch handlers
@@ -212,7 +230,7 @@ export function useCanvasMask(): UseCanvasMaskReturn {
       setIsDrawing(true);
       lastPointRef.current = point;
       saveHistory();
-      drawBrushStroke(point.x, point.y);
+      drawAtPoint(point.x, point.y);
       redrawOverlay();
     };
 
@@ -249,7 +267,7 @@ export function useCanvasMask(): UseCanvasMaskReturn {
       canvas.removeEventListener('touchmove', handleTouchMove);
       canvas.removeEventListener('touchend', handleTouchEnd);
     };
-  }, [isImageLoaded, brushSize, getCanvasPoint, drawBrushStroke, interpolateAndDraw, redrawOverlay, saveHistory, setBrushSize, updateHistoryFlags]);
+  }, [isImageLoaded, getCanvasPoint, drawAtPoint, interpolateAndDraw, redrawOverlay, saveHistory, updateHistoryFlags]);
 
   // Keyboard shortcuts (Ctrl+Z / Ctrl+Shift+Z)
   useEffect(() => {
@@ -257,9 +275,9 @@ export function useCanvasMask(): UseCanvasMaskReturn {
       if ((e.metaKey || e.ctrlKey) && e.key === 'z') {
         e.preventDefault();
         if (e.shiftKey) {
-          redo();
+          redoAction();
         } else {
-          undo();
+          undoAction();
         }
       }
     };
@@ -267,23 +285,25 @@ export function useCanvasMask(): UseCanvasMaskReturn {
     return () => window.removeEventListener('keydown', handleKeyDown);
   });
 
-  const undo = useCallback(() => {
+  const undoAction = useCallback(() => {
     if (historyIndexRef.current <= 0) return;
     historyIndexRef.current--;
     const maskCanvas = maskCanvasRef.current;
     if (!maskCanvas) return;
-    const ctx = maskCanvas.getContext('2d')!;
+    const ctx = maskCanvas.getContext('2d');
+    if (!ctx) return;
     ctx.putImageData(historyRef.current[historyIndexRef.current], 0, 0);
     redrawOverlay();
     updateHistoryFlags();
   }, [redrawOverlay, updateHistoryFlags]);
 
-  const redo = useCallback(() => {
+  const redoAction = useCallback(() => {
     if (historyIndexRef.current >= historyRef.current.length - 1) return;
     historyIndexRef.current++;
     const maskCanvas = maskCanvasRef.current;
     if (!maskCanvas) return;
-    const ctx = maskCanvas.getContext('2d')!;
+    const ctx = maskCanvas.getContext('2d');
+    if (!ctx) return;
     ctx.putImageData(historyRef.current[historyIndexRef.current], 0, 0);
     redrawOverlay();
     updateHistoryFlags();
@@ -293,7 +313,9 @@ export function useCanvasMask(): UseCanvasMaskReturn {
     const maskCanvas = maskCanvasRef.current;
     if (!maskCanvas) return;
     saveHistory();
-    const ctx = maskCanvas.getContext('2d')!;
+    const ctx = maskCanvas.getContext('2d');
+    if (!ctx) return;
+    ctx.clearRect(0, 0, maskCanvas.width, maskCanvas.height);
     ctx.fillStyle = '#000000';
     ctx.fillRect(0, 0, maskCanvas.width, maskCanvas.height);
     redrawOverlay();
@@ -312,16 +334,7 @@ export function useCanvasMask(): UseCanvasMaskReturn {
       setDisplaySize({ width: w, height: h });
       imageRef.current = img;
 
-      // Init visible canvas
-      const canvas = canvasRef.current;
-      if (canvas) {
-        canvas.width = w;
-        canvas.height = h;
-        const ctx = canvas.getContext('2d')!;
-        ctx.drawImage(img, 0, 0, w, h);
-      }
-
-      // Init hidden mask canvas (same size, all black)
+      // Init hidden mask canvas (same size, all black = keep everything)
       let maskCanvas = maskCanvasRef.current;
       if (!maskCanvas) {
         maskCanvas = document.createElement('canvas');
@@ -354,24 +367,35 @@ export function useCanvasMask(): UseCanvasMaskReturn {
       historyIndexRef.current = 0;
 
       setIsImageLoaded(true);
+
+      // Draw image onto visible canvas after React renders it
+      // Use requestAnimationFrame to ensure canvasRef is mounted
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          const canvas = canvasRef.current;
+          if (canvas) {
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext('2d');
+            if (ctx) {
+              ctx.drawImage(img, 0, 0, w, h);
+            }
+          }
+        });
+      });
     };
     img.src = src;
   }, []);
 
-  const getMaskCanvas = useCallback(() => {
-    return maskCanvasRef.current;
-  }, []);
-
-  const getImageCanvas = useCallback(() => {
-    return imageCanvasRef.current;
-  }, []);
+  const getMaskCanvas = useCallback(() => maskCanvasRef.current, []);
+  const getImageCanvas = useCallback(() => imageCanvasRef.current, []);
 
   return {
     canvasRef,
     brushSize,
     setBrushSize,
-    undo,
-    redo,
+    undo: undoAction,
+    redo: redoAction,
     clearMask,
     canUndo,
     canRedo,
