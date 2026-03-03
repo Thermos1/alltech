@@ -53,7 +53,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Не удалось отправить SMS' }, { status: 500 });
     }
 
-    return NextResponse.json({ success: true, devCode: process.env.SMS_RU_API_KEY ? undefined : code });
+    // Always return devCode until SMS sender is verified for all operators
+    return NextResponse.json({ success: true, devCode: code });
   } catch (error) {
     console.error('Send OTP error:', error);
     return NextResponse.json({ error: 'Ошибка сервера' }, { status: 500 });
