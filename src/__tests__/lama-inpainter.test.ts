@@ -52,6 +52,10 @@ function createMockCtx(w: number, h: number, rgba: [number, number, number, numb
       width: cw,
       height: ch,
     })),
+    beginPath: vi.fn(),
+    arc: vi.fn(),
+    fill: vi.fn(),
+    fillStyle: '#000000',
     imageSmoothingEnabled: true,
     imageSmoothingQuality: 'high',
   };

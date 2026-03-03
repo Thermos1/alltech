@@ -13,9 +13,14 @@ import * as ort from 'onnxruntime-web';
 
 // CDN for WASM runtime files (avoids bundling in webpack)
 ort.env.wasm.wasmPaths = 'https://cdn.jsdelivr.net/npm/onnxruntime-web@1.21.0/dist/';
+// Run inference in Web Worker so UI doesn't freeze during 1-3s computation
+ort.env.wasm.proxy = true;
+// Use all available CPU cores for parallel WASM execution
+ort.env.wasm.numThreads = typeof navigator !== 'undefined' ? (navigator.hardwareConcurrency ?? 4) : 1;
 
 const MODEL_URL = 'https://huggingface.co/Carve/LaMa-ONNX/resolve/main/lama_fp32.onnx';
 const INPAINT_SIZE = 512;
+const MASK_DILATION_RADIUS = 8; // px — expand mask edges to avoid visible seams
 
 export type InpaintProgress = (stage: 'download' | 'session' | 'inference', pct: number) => void;
 
@@ -117,6 +122,33 @@ function canvasToImageTensor(canvas: HTMLCanvasElement): Float32Array {
   return chw;
 }
 
+/** Dilate mask by radius px to expand edges and avoid visible seams (best practice from IOPaint/Kortex) */
+function dilateMask(canvas: HTMLCanvasElement, radius: number): HTMLCanvasElement {
+  const srcCtx = canvas.getContext('2d')!;
+  const { data, width, height } = srcCtx.getImageData(0, 0, canvas.width, canvas.height);
+
+  const out = document.createElement('canvas');
+  out.width = width;
+  out.height = height;
+  const ctx = out.getContext('2d')!;
+
+  // Copy original mask
+  ctx.drawImage(canvas, 0, 0);
+
+  // Draw filled circle at every white pixel boundary — equivalent to morphological dilation
+  ctx.fillStyle = '#FFFFFF';
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      if (data[(y * width + x) * 4] > 128) {
+        ctx.beginPath();
+        ctx.arc(x, y, radius, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+  }
+  return out;
+}
+
 /** Convert canvas pixels to CHW Float32Array for mask (single channel, binarized) */
 function canvasToMaskTensor(canvas: HTMLCanvasElement): Float32Array {
   const ctx = canvas.getContext('2d')!;
@@ -185,11 +217,14 @@ export async function inpaint(
 
   onProgress?.('inference', 0);
 
-  // 2. Resize to 512x512 for LaMa
-  const resizedImage = resizeCanvas(imageCanvas, INPAINT_SIZE, INPAINT_SIZE);
-  const resizedMask = resizeCanvas(maskCanvas, INPAINT_SIZE, INPAINT_SIZE);
+  // 2. Dilate mask to expand edges (avoids visible seams — best practice from IOPaint)
+  const dilatedMask = dilateMask(maskCanvas, MASK_DILATION_RADIUS);
 
-  // 3. Convert to tensors
+  // 3. Resize to 512x512 for LaMa
+  const resizedImage = resizeCanvas(imageCanvas, INPAINT_SIZE, INPAINT_SIZE);
+  const resizedMask = resizeCanvas(dilatedMask, INPAINT_SIZE, INPAINT_SIZE);
+
+  // 4. Convert to tensors
   const imageData = canvasToImageTensor(resizedImage);
   const maskData = canvasToMaskTensor(resizedMask);
 
@@ -198,16 +233,16 @@ export async function inpaint(
 
   onProgress?.('inference', 30);
 
-  // 4. Run inference
+  // 5. Run inference
   const results = await session.run({ image: imageTensor, mask: maskTensor });
   const outputData = results.output.data as Float32Array;
 
   onProgress?.('inference', 80);
 
-  // 5. Convert output back to canvas (512x512)
+  // 6. Convert output back to canvas (512x512)
   const resultCanvas = outputToCanvas(outputData, INPAINT_SIZE, INPAINT_SIZE);
 
-  // 6. Resize back to original dimensions
+  // 7. Resize back to original dimensions
   const finalCanvas = resizeCanvas(resultCanvas, origWidth, origHeight);
 
   onProgress?.('inference', 100);
