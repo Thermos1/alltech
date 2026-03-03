@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
     });
 
     // Send SMS
-    const sent = await sendSms(cleanPhone, `АЛТЕХ: Ваш код входа: ${code}`);
+    const sent = await sendSms(cleanPhone, `ALTEH: Vash kod: ${code}`);
 
     if (!sent) {
       return NextResponse.json({ error: 'Не удалось отправить SMS' }, { status: 500 });

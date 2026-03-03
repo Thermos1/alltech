@@ -23,6 +23,7 @@ export async function sendSms(phone: string, message: string): Promise<boolean> 
     url.searchParams.set('to', cleanPhone);
     url.searchParams.set('msg', message);
     url.searchParams.set('json', '1');
+    url.searchParams.set('from', process.env.SMS_RU_SENDER || 'Good Remont');
 
     const res = await fetch(url.toString());
     const data = await res.json();

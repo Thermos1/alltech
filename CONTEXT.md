@@ -5,38 +5,95 @@
 
 ## Статус проекта
 
-**Фаза**: MVP (Фаза 1 — каталог + корзина) задеплоен на Coolify
-**Дата**: 2026-02-27
+**Фаза**: Production — полнофункциональный e-commerce
+**Дата**: 2026-03-03
 
 ### Что сделано
 
+#### Core E-commerce
 - [x] Next.js 15 + TypeScript + Tailwind v4 (App Router, standalone output)
-- [x] Supabase проект создан (tylxmgxmsyegqcdfyxsp, eu-central-1)
-- [x] Схема БД: brands, categories, products, product_variants, profiles, orders, order_items, cart_items, promo_codes, banners, vehicle_brands/models/engine_models, product_vehicle_compatibility, referral_events
-- [x] RLS-политики для всех таблиц
-- [x] Сид-данные: 7 брендов, 10 категорий, 35+ продуктов с вариантами (ROLF, KIXX, ХИМАВТО, RhinOIL, Sintec, Volga)
-- [x] Ретро-футуристический дизайн (неон, тёмный фон, стиль постеров 80-90х)
-- [x] Шрифты: Dela Gothic One (заголовки) + Golos Text (текст), кириллица
-- [x] Главная страница: Hero, BrandCarousel, SectionChooser, ValueProps
-- [x] Каталог: /catalog/[section] и /catalog/[section]/[category]
-- [x] Карточка товара: /product/[slug] с VolumeSelector
-- [x] Корзина: Zustand + localStorage, CartDrawer
-- [x] Layout: Header, MobileNav, Footer, ChatFab (WhatsApp)
-- [x] Dockerfile (standalone build) + деплой на Coolify PS.KZ
-- [x] GitHub: https://github.com/Thermos1/alltech (публичный)
+- [x] Supabase проект (tylxmgxmsyegqcdfyxsp, eu-central-1)
+- [x] Каталог: 10 брендов, 12 категорий, 47 товаров, 73 варианта с реальными PNG в Supabase Storage
+- [x] Карточка товара: изображения, варианты (объём/ед./цена), спеки (API, ACEA, тип базы), add to cart
+- [x] Корзина: Zustand v5 с persist middleware, localStorage, SSR hydration guard
+- [x] Checkout: валидация форм (Zod), промокоды, бонусы, создание заказа
+- [x] ЮKassa sandbox payment: полный флоу (инициация → ЮKassa → webhook → статус)
+- [x] Управление заказами: номера (ALT-YYYY-XXXX), статусы, история
+
+#### Auth & Users
+- [x] Customer auth: SMS OTP через SMS.ru (кастомный флоу, /login)
+- [x] Staff auth: email/password через Supabase Auth (/admin-login)
+- [x] RBAC: admin, manager, customer — RLS + middleware
+- [x] Middleware: protected routes, smart redirects по ролям
+- [x] Staff SMS redirect: менеджеры через /login → автоматически в /admin
+
+#### Личный кабинет (/cabinet)
+- [x] Дашборд: приветствие, бонусный баланс, реферальный код, последние заказы
+- [x] Список заказов со статус-бейджами
+- [x] Детали заказа с позициями
+- [x] Настройки профиля (имя, телефон, компания, ИНН)
+
+#### Бонусная система
+- [x] Tiered cashback: Старт 3% → Бронза 5% → Серебро 7% → Золото 10% → Платина 15%
+- [x] Повышение уровня по накопительной сумме покупок
+- [x] Списание бонусов (макс 30% от суммы заказа)
+- [x] Реферальные коды: 500 бонусов рефереру при первой покупке приведённого
+
+#### Промокоды
+- [x] Процентные и фиксированные скидки
+- [x] Дата, лимит использований, минимальная сумма
+- [x] Тестовые коды: WELCOME10 (10%), АЛТЕХ500 (500₽)
+
+#### Админ-панель (/admin) — 13 секций admin, 5 manager
+- [x] Dashboard: заказы, выручка, новые заказы (admin); заказы, оплаченные, комиссия (manager)
+- [x] Обратный отсчёт замены масла на дашборде и карточке клиента
+- [x] Заказы: таблица с фильтром по статусу + dropdown изменения статуса
+- [x] Клиенты: поиск, фильтр по менеджеру/статусу, заметки, прогноз замены масла, WhatsApp
+- [x] Менеджеры: добавление/редактирование, ставки комиссии, выручка
+- [x] Комиссии (/admin/commissions): лог по заказам, группировка по месяцам
+- [x] Промокоды (/admin/promo): CRUD, toggle active, safe delete
+- [x] Корзины (/admin/shared-cart): менеджер → ссылка → WhatsApp → клиент
+- [x] Склад (/admin/stock): таблица вариантов, цветовая индикация, inline-editing, auto-deduction
+- [x] Аналитика (/admin/analytics): выручка по месяцам, средний чек, топ товаров/клиентов
+- [x] Журнал (/admin/activity): audit trail
+- [x] Товары, Бренды, Категории — read-only с изображениями
+
+#### SIPmind API
+- [x] search-products, check-stock, create-order (Bearer token auth)
+
+#### Безопасность
+- [x] Server-side price verification
+- [x] Payment webhook idempotency
+- [x] HTTP security headers (HSTS, X-Frame-Options: DENY, X-Content-Type-Options, Referrer-Policy)
+- [x] Atomic promo code usage (optimistic lock)
+- [x] Self-referral prevention
+
+#### Юридические страницы
+- [x] /privacy, /terms, /offer, /returns (ЮKassa-ready)
+
+#### /about — бизнес-презентация (12 секций)
+- [x] Unit Economics, Product Decisions, Modules, Onboarding, Test Accounts
+- [x] Market Analytics (TAM ~200 млрд), Delivery Economics, Scaling
+- [x] Credits: techdab.net + sipmind.net
+
+#### Тесты
+- [x] 436 unit tests (Vitest), 36 suites, 100% API route coverage (33 routes)
+
+#### Инфраструктура
+- [x] Docker standalone build, Coolify на PS.KZ VPS
+- [x] GitHub Actions auto-deploy on push to main
+- [x] Weekly cron: docker prune + journalctl vacuum
 
 ### Что следующее
 
-- [ ] Подключить реальные изображения товаров (docs/Иконки финал/) → Supabase Storage
-- [ ] Auth: Supabase Auth (телефон OTP + email)
-- [ ] Checkout + ЮKassa оплата (аккаунт ещё не создан)
-- [ ] Личный кабинет (история заказов, профиль)
+- [ ] ЮKassa production (sandbox работает, нужен аккаунт + HMAC webhook signature)
+- [ ] СДЭК API интеграция (доставка — сделано в online-trade, можно перенести)
+- [ ] Product CRUD в admin (сейчас read-only)
 - [ ] Подбор фильтров по авто (FAW, SITRAK, HOWO, SHACMAN, HINO)
-- [ ] Акции, промокоды, бонусная программа, реферальная система
-- [ ] Админ-панель (CRUD товаров, заказов, баннеров)
 - [ ] SEO: generateMetadata, JSON-LD, sitemap.xml
 - [ ] Яндекс.Метрика
-- [ ] AI-виджет (SIPmind интеграция)
+- [ ] 1С интеграция (bidirectional sync)
+- [ ] WhatsApp chat-bot (ссылка корзины менеджера работает, полноценный бот — нет)
 
 ## Инфраструктура
 
@@ -72,11 +129,28 @@
 | Репо | https://github.com/Thermos1/alltech |
 | Видимость | public (для Coolify deploy) |
 | Branch | main |
-| Deploy key | ED25519 `coolify-altech-deploy` (добавлен через gh CLI) |
+| Deploy key | ED25519 `coolify-altech-deploy` |
+
+### Тестовые аккаунты
+
+**Staff (email/password через /admin-login):**
+| Роль | Email | Пароль |
+|------|-------|--------|
+| Admin | admin@altech-store.ru | admin2025 |
+| Manager | manager@altech-store.ru | manager2025 |
+
+**Покупатели (SMS OTP через /login):**
+| Телефон | Имя |
+|---------|-----|
+| +7 900 111-11-11 | Иванов Алексей |
+| +7 900 444-44-44 | Петрова Мария |
+| +7 900 555-55-55 | Сидоров Дмитрий |
 
 ## Контакты компании
 
-- **Компания**: АЛТЕХ (ООО)
+- **Компания**: ООО «АЛТЕХ»
+- **ОГРН**: 1221400010182
+- **ИНН**: 1400013380
 - **Слоган**: Родом из Якутии
 - **Телефоны**: +7 (924) 171-61-22, +7 (914) 274-44-20
 - **Email**: Alltech.dv@gmail.com
@@ -100,8 +174,24 @@
 3. **Zustand + localStorage** — корзина работает без авторизации, синхронизируется при логине
 4. **Product variants** — отдельная таблица для объёмов/упаковок (200л, 20л, розлив)
 5. **Vehicle compatibility** — junction table для подбора фильтров по технике
-6. **Coolify на PS.KZ** — временный хостинг на сервере Allergoscreen
+6. **Coolify на PS.KZ** — хостинг на сервере Allergoscreen
+7. **Route groups** — (shop), (cabinet), (admin), (auth) — изолированные layouts
+8. **Three Supabase clients** — anon (browser), server (SSR cookies), admin (service role)
+9. **RLS + SECURITY DEFINER** — `get_my_role()` функция предотвращает бесконечную рекурсию
+10. **RBAC** — admin, manager, customer — на уровне БД (RLS) + middleware
+11. **Fail-open** — внешний сервис недоступен → платформа продолжает работать
+
+## БД (8 миграций)
+
+- `001_initial_schema.sql` — базовые таблицы
+- `002_rls_policies.sql` — RLS-политики
+- `003_bonus_tiers.sql` — tiered бонусная система
+- `004_promo_codes.sql` — промокоды
+- `005_crm_fields.sql` — CRM поля (manager_id, commission_rate и т.д.)
+- `006_checkout_validation.sql` — валидация checkout
+- `007_commission_log.sql` — лог комиссий
+- `008_crm_enhancements.sql` — client_notes, activity_log, shared_carts, decrement_stock()
 
 ---
 
-*Последнее обновление: 2026-02-27*
+*Последнее обновление: 2026-03-03*
