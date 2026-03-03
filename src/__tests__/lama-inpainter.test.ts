@@ -143,7 +143,7 @@ describe('lama-inpainter', () => {
 
   it('sets WASM paths to CDN', async () => {
     const ort = await import('onnxruntime-web');
-    expect(ort.env.wasm.wasmPaths).toBe('https://cdn.jsdelivr.net/npm/onnxruntime-web@1.24.2/dist/');
+    expect(ort.env.wasm.wasmPaths).toBe('https://cdn.jsdelivr.net/npm/onnxruntime-web@1.21.0/dist/');
   });
 
   it('creates session with WASM provider on first inpaint call', async () => {

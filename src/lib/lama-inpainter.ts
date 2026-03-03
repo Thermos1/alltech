@@ -12,7 +12,7 @@
 import * as ort from 'onnxruntime-web';
 
 // CDN for WASM runtime files (avoids bundling in webpack)
-ort.env.wasm.wasmPaths = 'https://cdn.jsdelivr.net/npm/onnxruntime-web@1.24.2/dist/';
+ort.env.wasm.wasmPaths = 'https://cdn.jsdelivr.net/npm/onnxruntime-web@1.21.0/dist/';
 
 const MODEL_URL = 'https://huggingface.co/Carve/LaMa-ONNX/resolve/main/lama_fp32.onnx';
 const INPAINT_SIZE = 512;

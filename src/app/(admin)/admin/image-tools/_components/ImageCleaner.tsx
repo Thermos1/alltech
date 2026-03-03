@@ -177,6 +177,12 @@ export default function ImageCleaner({ onCleaned }: Props) {
       {/* EDITING: Canvas + toolbar */}
       {status === 'editing' && mask.isImageLoaded && (
         <div className="space-y-3">
+          {/* Hint */}
+          <div className="flex items-center gap-3 rounded-lg bg-accent-cyan/10 border border-accent-cyan/20 px-4 py-3">
+            <span className="text-sm text-accent-cyan">
+              Закрасьте кистью то, что хотите удалить (бейджи, логотипы, надписи). Розовый = будет удалено.
+            </span>
+          </div>
           {/* Toolbar */}
           <div className="flex items-center gap-4 flex-wrap rounded-lg bg-bg-secondary px-4 py-3">
             {/* Brush size */}

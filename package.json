@@ -16,7 +16,7 @@
     "@supabase/supabase-js": "^2.98.0",
     "framer-motion": "^12.34.3",
     "next": "16.1.6",
-    "onnxruntime-web": "^1.24.2",
+    "onnxruntime-web": "1.21.0",
     "pdf-lib": "^1.17.1",
     "react": "19.2.3",
     "react-dom": "19.2.3",
@@ -24,11 +24,6 @@
     "sharp": "^0.34.5",
     "zod": "^4.3.6",
     "zustand": "^5.0.11"
-  },
-  "overrides": {
-    "@imgly/background-removal": {
-      "onnxruntime-web": "$onnxruntime-web"
-    }
   },
   "devDependencies": {
     "@playwright/test": "^1.58.2",
