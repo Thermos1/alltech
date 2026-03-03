@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 
+const YOOKASSA_SHOP_ID = process.env.YOOKASSA_SHOP_ID;
+const YOOKASSA_SECRET_KEY = process.env.YOOKASSA_SECRET_KEY;
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://altehspec.ru';
+
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
@@ -38,25 +42,71 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Заказ уже оплачен' }, { status: 400 });
     }
 
-    // Generate mock payment ID
-    const mockPaymentId = `mock_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+    // Idempotency key — prevents duplicate payments for the same order
+    const idempotencyKey = `order_${orderId}_${Date.now()}`;
 
-    // Update order with payment ID
+    if (!YOOKASSA_SHOP_ID || !YOOKASSA_SECRET_KEY) {
+      // Fallback: mock payment (dev mode without YooKassa keys)
+      const mockPaymentId = `mock_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+      await admin
+        .from('orders')
+        .update({ yookassa_payment_id: mockPaymentId, payment_status: 'waiting_for_capture' })
+        .eq('id', orderId);
+
+      return NextResponse.json({
+        paymentUrl: `/checkout/mock-pay?order_id=${orderId}&payment_id=${mockPaymentId}&amount=${order.total}`,
+        paymentId: mockPaymentId,
+      });
+    }
+
+    // Create payment via YooKassa API
+    const auth = Buffer.from(`${YOOKASSA_SHOP_ID}:${YOOKASSA_SECRET_KEY}`).toString('base64');
+
+    const yooRes = await fetch('https://api.yookassa.ru/v3/payments', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Basic ${auth}`,
+        'Idempotence-Key': idempotencyKey,
+      },
+      body: JSON.stringify({
+        amount: {
+          value: Number(order.total).toFixed(2),
+          currency: 'RUB',
+        },
+        confirmation: {
+          type: 'redirect',
+          return_url: `${APP_URL}/cabinet/orders?paid=${order.order_number}`,
+        },
+        capture: true,
+        description: `Заказ №${order.order_number} — АЛТЕХ`,
+        metadata: {
+          order_id: orderId,
+          order_number: order.order_number,
+        },
+      }),
+    });
+
+    if (!yooRes.ok) {
+      const errBody = await yooRes.text();
+      console.error('YooKassa API error:', yooRes.status, errBody);
+      return NextResponse.json({ error: 'Ошибка платёжной системы' }, { status: 502 });
+    }
+
+    const payment = await yooRes.json();
+
+    // Save YooKassa payment ID to order
     await admin
       .from('orders')
       .update({
-        yookassa_payment_id: mockPaymentId,
-        payment_status: 'waiting_for_capture',
+        yookassa_payment_id: payment.id,
+        payment_status: 'pending',
       })
       .eq('id', orderId);
 
-    // In real ЮKassa: create payment via API, return confirmation URL
-    // For demo: redirect to mock payment page
-    const paymentUrl = `/checkout/mock-pay?order_id=${orderId}&payment_id=${mockPaymentId}&amount=${order.total}`;
-
     return NextResponse.json({
-      paymentUrl,
-      paymentId: mockPaymentId,
+      paymentUrl: payment.confirmation.confirmation_url,
+      paymentId: payment.id,
     });
   } catch (error) {
     console.error('Payment create error:', error);
