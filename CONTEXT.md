@@ -17,11 +17,11 @@
 - [x] Карточка товара: изображения, варианты (объём/ед./цена), спеки (API, ACEA, тип базы), add to cart
 - [x] Корзина: Zustand v5 с persist middleware, localStorage, SSR hydration guard
 - [x] Checkout: валидация форм (Zod), промокоды, бонусы, создание заказа
-- [x] ЮKassa sandbox payment: полный флоу (инициация → ЮKassa → webhook → статус)
+- [x] ЮKassa payment: реальный API (POST /v3/payments), тестовый магазин (Shop ID 1291070), webhook
 - [x] Управление заказами: номера (ALT-YYYY-XXXX), статусы, история
 
 #### Auth & Users
-- [x] Customer auth: SMS OTP через SMS.ru (кастомный флоу, /login)
+- [x] Customer auth: SMS OTP через SMS.ru (реальные SMS, Latin text, sender "Good Remont", /login)
 - [x] Staff auth: email/password через Supabase Auth (/admin-login)
 - [x] RBAC: admin, manager, customer — RLS + middleware
 - [x] Middleware: protected routes, smart redirects по ролям
@@ -77,7 +77,7 @@
 - [x] Credits: techdab.net + sipmind.net
 
 #### Тесты
-- [x] 436 unit tests (Vitest), 36 suites, 100% API route coverage (33 routes)
+- [x] 428 unit tests (Vitest), 32 suites, 100% API route coverage (33 routes)
 
 #### Инфраструктура
 - [x] Docker standalone build, Coolify на PS.KZ VPS
@@ -86,7 +86,8 @@
 
 ### Что следующее
 
-- [ ] ЮKassa production (sandbox работает, нужен аккаунт + HMAC webhook signature)
+- [ ] ЮKassa production (тестовый магазин работает, нужна верификация Сбер ID + HMAC webhook signature)
+- [ ] SMS.ru: зарегистрировать отправителя "ALTECH" (сейчас "Good Remont") — не срочно
 - [ ] СДЭК API интеграция (доставка — сделано в online-trade, можно перенести)
 - [ ] Product CRUD в admin (сейчас read-only)
 - [ ] Подбор фильтров по авто (FAW, SITRAK, HOWO, SHACMAN, HINO)
@@ -120,7 +121,35 @@
 | API Token (write) | `3\|Q0uWpHphaUL6GBFRAeVkc8E6TpbNrMPbmbDIyIu2e2de259b` |
 | Проект UUID | `hk0kk8c4go0k8ogccwo0sko4` |
 | App UUID | `l04k0oo4oc8sg8g88gcc4g44` |
-| Домен | `http://l04k0oo4oc8sg8g88gcc4g44.94.247.130.164.sslip.io` |
+| Домен | `https://altehspec.ru` (SSL Let's Encrypt) |
+
+### SMS.ru (SMS OTP)
+
+| Параметр | Значение |
+|----------|---------|
+| API ID | `7FF81873-1D80-9362-9492-008596DF3FD8` |
+| Sender | `Good Remont` (ООО "Умный ремонт") |
+| Баланс | ~580₽ (8.80₽/SMS) |
+| Текст OTP | `ALTEH: Vash kod: XXXX` (Latin — Cyrillic блокируется спам-фильтром) |
+
+### ЮKassa (Payment)
+
+| Параметр | Значение |
+|----------|---------|
+| Shop ID | `1291070` |
+| Secret Key (test) | `test_9KJK8Wkb2V5yh4xEMvgLWi11zYWzigzlalwgudJlIIE` |
+| Webhook URL | `https://altehspec.ru/api/payment/webhook` |
+| Events | payment.succeeded, payment.waiting_for_capture, payment.canceled, refund.succeeded |
+| Mode | **Тестовый** — для production нужна верификация Сбер ID |
+
+### Рег.ру (Domain)
+
+| Параметр | Значение |
+|----------|---------|
+| Домен | `altehspec.ru` |
+| DNS | A-record → 94.247.130.164 |
+| SSL | Let's Encrypt (auto-renew via Coolify/Traefik) |
+| Доступ | Alltech.dv@gmail.com / Levaf2015 |
 
 ### GitHub
 
@@ -180,6 +209,16 @@
 9. **RLS + SECURITY DEFINER** — `get_my_role()` функция предотвращает бесконечную рекурсию
 10. **RBAC** — admin, manager, customer — на уровне БД (RLS) + middleware
 11. **Fail-open** — внешний сервис недоступен → платформа продолжает работать
+
+## Env Variables (production Coolify)
+
+```
+NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY
+YOOKASSA_SHOP_ID=1291070, YOOKASSA_SECRET_KEY=test_9KJK8...
+SMS_RU_API_KEY=7FF81873-...
+SIPMIND_API_SECRET=altech-sipmind-secret-2026
+NEXT_PUBLIC_APP_URL=https://altehspec.ru
+```
 
 ## БД (8 миграций)
 

@@ -1,8 +1,9 @@
 /**
  * SMS.ru API client for sending OTP codes.
- * Uses GET API: https://sms.ru/api/send?api_id=XXX&to=79241716122&msg=Код:1234&json=1
+ * Uses GET API: https://sms.ru/sms/send?api_id=XXX&to=79241716122&msg=Kod:1234&json=1
  *
  * When SMS_RU_API_KEY is not set, logs the code to console (dev mode).
+ * Sender: "Good Remont" (verified on SMS.ru for ООО "Умный ремонт").
  */
 
 const SMS_RU_API_KEY = process.env.SMS_RU_API_KEY;
@@ -28,8 +29,18 @@ export async function sendSms(phone: string, message: string): Promise<boolean> 
     const res = await fetch(url.toString());
     const data = await res.json();
 
-    // SMS.ru returns { status: "OK" } on success
+    // Log full response for delivery debugging
+    console.log(`[SMS] Response for ${cleanPhone}:`, JSON.stringify(data));
+
+    // SMS.ru returns { status: "OK", sms: { "79xx...": { status: "OK", sms_id: "..." } } }
+    // Check both overall status AND per-number status
     if (data.status === 'OK') {
+      // Check per-number delivery status (204 = operator not activated for sender)
+      const smsInfo = data.sms?.[cleanPhone];
+      if (smsInfo && smsInfo.status_code && smsInfo.status_code !== 100) {
+        console.error(`[SMS] Per-number error for ${cleanPhone}: code=${smsInfo.status_code}, status=${smsInfo.status}`);
+        return false;
+      }
       return true;
     }
 
