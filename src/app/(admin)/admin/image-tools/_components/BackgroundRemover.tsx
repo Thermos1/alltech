@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { removeBackground, type Config } from '@imgly/background-removal';
 
 type RecognizedProduct = {
@@ -22,10 +22,11 @@ const BASE_TYPE_LABELS: Record<string, string> = {
 };
 
 type Props = {
+  initialCleanedImage?: string | null;
   onProcessed?: (imageBase64: string, recognized: RecognizedProduct | null) => void;
 };
 
-export default function BackgroundRemover({ onProcessed }: Props) {
+export default function BackgroundRemover({ initialCleanedImage, onProcessed }: Props) {
   const [originalUrl, setOriginalUrl] = useState<string | null>(null);
   const [processedUrl, setProcessedUrl] = useState<string | null>(null);
   const [processedBlob, setProcessedBlob] = useState<Blob | null>(null);
@@ -36,6 +37,23 @@ export default function BackgroundRemover({ onProcessed }: Props) {
   const [recognized, setRecognized] = useState<RecognizedProduct | null>(null);
 
   const inputRef = useRef<HTMLInputElement>(null);
+  const cleanedImageUsedRef = useRef<string | null>(null);
+
+  // Auto-load cleaned image from ImageCleaner tab
+  useEffect(() => {
+    if (initialCleanedImage && initialCleanedImage !== cleanedImageUsedRef.current && !originalUrl) {
+      cleanedImageUsedRef.current = initialCleanedImage;
+      setOriginalUrl(initialCleanedImage);
+      // Convert base64 data URL to File and process
+      fetch(initialCleanedImage)
+        .then(res => res.blob())
+        .then(blob => {
+          const file = new File([blob], 'cleaned-image.png', { type: 'image/png' });
+          handleFile(file);
+        })
+        .catch(err => console.error('Failed to load cleaned image:', err));
+    }
+  }, [initialCleanedImage, originalUrl]);
 
   const handleFile = useCallback(async (file: File) => {
     if (!file.type.startsWith('image/')) return;

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import ImageCleaner from './_components/ImageCleaner';
 import BackgroundRemover from './_components/BackgroundRemover';
 import CardConstructor from './_components/CardConstructor';
 import CarouselConstructor from './_components/CarouselConstructor';
@@ -15,16 +16,20 @@ type RecognizedProduct = {
   volume?: string;
 };
 
-type Tab = 'bg-remove' | 'card' | 'carousel';
+type Tab = 'cleanup' | 'bg-remove' | 'card' | 'carousel';
 
 const TABS: { id: Tab; label: string }[] = [
+  { id: 'cleanup', label: 'Очистка' },
   { id: 'bg-remove', label: 'Удаление фона' },
   { id: 'card', label: 'Карточка' },
   { id: 'carousel', label: 'Карусель' },
 ];
 
 export default function ImageToolsPage() {
-  const [activeTab, setActiveTab] = useState<Tab>('bg-remove');
+  const [activeTab, setActiveTab] = useState<Tab>('cleanup');
+
+  // Cleaned image from ImageCleaner → BackgroundRemover
+  const [cleanedImageBase64, setCleanedImageBase64] = useState<string | null>(null);
 
   // Shared state from background remover → constructors
   const [processedImageBase64, setProcessedImageBase64] = useState<string | null>(null);
@@ -55,7 +60,16 @@ export default function ImageToolsPage() {
         ))}
       </div>
 
-      {/* Hint when data available */}
+      {/* Hint: cleanup done */}
+      {cleanedImageBase64 && activeTab === 'cleanup' && (
+        <div className="flex items-center gap-3 rounded-lg bg-accent-yellow/10 border border-accent-yellow/20 px-4 py-3">
+          <span className="text-sm text-accent-yellow">
+            Изображение очищено! Переключитесь на «Удаление фона» для продолжения.
+          </span>
+        </div>
+      )}
+
+      {/* Hint: bg-remove done */}
       {processedImageBase64 && activeTab === 'bg-remove' && (
         <div className="flex items-center gap-3 rounded-lg bg-accent-yellow/10 border border-accent-yellow/20 px-4 py-3">
           <span className="text-sm text-accent-yellow">
@@ -66,8 +80,16 @@ export default function ImageToolsPage() {
 
       {/* Tab content */}
       <div>
+        {activeTab === 'cleanup' && (
+          <ImageCleaner
+            onCleaned={(imageBase64) => {
+              setCleanedImageBase64(imageBase64);
+            }}
+          />
+        )}
         {activeTab === 'bg-remove' && (
           <BackgroundRemover
+            initialCleanedImage={cleanedImageBase64}
             onProcessed={(imageBase64, recognized) => {
               setProcessedImageBase64(imageBase64);
               setRecognizedData(recognized);

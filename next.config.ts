@@ -11,6 +11,14 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  serverExternalPackages: ['onnxruntime-web'],
+  turbopack: {
+    resolveAlias: {
+      fs: { browser: './src/lib/empty-module.ts' },
+      path: { browser: './src/lib/empty-module.ts' },
+      crypto: { browser: './src/lib/empty-module.ts' },
+    },
+  },
   images: {
     remotePatterns: [
       {
