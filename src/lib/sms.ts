@@ -3,7 +3,7 @@
  * Uses GET API: https://sms.ru/sms/send?api_id=XXX&to=79241716122&msg=Kod:1234&json=1
  *
  * When SMS_RU_API_KEY is not set, logs the code to console (dev mode).
- * Sender: "Good Remont" (verified on SMS.ru for ООО "Умный ремонт").
+ * Sender: "Alteh" (approved on SMS.ru for Beeline).
  */
 
 const SMS_RU_API_KEY = process.env.SMS_RU_API_KEY;
@@ -24,7 +24,7 @@ export async function sendSms(phone: string, message: string): Promise<boolean> 
     url.searchParams.set('to', cleanPhone);
     url.searchParams.set('msg', message);
     url.searchParams.set('json', '1');
-    url.searchParams.set('from', process.env.SMS_RU_SENDER || 'Good Remont');
+    url.searchParams.set('from', process.env.SMS_RU_SENDER || 'Alteh');
 
     const res = await fetch(url.toString());
     const data = await res.json();
