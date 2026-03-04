@@ -40,8 +40,8 @@ export default function AboutPage() {
             height={37}
             className="h-9 w-auto md:h-11"
           />
-          <span className="rounded-full bg-accent-magenta/15 border border-accent-magenta/30 px-3 py-0.5 text-xs font-bold uppercase tracking-wider text-accent-magenta">
-            Pilot
+          <span className="rounded-full bg-green-500/15 border border-green-500/30 px-3 py-0.5 text-xs font-bold uppercase tracking-wider text-green-400">
+            Live
           </span>
         </div>
         <h1 className="font-display text-2xl md:text-3xl lg:text-4xl text-text-primary mb-4 leading-tight">
@@ -234,9 +234,9 @@ export default function AboutPage() {
               alternative: 'Клиент сам ищет товары: долго, ошибки, уход к конкуренту. Менеджер диктует по телефону: неэффективно при 50+ клиентах.',
             },
             {
-              decision: 'Песочница ЮKassa вместо заглушки',
-              why: 'Реальный платёжный flow: инициация — страница оплаты — webhook — статус. Для запуска в продакшн — только поменять ключи. Ноль доработок.',
-              alternative: 'Мок-оплата с кнопкой «Оплачено»: не даёт понимания реального UX. Требует переписывания при интеграции.',
+              decision: 'ЮKassa — полный платёжный цикл',
+              why: 'Полноценная оплата через ЮKassa: инициация — страница оплаты — webhook — автоматическое обновление статуса. Банковские карты, СБП, SberPay. Бонусы начисляются после оплаты.',
+              alternative: 'Оплата при получении: потери на невыкупах 15-25%. Онлайн-оплата гарантирует 100% конверсию заказов.',
             },
           ].map((item) => (
             <div key={item.decision} className="rounded-xl border border-border-subtle bg-bg-card p-5">
@@ -266,8 +266,8 @@ export default function AboutPage() {
             { title: 'Каталог товаров', description: 'Категоризация по типам ГСМ, фильтры по бренду и вязкости. Карточки с допусками, вариантами фасовок и ценами. Розлив масла с шагом 5 литров.', status: 'live' as const },
             { title: 'Поиск по каталогу', description: 'Мгновенный поиск по названию, бренду, вязкости и допускам. Доступен из шапки на любой странице.', status: 'live' as const },
             { title: 'Корзина и повтор заказа', description: 'Добавление в один клик, редактирование количества, автопересчёт. Повтор предыдущего заказа одной кнопкой.', status: 'live' as const },
-            { title: 'SMS-авторизация', description: 'Вход и регистрация клиентов по SMS-коду. Отдельный вход для сотрудников. Менеджеры входят по телефону — автоматический редирект в панель.', status: 'live' as const },
-            { title: 'Оформление и оплата', description: 'Форма с валидацией, применение промокодов и бонусов, расчёт итога. Оплата через песочницу ЮKassa (полный flow, готов к запуску).', status: 'live' as const },
+            { title: 'SMS-авторизация', description: 'Вход и регистрация клиентов по SMS-коду через SMS.ru (отправитель OOO_Alteh). Отдельный вход для сотрудников. Менеджеры входят по телефону — автоматический редирект в панель.', status: 'live' as const },
+            { title: 'Оформление и оплата', description: 'Форма с валидацией, применение промокодов и бонусов, расчёт итога. Онлайн-оплата через ЮKassa: банковские карты, СБП, SberPay. Webhook-уведомления, автообновление статуса.', status: 'live' as const },
             { title: 'Личный кабинет', description: 'История заказов со статусами, бонусный уровень с прогресс-баром, реферальный код, повтор заказа, профиль.', status: 'live' as const },
             { title: 'Тиерная бонусная программа', description: 'Растущий кэшбэк: Старт 3% — Бронза 5% — Серебро 7% — Золото 10% — Платина 15%. Уровень растёт с накоплением покупок.', status: 'live' as const },
             { title: 'Промокоды', description: 'Процентные и фиксированные скидки. Контроль сроков, лимитов использования и минимальной суммы.', status: 'live' as const },
@@ -277,7 +277,11 @@ export default function AboutPage() {
             { title: 'Аналитика', description: 'Выручка по месяцам, средний чек, топ товаров, топ клиентов, менеджеры по выручке, заказы по статусам. CSS-only графики без внешних библиотек.', status: 'live' as const },
             { title: 'Журнал действий', description: 'Аудит: кто назначил менеджера, кто создал корзину, кто оплатил заказ. Таблица: дата, автор, действие, детали. Логирование в 6 API-эндпоинтах.', status: 'live' as const },
             { title: 'Комиссии менеджеров', description: 'Автоматическое начисление с каждого оплаченного заказа. Разбивка по месяцам, история по заказам, номер и сумма. Настраиваемая ставка (по умолчанию 3%).', status: 'live' as const },
-            { title: 'Панель администратора', description: 'Два уровня: Админ — 12 разделов (заказы, клиенты, менеджеры, корзины, склад, аналитика, журнал, комиссии, товары, бренды, категории). Менеджер — 5 разделов.', status: 'live' as const },
+            { title: 'Панель администратора', description: 'Два уровня: Админ — 14 разделов (заказы, клиенты, менеджеры, корзины, склад, аналитика, журнал, комиссии, товары, бренды, категории, промокоды, AI-инструменты). Менеджер — 5 разделов.', status: 'live' as const },
+            { title: 'AI Генератор карточек', description: 'Загрузите фото + опишите товар — AI создаёт план слайдов, генерирует готовые PNG/PDF. 12 типов слайдов, 4 стиля, 6 платформ (WB, Ozon, Shopify, Instagram, Telegram, Pinterest). Satori + Sharp рендеринг.', status: 'live' as const },
+            { title: 'Конструктор карточек', description: 'Ручной режим: выбор стиля, платформы, элементов. Настройка цветов, бейджи, характеристики. Масштаб и позиционирование фото. Экспорт PNG/JPG/PDF.', status: 'live' as const },
+            { title: 'Конструктор каруселей', description: '7 типов слайдов для товарных каруселей: обложка, характеристики, преимущества, совместимость, варианты, применение, гарантия. AI-генерация текстов через Claude.', status: 'live' as const },
+            { title: 'Удаление фона / Очистка', description: 'Удаление фона с фото товаров (@imgly/background-removal, WASM, 100% в браузере). Очистка карточек от водяных знаков и бейджей конкурентов.', status: 'live' as const },
             { title: 'REST API (FastAPI)', description: 'Серверный бэкенд на FastAPI: эндпоинты для внешних систем, поиск товаров, проверка остатков, создание заказов. Bearer-авторизация, Pydantic-валидация.', status: 'live' as const },
             { title: 'SIPmind — голосовой AI', description: 'Потенциальная интеграция: клиент звонит — AI-ассистент принимает, находит товар и оформляет заказ через подготовленный API.', status: 'next' as const },
           ].map((m) => (
@@ -330,11 +334,11 @@ export default function AboutPage() {
               </div>
               <div className="flex gap-3">
                 <span className="text-accent-yellow font-bold shrink-0">3.</span>
-                <p>Нажмите <Link href="/login" className="text-accent-cyan hover:text-accent-yellow transition-colors">Войти</Link>. Введите <span className="text-text-primary font-medium">любой номер телефона</span> (можно выдуманный) — SMS-код показывается прямо на экране (демо-режим).</p>
+                <p>Нажмите <Link href="/login" className="text-accent-cyan hover:text-accent-yellow transition-colors">Войти</Link>. Введите <span className="text-text-primary font-medium">свой номер телефона</span> — на него придёт SMS-код от отправителя OOO_Alteh. Вход за 15 секунд.</p>
               </div>
               <div className="flex gap-3">
                 <span className="text-accent-yellow font-bold shrink-0">4.</span>
-                <p>Заполните форму заказа. Попробуйте промокод <span className="font-mono text-text-primary">ALTECH10</span>. Пройдите оплату через песочницу ЮKassa (тестовая карта — любые цифры).</p>
+                <p>Заполните форму заказа. Попробуйте промокод <span className="font-mono text-text-primary">ALTECH10</span>. Оплатите через ЮKassa — банковская карта, СБП или SberPay.</p>
               </div>
               <div className="flex gap-3">
                 <span className="text-accent-yellow font-bold shrink-0">5.</span>
@@ -412,9 +416,13 @@ export default function AboutPage() {
                 <span className="text-accent-magenta font-bold shrink-0">5.</span>
                 <p><Link href="/admin/managers" className="text-accent-cyan hover:text-accent-yellow transition-colors">«Менеджеры»</Link> — создать нового или назначить из клиентов. <Link href="/admin/activity" className="text-accent-cyan hover:text-accent-yellow transition-colors">«Журнал»</Link> — полный аудит действий в системе.</p>
               </div>
+              <div className="flex gap-3">
+                <span className="text-accent-magenta font-bold shrink-0">6.</span>
+                <p>Откройте <Link href="/admin/image-tools" className="text-accent-cyan hover:text-accent-yellow transition-colors">«AI-инструменты»</Link> — генератор карточек для маркетплейсов: AI создаёт план слайдов, 4 стиля, 6 платформ. Удаление фона с фото, очистка от водяных знаков.</p>
+              </div>
             </div>
             <p className="text-[10px] text-text-muted mt-4 border-t border-accent-magenta/10 pt-3">
-              Обратите внимание: админ видит ВСЕ заказы, клиентов, корзины и действия. 12 разделов панели управления. Может создать менеджера с нуля или назначить из клиентов.
+              Обратите внимание: админ видит ВСЕ заказы, клиентов, корзины и действия. 14 разделов панели управления + AI-инструменты для создания карточек товаров.
             </p>
           </div>
         </div>
@@ -433,8 +441,8 @@ export default function AboutPage() {
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-accent-yellow"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
               <h3 className="text-sm font-semibold text-accent-yellow">Покупатель</h3>
             </div>
-            <p className="text-xs text-text-secondary mb-2">Телефон: <span className="text-text-primary">любой номер</span></p>
-            <p className="text-[11px] text-text-muted">SMS-код на экране (демо). Аккаунт создаётся автоматически.</p>
+            <p className="text-xs text-text-secondary mb-2">Телефон: <span className="text-text-primary">ваш номер</span></p>
+            <p className="text-[11px] text-text-muted">Реальная SMS от OOO_Alteh. Аккаунт создаётся автоматически.</p>
             <div className="mt-3 flex gap-3 text-[11px]">
               <Link href="/login" className="text-accent-cyan hover:text-accent-yellow transition-colors">Вход →</Link>
               <Link href="/cabinet" className="text-accent-cyan hover:text-accent-yellow transition-colors">Кабинет →</Link>
@@ -485,9 +493,9 @@ export default function AboutPage() {
         <div className="space-y-3">
           {[
             {
-              title: 'ЮKassa — боевой режим',
-              impact: 'Конверсия +25-30%',
-              desc: 'Песочница ЮKassa уже интегрирована с полным flow. Для запуска — зарегистрировать аккаунт ЮKassa и подставить ключи. Ноль доработок в коде.',
+              title: 'Маркировка «Честный знак»',
+              impact: 'Обязательно с 2025',
+              desc: 'Обязательная маркировка моторных масел стартовала в 2025. Интеграция DataMatrix-кодов в чеки ЮKassa и складской учёт — гарантия легальности каждой единицы товара.',
               accent: 'text-accent-yellow',
               bg: 'bg-accent-yellow/10 border-accent-yellow/20',
             },
@@ -931,7 +939,7 @@ export default function AboutPage() {
             { label: 'Бэкенд API', value: 'FastAPI (Python 3.11+), Pydantic v2, async, structlog' },
             { label: 'База данных', value: 'Supabase PostgreSQL 15, Row Level Security, RBAC' },
             { label: 'Авторизация', value: 'SMS OTP + Supabase Auth, JWT, HttpOnly cookies' },
-            { label: 'Оплата', value: 'ЮKassa (песочница), полный webhook flow' },
+            { label: 'Оплата', value: 'ЮKassa production, банковские карты, СБП, SberPay, webhook' },
             { label: 'Деплой', value: 'Docker, GitHub Actions CI/CD, Coolify, zero-downtime' },
           ].map((item, i, arr) => (
             <div
@@ -953,16 +961,16 @@ export default function AboutPage() {
       <section className="mb-8">
         <div className="rounded-2xl border border-accent-yellow/30 bg-gradient-to-br from-accent-yellow/10 to-accent-yellow/5 p-8 md:p-10 text-center">
           <h2 className="font-display text-xl md:text-2xl text-text-primary mb-3">
-            Готовы запустить?
+            Хотите такую же платформу?
           </h2>
           <p className="text-text-secondary text-sm max-w-lg mx-auto mb-6 leading-relaxed">
-            Это пилотная версия с демо-данными и тестовыми аккаунтами.
-            Для настройки под ваш бизнес — реальные товары, цены, сотрудники,
-            боевая оплата — обратитесь в TechDab.
+            АЛТЕХ — работающая платформа с реальными товарами, оплатой и клиентами.
+            Мы делаем white-label версии для B2B-дистрибьюторов любой ниши —
+            запуск за неделю.
           </p>
           <p className="text-text-muted text-xs mb-6">
-            Мы обнулим тестовые данные, настроим ЮKassa, загрузим ваш каталог
-            и создадим аккаунты для сотрудников.
+            Настроим под ваш бизнес: каталог, оплата, CRM, брендинг.
+            Лицензия или заказная разработка — обсудим ваш сценарий.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <a
