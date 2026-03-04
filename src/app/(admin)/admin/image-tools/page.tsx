@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import type { ProductSpec } from '@/lib/card-templates';
 import ImageCleaner from './_components/ImageCleaner';
 import BackgroundRemover from './_components/BackgroundRemover';
@@ -11,6 +11,14 @@ type RecognizedProduct = {
   brand?: string;
   specs?: ProductSpec[];
   subtitle?: string;
+};
+
+export type SlideBufferItem = {
+  id: string;
+  dataUrl: string;
+  source: 'card' | 'upload';
+  label: string;
+  included: boolean;
 };
 
 type Tab = 'cleanup' | 'bg-remove' | 'card' | 'carousel';
@@ -32,6 +40,48 @@ export default function ImageToolsPage() {
   const [processedImageBase64, setProcessedImageBase64] = useState<string | null>(null);
   const [recognizedData, setRecognizedData] = useState<RecognizedProduct | null>(null);
 
+  // Slide buffer (session-level, shared between card → carousel)
+  const [slideBuffer, setSlideBuffer] = useState<SlideBufferItem[]>([]);
+
+  const addToBuffer = useCallback((dataUrl: string, label: string, source: 'card' | 'upload' = 'card') => {
+    setSlideBuffer((prev) => [
+      ...prev,
+      {
+        id: crypto.randomUUID(),
+        dataUrl,
+        source,
+        label,
+        included: true,
+      },
+    ]);
+  }, []);
+
+  const removeFromBuffer = useCallback((id: string) => {
+    setSlideBuffer((prev) => prev.filter((item) => item.id !== id));
+  }, []);
+
+  const toggleSlide = useCallback((id: string) => {
+    setSlideBuffer((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, included: !item.included } : item,
+      ),
+    );
+  }, []);
+
+  const reorderSlide = useCallback((id: string, direction: 'up' | 'down') => {
+    setSlideBuffer((prev) => {
+      const idx = prev.findIndex((item) => item.id === id);
+      if (idx === -1) return prev;
+      const targetIdx = direction === 'up' ? idx - 1 : idx + 1;
+      if (targetIdx < 0 || targetIdx >= prev.length) return prev;
+      const next = [...prev];
+      [next[idx], next[targetIdx]] = [next[targetIdx], next[idx]];
+      return next;
+    });
+  }, []);
+
+  const bufferCount = slideBuffer.length;
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -46,13 +96,18 @@ export default function ImageToolsPage() {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`flex-1 rounded-lg px-4 py-2.5 text-sm font-medium transition-all ${
+            className={`flex-1 rounded-lg px-4 py-2.5 text-sm font-medium transition-all relative ${
               activeTab === tab.id
                 ? 'bg-bg-card text-accent-yellow shadow-sm'
                 : 'text-text-secondary hover:text-text-primary'
             }`}
           >
             {tab.label}
+            {tab.id === 'carousel' && bufferCount > 0 && (
+              <span className="ml-1.5 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-bold rounded-full bg-accent-cyan text-bg-primary">
+                {bufferCount}
+              </span>
+            )}
           </button>
         ))}
       </div>
@@ -97,12 +152,18 @@ export default function ImageToolsPage() {
           <CardConstructor
             initialImage={processedImageBase64}
             initialData={recognizedData}
+            onCardGenerated={(dataUrl, label) => addToBuffer(dataUrl, label, 'card')}
           />
         )}
         {activeTab === 'carousel' && (
           <CarouselConstructor
             initialImage={processedImageBase64}
             initialData={recognizedData}
+            slideBuffer={slideBuffer}
+            onAddToBuffer={(dataUrl, label) => addToBuffer(dataUrl, label, 'upload')}
+            onRemoveFromBuffer={removeFromBuffer}
+            onToggleSlide={toggleSlide}
+            onReorderSlide={reorderSlide}
           />
         )}
       </div>

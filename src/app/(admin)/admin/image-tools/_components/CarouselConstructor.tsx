@@ -4,10 +4,12 @@ import { useState, useRef, useCallback } from 'react';
 import { removeBackground, type Config } from '@imgly/background-removal';
 import { CAROUSEL_SLIDES, DEFAULT_BENEFITS, DEFAULT_COMPATIBILITY, DEFAULT_CERTIFICATIONS, DEFAULT_USAGE_TIPS } from '@/lib/card-templates/carousel';
 import { ALL_STYLES, SPEC_PRESETS, type CardStyleId, type ExportPlatform, type ProductCardData, type ProductSpec, type CardStyleColors } from '@/lib/card-templates';
+import type { SlideBufferItem } from '../page';
 import StyleSelector from './StyleSelector';
 import ColorEditor from './ColorEditor';
 import PlatformSelector from './PlatformSelector';
 import CarouselSlideEditor from './CarouselSlideEditor';
+import SlideBufferStrip from './SlideBufferStrip';
 
 type RecognizedProduct = {
   brand?: string;
@@ -18,9 +20,22 @@ type RecognizedProduct = {
 type Props = {
   initialImage?: string | null;
   initialData?: RecognizedProduct | null;
+  slideBuffer: SlideBufferItem[];
+  onAddToBuffer: (dataUrl: string, label: string) => void;
+  onRemoveFromBuffer: (id: string) => void;
+  onToggleSlide: (id: string) => void;
+  onReorderSlide: (id: string, direction: 'up' | 'down') => void;
 };
 
-export default function CarouselConstructor({ initialImage, initialData }: Props) {
+export default function CarouselConstructor({
+  initialImage,
+  initialData,
+  slideBuffer,
+  onAddToBuffer,
+  onRemoveFromBuffer,
+  onToggleSlide,
+  onReorderSlide,
+}: Props) {
   // Style & platform
   const [style, setStyle] = useState<CardStyleId>('minimalist');
   const [platform, setPlatform] = useState<ExportPlatform>('instagram');
@@ -52,6 +67,10 @@ export default function CarouselConstructor({ initialImage, initialData }: Props
   const [generating, setGenerating] = useState(false);
   const [generatedImages, setGeneratedImages] = useState<{ slideNumber: number; dataUrl: string }[]>([]);
   const [error, setError] = useState('');
+
+  // AI generation
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState('');
 
   const handleImageFile = useCallback(async (file: File) => {
     if (!file.type.startsWith('image/')) return;
@@ -109,6 +128,60 @@ export default function CarouselConstructor({ initialImage, initialData }: Props
   function applyPreset(presetKey: string) {
     const preset = SPEC_PRESETS[presetKey];
     if (preset) updateField('specs', preset.specs.map(s => ({ ...s })));
+  }
+
+  async function handleAiFill() {
+    if (!productData.name) {
+      setAiError('Введите название товара');
+      return;
+    }
+
+    // Check if any carousel fields were modified from defaults
+    const hasContent =
+      (benefits.length > 0 && benefits[0] !== DEFAULT_BENEFITS[0]) ||
+      (compatibility.length > 0 && compatibility[0] !== DEFAULT_COMPATIBILITY[0]) ||
+      (usageTips.length > 0 && usageTips[0] !== DEFAULT_USAGE_TIPS[0]) ||
+      (certifications.length > 0 && certifications[0] !== DEFAULT_CERTIFICATIONS[0]);
+    if (hasContent && !confirm('AI заменит текущие данные. Продолжить?')) {
+      return;
+    }
+
+    setAiLoading(true);
+    setAiError('');
+
+    try {
+      const res = await fetch('/api/admin/cards/ai-carousel', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          productName: productData.name,
+          brand: productData.brand || undefined,
+          specs: productData.specs.length > 0 ? productData.specs : undefined,
+          productDescription: productData.subtitle || undefined,
+        }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        if (res.status === 503) {
+          setAiError('ANTHROPIC_API_KEY не настроен');
+        } else {
+          throw new Error(data.error || `HTTP ${res.status}`);
+        }
+        return;
+      }
+
+      const data = await res.json();
+      if (data.benefits?.length) setBenefits(data.benefits);
+      if (data.compatibility?.length) setCompatibility(data.compatibility);
+      if (data.usageTips?.length) setUsageTips(data.usageTips);
+      if (data.certifications?.length) setCertifications(data.certifications);
+    } catch (err) {
+      console.error('AI carousel error:', err);
+      setAiError(err instanceof Error ? err.message : 'Ошибка AI-генерации');
+    } finally {
+      setAiLoading(false);
+    }
   }
 
   async function handleGenerate(format: 'png' | 'pdf') {
@@ -182,10 +255,44 @@ export default function CarouselConstructor({ initialImage, initialData }: Props
     });
   }
 
+  function downloadBufferSlides() {
+    const included = slideBuffer.filter((item) => item.included);
+    included.forEach((item, i) => {
+      setTimeout(() => {
+        const a = document.createElement('a');
+        a.href = item.dataUrl;
+        a.download = `slide-${i + 1}.png`;
+        a.click();
+      }, i * 200);
+    });
+  }
+
   const currentSlide = CAROUSEL_SLIDES[activeSlide];
+  const includedBufferCount = slideBuffer.filter((item) => item.included).length;
 
   return (
     <div className="space-y-6">
+      {/* Slide buffer strip */}
+      <SlideBufferStrip
+        items={slideBuffer}
+        onAdd={onAddToBuffer}
+        onRemove={onRemoveFromBuffer}
+        onToggle={onToggleSlide}
+        onReorder={onReorderSlide}
+      />
+
+      {/* Download buffer slides button */}
+      {includedBufferCount > 0 && (
+        <div className="flex gap-3">
+          <button
+            onClick={downloadBufferSlides}
+            className="text-sm px-4 py-2 rounded-lg bg-accent-cyan text-bg-primary hover:brightness-110 transition-all"
+          >
+            Скачать буфер ({includedBufferCount} слайдов)
+          </button>
+        </div>
+      )}
+
       {/* Slide tabs */}
       <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
         {CAROUSEL_SLIDES.map((slide, i) => (
@@ -285,7 +392,7 @@ export default function CarouselConstructor({ initialImage, initialData }: Props
                   Скачать все PNG
                 </button>
               </div>
-              <div className="grid grid-cols-7 gap-2">
+              <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-7 gap-2">
                 {generatedImages.map((img, i) => (
                   <div key={i} className="space-y-1">
                     <button
@@ -325,7 +432,7 @@ export default function CarouselConstructor({ initialImage, initialData }: Props
               placeholder="Название товара *"
               className="w-full rounded-lg bg-bg-secondary border border-border-subtle px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:border-accent-yellow focus:outline-none"
             />
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <input type="text" value={productData.brand || ''} onChange={(e) => updateField('brand', e.target.value)}
                 placeholder="Бренд"
                 className="rounded-lg bg-bg-secondary border border-border-subtle px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:border-accent-yellow focus:outline-none"
@@ -335,7 +442,7 @@ export default function CarouselConstructor({ initialImage, initialData }: Props
                 className="rounded-lg bg-bg-secondary border border-border-subtle px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:border-accent-yellow focus:outline-none"
               />
             </div>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <input type="number" value={productData.price || ''} onChange={(e) => updateField('price', Number(e.target.value))}
                 placeholder="Цена"
                 className="rounded-lg bg-bg-secondary border border-border-subtle px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:border-accent-yellow focus:outline-none"
@@ -356,7 +463,7 @@ export default function CarouselConstructor({ initialImage, initialData }: Props
             <div className="flex flex-wrap gap-1">
               {Object.entries(SPEC_PRESETS).map(([key, preset]) => (
                 <button key={key} onClick={() => applyPreset(key)}
-                  className="text-xs px-2.5 py-1 rounded-md bg-bg-secondary border border-border-subtle text-text-secondary hover:border-accent-cyan hover:text-accent-cyan transition-colors"
+                  className="text-xs px-3 py-2 rounded-md bg-bg-secondary border border-border-subtle text-text-secondary hover:border-accent-cyan hover:text-accent-cyan transition-colors"
                 >
                   {preset.label}
                 </button>
@@ -372,7 +479,7 @@ export default function CarouselConstructor({ initialImage, initialData }: Props
                   placeholder="Значение"
                   className="flex-1 rounded-lg bg-bg-secondary border border-border-subtle px-3 py-1.5 text-sm text-text-primary placeholder:text-text-muted focus:border-accent-yellow focus:outline-none"
                 />
-                <button onClick={() => removeSpec(i)} className="px-2 text-text-muted hover:text-accent-magenta transition-colors">&times;</button>
+                <button onClick={() => removeSpec(i)} className="px-3 py-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-text-muted hover:text-accent-magenta transition-colors">&times;</button>
               </div>
             ))}
             {productData.specs.length < 10 && (
@@ -381,6 +488,23 @@ export default function CarouselConstructor({ initialImage, initialData }: Props
               </button>
             )}
           </div>
+
+          {/* AI fill button */}
+          <button
+            onClick={handleAiFill}
+            disabled={aiLoading || !productData.name}
+            className="w-full rounded-lg py-2.5 text-sm font-medium bg-accent-cyan text-bg-primary hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
+          >
+            {aiLoading ? (
+              <>
+                <div className="w-4 h-4 border-2 border-bg-primary border-t-transparent rounded-full animate-spin" />
+                AI генерирует...
+              </>
+            ) : (
+              'Заполнить с AI'
+            )}
+          </button>
+          {aiError && <p className="text-xs text-accent-magenta">{aiError}</p>}
 
           {/* Slide-specific editor */}
           <div className="rounded-xl bg-bg-card border border-border-subtle p-4">

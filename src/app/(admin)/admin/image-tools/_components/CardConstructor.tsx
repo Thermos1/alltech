@@ -19,9 +19,10 @@ type RecognizedProduct = {
 type Props = {
   initialImage?: string | null;
   initialData?: RecognizedProduct | null;
+  onCardGenerated?: (dataUrl: string, label: string) => void;
 };
 
-export default function CardConstructor({ initialImage, initialData }: Props) {
+export default function CardConstructor({ initialImage, initialData, onCardGenerated }: Props) {
   const [style, setStyle] = useState<CardStyleId>('minimalist');
   const [platform, setPlatform] = useState<ExportPlatform>('wb-ozon');
   const [customWidth, setCustomWidth] = useState(1080);
@@ -44,6 +45,7 @@ export default function CardConstructor({ initialImage, initialData }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState('');
+  const [bufferNotice, setBufferNotice] = useState(false);
 
   const handleImageFile = useCallback(async (file: File) => {
     if (!file.type.startsWith('image/')) return;
@@ -139,6 +141,19 @@ export default function CardConstructor({ initialImage, initialData }: Props) {
       a.download = `card-${productData.name.slice(0, 30)}-${platform}.${outputFormat}`;
       a.click();
       URL.revokeObjectURL(url);
+
+      // Add to slide buffer
+      if (onCardGenerated) {
+        const reader = new FileReader();
+        const dataUrl = await new Promise<string>((resolve, reject) => {
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
+        });
+        onCardGenerated(dataUrl, productData.name || 'Карточка');
+        setBufferNotice(true);
+        setTimeout(() => setBufferNotice(false), 3000);
+      }
     } catch (err) {
       console.error('Generation failed:', err);
       setError(err instanceof Error ? err.message : 'Ошибка генерации');
@@ -231,7 +246,7 @@ export default function CardConstructor({ initialImage, initialData }: Props) {
             placeholder="Название товара *"
             className="w-full rounded-lg bg-bg-secondary border border-border-subtle px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:border-accent-yellow focus:outline-none"
           />
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <input type="text" value={productData.brand || ''} onChange={(e) => updateField('brand', e.target.value)}
               placeholder="Бренд"
               className="rounded-lg bg-bg-secondary border border-border-subtle px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:border-accent-yellow focus:outline-none"
@@ -241,7 +256,7 @@ export default function CardConstructor({ initialImage, initialData }: Props) {
               className="rounded-lg bg-bg-secondary border border-border-subtle px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:border-accent-yellow focus:outline-none"
             />
           </div>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <input type="number" value={productData.price || ''} onChange={(e) => updateField('price', Number(e.target.value))}
               placeholder="Цена"
               className="rounded-lg bg-bg-secondary border border-border-subtle px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:border-accent-yellow focus:outline-none"
@@ -262,7 +277,7 @@ export default function CardConstructor({ initialImage, initialData }: Props) {
           <div className="flex flex-wrap gap-1">
             {Object.entries(SPEC_PRESETS).map(([key, preset]) => (
               <button key={key} onClick={() => applyPreset(key)}
-                className="text-xs px-2.5 py-1 rounded-md bg-bg-secondary border border-border-subtle text-text-secondary hover:border-accent-cyan hover:text-accent-cyan transition-colors"
+                className="text-xs px-3 py-2 rounded-md bg-bg-secondary border border-border-subtle text-text-secondary hover:border-accent-cyan hover:text-accent-cyan transition-colors"
               >
                 {preset.label}
               </button>
@@ -278,7 +293,7 @@ export default function CardConstructor({ initialImage, initialData }: Props) {
                 placeholder="Значение"
                 className="flex-1 rounded-lg bg-bg-secondary border border-border-subtle px-3 py-1.5 text-sm text-text-primary placeholder:text-text-muted focus:border-accent-yellow focus:outline-none"
               />
-              <button onClick={() => removeSpec(i)} className="px-2 text-text-muted hover:text-accent-magenta transition-colors">&times;</button>
+              <button onClick={() => removeSpec(i)} className="px-3 py-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-text-muted hover:text-accent-magenta transition-colors">&times;</button>
             </div>
           ))}
           {productData.specs.length < 10 && (
@@ -298,6 +313,12 @@ export default function CardConstructor({ initialImage, initialData }: Props) {
         </button>
 
         {error && <p className="text-sm text-accent-magenta">{error}</p>}
+
+        {bufferNotice && (
+          <p className="text-sm text-green-400 animate-pulse">
+            Добавлено в буфер карусели
+          </p>
+        )}
       </div>
     </div>
   );

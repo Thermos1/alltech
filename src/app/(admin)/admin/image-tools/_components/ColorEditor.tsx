@@ -60,7 +60,7 @@ export default function ColorEditor({ baseColors, customColors, onChange }: Prop
                 type="color"
                 value={getColor(key)}
                 onChange={(e) => setColor(key, e.target.value)}
-                className="w-8 h-8 rounded border border-border-subtle cursor-pointer bg-transparent"
+                className="w-10 h-10 rounded border border-border-subtle cursor-pointer bg-transparent"
               />
               <span className="text-xs text-text-secondary flex-1">{COLOR_LABELS[key]}</span>
             </div>

@@ -205,7 +205,7 @@ export default function ImageCleaner({ onCleaned }: Props) {
             <button
               onClick={mask.undo}
               disabled={!mask.canUndo}
-              className="text-xs px-2 py-1 rounded bg-bg-card text-text-secondary hover:text-text-primary disabled:opacity-30 transition-colors"
+              className="text-xs px-3 py-2 rounded bg-bg-card text-text-secondary hover:text-text-primary disabled:opacity-30 transition-colors"
               title="Отменить (Ctrl+Z)"
             >
               ↩ Отменить
@@ -213,14 +213,14 @@ export default function ImageCleaner({ onCleaned }: Props) {
             <button
               onClick={mask.redo}
               disabled={!mask.canRedo}
-              className="text-xs px-2 py-1 rounded bg-bg-card text-text-secondary hover:text-text-primary disabled:opacity-30 transition-colors"
+              className="text-xs px-3 py-2 rounded bg-bg-card text-text-secondary hover:text-text-primary disabled:opacity-30 transition-colors"
               title="Повторить (Ctrl+Shift+Z)"
             >
               ↪ Повторить
             </button>
             <button
               onClick={mask.clearMask}
-              className="text-xs px-2 py-1 rounded bg-bg-card text-text-secondary hover:text-accent-magenta transition-colors"
+              className="text-xs px-3 py-2 rounded bg-bg-card text-text-secondary hover:text-accent-magenta transition-colors"
             >
               Очистить маску
             </button>
