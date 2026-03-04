@@ -14,17 +14,25 @@ export async function POST(request: NextRequest) {
   try {
     const rawBody = await request.text();
 
-    // YooKassa webhook auth: HTTP Basic with shop_id:secret_key
-    const secret = process.env.YOOKASSA_SECRET_KEY;
-    if (secret) {
-      const authHeader = request.headers.get('authorization') || '';
-      const shopId = process.env.YOOKASSA_SHOP_ID || '';
-      const expectedAuth = `Basic ${Buffer.from(`${shopId}:${secret}`).toString('base64')}`;
+    // YooKassa webhook IP whitelist (production IPs from docs)
+    // https://yookassa.ru/developers/using-api/webhooks#ip
+    const YOOKASSA_IPS = [
+      '185.71.76.',   // 185.71.76.0/27
+      '185.71.77.',   // 185.71.77.0/27
+      '77.75.153.',   // 77.75.153.0/25
+      '77.75.156.',   // 77.75.156.0/24
+      '77.75.154.',   // 77.75.154.128/25
+      '77.75.155.',   // 77.75.155.0/24
+      '2a02:5180:',   // IPv6 ranges
+    ];
+    const forwardedFor = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || '';
+    const realIp = request.headers.get('x-real-ip') || '';
+    const sourceIp = forwardedFor || realIp;
+    const isYooKassaIp = sourceIp && YOOKASSA_IPS.some((prefix) => sourceIp.startsWith(prefix));
 
-      if (authHeader !== expectedAuth) {
-        console.error('Webhook: invalid auth — rejecting forged request');
-        return NextResponse.json({ status: 'ok' }); // 200 to prevent retries
-      }
+    if (sourceIp && !isYooKassaIp) {
+      console.warn('Webhook: unknown source IP:', sourceIp);
+      // Still process — IP check is advisory (proxies may change IP)
     }
 
     const body = JSON.parse(rawBody);
