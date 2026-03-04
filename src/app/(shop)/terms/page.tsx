@@ -140,8 +140,8 @@ export default function TermsPage() {
           <p>
             ООО &laquo;АЛТЕХ&raquo;<br />
             ОГРН: 1221400010182, ИНН: 1400013380<br />
-            Адрес: Респ. Саха (Якутия), г. Якутск, ул. Феликса Кона, д. 1а, кв. 90<br />
-            Телефон: <a href="tel:+79241716122" className="text-accent-cyan hover:underline">+7 (924) 171-61-22</a><br />
+            Адрес: Респ. Саха (Якутия), г. Якутск, ул. Лонгинова, 24/6, 2 этаж<br />
+            Телефон: <a href="tel:+79142744420" className="text-accent-cyan hover:underline">+7 (914) 274-44-20</a><br />
             Email: <a href="mailto:Alltech.dv@gmail.com" className="text-accent-cyan hover:underline">Alltech.dv@gmail.com</a>
           </p>
         </section>

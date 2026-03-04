@@ -3,7 +3,7 @@ export const COMPANY = {
   tagline: "Родом из Якутии",
   description:
     "Официальный дистрибьютор смазочных материалов ROLF, SINTEC, TAKAYAMA, KIXX, RHINOIL, ХИМАВТО",
-  phones: ["+7 (924) 171-61-22", "+7 (914) 274-44-20"],
+  phones: ["+7 (996) 914-28-32", "+7 (914) 274-44-20"],
   email: "Alltech.dv@gmail.com",
   telegram: "alltech14_ykt",
   instagram: "alltech.14",

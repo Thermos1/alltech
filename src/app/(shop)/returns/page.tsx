@@ -79,7 +79,7 @@ export default function ReturnsPage() {
           <ol className="list-decimal pl-5 space-y-2">
             <li>
               Свяжитесь с нами по телефону{' '}
-              <a href="tel:+79241716122" className="text-accent-cyan hover:underline">+7 (924) 171-61-22</a>{' '}
+              <a href="tel:+79142744420" className="text-accent-cyan hover:underline">+7 (914) 274-44-20</a>{' '}
               или email{' '}
               <a href="mailto:Alltech.dv@gmail.com" className="text-accent-cyan hover:underline">Alltech.dv@gmail.com</a>{' '}
               с указанием номера заказа и причины возврата
@@ -110,9 +110,9 @@ export default function ReturnsPage() {
           <h2 className="font-display text-base text-text-primary mb-3">6. Контакты</h2>
           <p>
             ООО &laquo;АЛТЕХ&raquo;<br />
-            Телефон: <a href="tel:+79241716122" className="text-accent-cyan hover:underline">+7 (924) 171-61-22</a><br />
+            Телефон: <a href="tel:+79142744420" className="text-accent-cyan hover:underline">+7 (914) 274-44-20</a><br />
             Email: <a href="mailto:Alltech.dv@gmail.com" className="text-accent-cyan hover:underline">Alltech.dv@gmail.com</a><br />
-            Адрес: Респ. Саха (Якутия), г. Якутск, ул. Феликса Кона, д. 1а, кв. 90
+            Адрес: Респ. Саха (Якутия), г. Якутск, ул. Лонгинова, 24/6, 2 этаж
           </p>
         </section>
       </div>

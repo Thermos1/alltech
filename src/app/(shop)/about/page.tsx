@@ -921,7 +921,7 @@ export default function AboutPage() {
         </h2>
         <div className="grid gap-4 sm:grid-cols-4 mb-6">
           {[
-            { value: '299', label: 'тестов', sub: '24 test suites' },
+            { value: '610', label: 'тестов', sub: '44 test suites' },
             { value: '0', label: 'ошибок TS', sub: 'strict mode' },
             { value: '< 1 мин', label: 'CI/CD', sub: 'push — deploy' },
             { value: '100%', label: 'крит. путей', sub: 'оплата, auth, CRM' },
@@ -961,37 +961,55 @@ export default function AboutPage() {
       <section className="mb-8">
         <div className="rounded-2xl border border-accent-yellow/30 bg-gradient-to-br from-accent-yellow/10 to-accent-yellow/5 p-8 md:p-10 text-center">
           <h2 className="font-display text-xl md:text-2xl text-text-primary mb-3">
-            Хотите такую же платформу?
+            Остались вопросы?
           </h2>
-          <p className="text-text-secondary text-sm max-w-lg mx-auto mb-6 leading-relaxed">
-            АЛТЕХ — работающая платформа с реальными товарами, оплатой и клиентами.
-            Мы делаем white-label версии для B2B-дистрибьюторов любой ниши —
-            запуск за неделю.
+          <p className="text-text-secondary text-sm max-w-lg mx-auto mb-4 leading-relaxed">
+            Свяжитесь с нами — поможем подобрать масло, рассчитаем объём
+            для автопарка, организуем доставку по всей России.
           </p>
-          <p className="text-text-muted text-xs mb-6">
-            Настроим под ваш бизнес: каталог, оплата, CRM, брендинг.
-            Лицензия или заказная разработка — обсудим ваш сценарий.
+
+          {/* Phone numbers */}
+          <div className="flex flex-col items-center gap-2 mb-6">
+            <a
+              href="tel:+79969142832"
+              className="inline-flex items-center gap-2 rounded-xl bg-accent-yellow px-6 py-3 text-sm font-bold text-bg-primary transition-all hover:shadow-[0_0_24px_rgba(255,214,0,0.3)]"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
+              </svg>
+              +7 (996) 914-28-32
+              <span className="text-xs font-normal opacity-70">отдел продаж</span>
+            </a>
+            <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-sm">
+              <a href="tel:+79142744420" className="text-text-secondary hover:text-accent-yellow transition-colors">
+                +7 (914) 274-44-20 <span className="text-text-muted text-xs">офис</span>
+              </a>
+              <a href="tel:+79141082051" className="text-text-secondary hover:text-accent-yellow transition-colors">
+                +7 (914) 108-20-51 <span className="text-text-muted text-xs">руководитель</span>
+              </a>
+            </div>
+          </div>
+
+          {/* Address + socials */}
+          <p className="text-text-muted text-xs mb-4">
+            г. Якутск, ул. Лонгинова, 24/6, 2 этаж &middot; Пн–Пт 09:00–18:00
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <a
-              href="https://techdab.net"
+              href="https://wa.me/79969142832"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-xl bg-accent-yellow px-6 py-3 text-sm font-bold text-bg-primary transition-all hover:shadow-[0_0_24px_rgba(255,214,0,0.3)]"
+              className="inline-flex items-center gap-2 rounded-xl border border-green-500/30 px-6 py-3 text-sm font-medium text-green-400 transition-colors hover:border-green-400 hover:bg-green-500/10"
             >
-              Связаться с TechDab
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="5" y1="12" x2="19" y2="12" />
-                <polyline points="12 5 19 12 12 19" />
-              </svg>
+              WhatsApp
             </a>
             <a
-              href="https://t.me/techdab"
+              href="https://t.me/alltech14_ykt"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded-xl border border-border-subtle px-6 py-3 text-sm font-medium text-text-secondary transition-colors hover:border-accent-cyan hover:text-accent-cyan"
             >
-              Написать в Telegram
+              Telegram
             </a>
           </div>
         </div>

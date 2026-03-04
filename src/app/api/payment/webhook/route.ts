@@ -12,7 +12,22 @@ import { logActivity } from '@/lib/activity-log';
  */
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    const rawBody = await request.text();
+
+    // YooKassa webhook auth: HTTP Basic with shop_id:secret_key
+    const secret = process.env.YOOKASSA_SECRET_KEY;
+    if (secret) {
+      const authHeader = request.headers.get('authorization') || '';
+      const shopId = process.env.YOOKASSA_SHOP_ID || '';
+      const expectedAuth = `Basic ${Buffer.from(`${shopId}:${secret}`).toString('base64')}`;
+
+      if (authHeader !== expectedAuth) {
+        console.error('Webhook: invalid auth — rejecting forged request');
+        return NextResponse.json({ status: 'ok' }); // 200 to prevent retries
+      }
+    }
+
+    const body = JSON.parse(rawBody);
     const event = body.event;
     const payment = body.object;
 

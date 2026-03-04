@@ -3,7 +3,7 @@
 export default function ChatFab() {
   return (
     <a
-      href="https://wa.me/79241716122"
+      href="https://wa.me/79969142832"
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Написать в WhatsApp"

@@ -10,6 +10,11 @@ export async function POST(request: NextRequest) {
     }
 
     const cleanPhone = phone.replace(/[\s\-\(\)\+]/g, '');
+
+    if (!/^\d{10,15}$/.test(cleanPhone)) {
+      return NextResponse.json({ error: 'Неверный формат номера' }, { status: 400 });
+    }
+
     const admin = createAdminClient();
 
     // Find matching OTP

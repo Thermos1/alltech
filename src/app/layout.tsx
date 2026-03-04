@@ -35,7 +35,17 @@ export const metadata: Metadata = {
     type: "website",
     locale: "ru_RU",
     siteName: "АЛТЕХ",
+    url: "https://altehspec.ru",
+    title: "АЛТЕХ — масла и фильтры в Якутске",
+    description:
+      "Официальный дистрибьютор ROLF, SINTEC, KIXX, RHINOIL, ХИМАВТО. Моторные масла, фильтры, технические жидкости.",
   },
+  twitter: {
+    card: "summary",
+    title: "АЛТЕХ — масла и фильтры в Якутске",
+    description: "Официальный дистрибьютор ГСМ в Якутске",
+  },
+  metadataBase: new URL("https://altehspec.ru"),
 };
 
 export default function RootLayout({

@@ -73,7 +73,7 @@ export default function AdminLoginForm() {
             autoComplete="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="admin@altech-store.ru"
+            placeholder="admin@altehspec.ru"
             className={inputClass}
           />
         </div>

@@ -57,16 +57,16 @@ export default function Footer() {
             </h4>
             <div className="flex flex-col gap-2 text-sm">
               <a
-                href="tel:+79241716122"
+                href="tel:+79969142832"
                 className="text-text-muted transition-colors hover:text-accent-yellow"
               >
-                +7 (924) 171-61-22
+                +7 (996) 914-28-32 <span className="text-text-muted/60 text-xs">отдел продаж</span>
               </a>
               <a
                 href="tel:+79142744420"
                 className="text-text-muted transition-colors hover:text-accent-yellow"
               >
-                +7 (914) 274-44-20
+                +7 (914) 274-44-20 <span className="text-text-muted/60 text-xs">офис</span>
               </a>
               <a
                 href="mailto:Alltech.dv@gmail.com"
@@ -122,7 +122,7 @@ export default function Footer() {
                 Instagram
               </a>
               <a
-                href="https://wa.me/79241716122"
+                href="https://wa.me/79969142832"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 text-text-muted transition-colors hover:text-green-400"
@@ -177,7 +177,7 @@ export default function Footer() {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
             <div className="text-[11px] text-text-muted leading-relaxed">
               <p>ООО &laquo;АЛТЕХ&raquo; &middot; ОГРН 1221400010182 &middot; ИНН 1400013380 &middot; КПП 140001001</p>
-              <p>Респ. Саха (Якутия), г. Якутск, ул. Феликса Кона, д. 1а, кв. 90</p>
+              <p>г. Якутск, ул. Лонгинова, 24/6, 2 этаж &middot; Пн&ndash;Пт 09:00&ndash;18:00</p>
             </div>
             <p className="text-[11px] text-text-muted whitespace-nowrap">
               &copy; 2022&ndash;2026 АЛТЕХ

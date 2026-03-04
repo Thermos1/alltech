@@ -13,6 +13,11 @@ export async function POST(request: NextRequest) {
     // Normalize phone
     const cleanPhone = phone.replace(/[\s\-\(\)\+]/g, '');
 
+    // Validate: must be digits only, Russian format 7XXXXXXXXXX
+    if (!/^\d{10,15}$/.test(cleanPhone)) {
+      return NextResponse.json({ error: 'Неверный формат номера телефона' }, { status: 400 });
+    }
+
     const admin = createAdminClient();
 
     // Rate limit: max 1 OTP per 60 seconds per phone
