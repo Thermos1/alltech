@@ -11,6 +11,8 @@ const mockUndo = vi.fn();
 const mockRedo = vi.fn();
 const mockClearMask = vi.fn();
 
+const mockHookOverrides: Record<string, unknown> = {};
+
 vi.mock('@/hooks/useCanvasMask', () => ({
   useCanvasMask: () => ({
     canvasRef: { current: null },
@@ -28,6 +30,7 @@ vi.mock('@/hooks/useCanvasMask', () => ({
     isImageLoaded: false,
     cursorPos: null,
     isDrawing: false,
+    ...mockHookOverrides,
   }),
 }));
 
@@ -46,6 +49,8 @@ const { default: ImageCleaner } = await import(
 describe('ImageCleaner', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // Reset overrides
+    Object.keys(mockHookOverrides).forEach((k) => delete mockHookOverrides[k]);
   });
 
   it('renders upload zone in idle state', () => {
@@ -73,7 +78,6 @@ describe('ImageCleaner', () => {
   });
 
   it('calls onCleaned prop is optional (no crash without it)', () => {
-    // Should render without onCleaned prop
     expect(() => render(createElement(ImageCleaner))).not.toThrow();
   });
 
@@ -89,8 +93,17 @@ describe('ImageCleaner', () => {
     const dropZone = screen.getByText('Загрузите изображение для очистки').closest('div[class*="border-dashed"]');
     expect(dropZone).toBeTruthy();
     if (dropZone) {
-      // Should not throw on dragOver
       fireEvent.dragOver(dropZone, { dataTransfer: { files: [] } });
     }
+  });
+
+  it('does not crash with cursorPos set during drawing', () => {
+    mockHookOverrides.cursorPos = { x: 100, y: 100 };
+    mockHookOverrides.isDrawing = true;
+    mockHookOverrides.isImageLoaded = true;
+
+    // Component renders in idle state (no file uploaded), so canvas is not visible.
+    // This verifies no crash when isDrawing=true with cursorPos set (regression for cursor ring bug).
+    expect(() => render(createElement(ImageCleaner))).not.toThrow();
   });
 });

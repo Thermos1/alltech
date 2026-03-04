@@ -14,11 +14,13 @@ vi.mock('@/lib/supabase/server', () => ({
 const mockGenerateCard = vi.fn();
 const mockGenerateCarousel = vi.fn();
 const mockGenerateCarouselPdf = vi.fn();
+const mockGenerateSlideSequence = vi.fn();
 
 vi.mock('@/lib/card-generator', () => ({
   generateCard: (...args: unknown[]) => mockGenerateCard(...args),
   generateCarousel: (...args: unknown[]) => mockGenerateCarousel(...args),
   generateCarouselPdf: (...args: unknown[]) => mockGenerateCarouselPdf(...args),
+  generateSlideSequence: (...args: unknown[]) => mockGenerateSlideSequence(...args),
 }));
 
 const { POST } = await import('@/app/api/admin/cards/generate/route');
@@ -240,5 +242,111 @@ describe('POST /api/admin/cards/generate', () => {
     await POST(createRequest(body) as never);
     const config = mockGenerateCard.mock.calls[0][0];
     expect(config.productData.specs).toEqual([]);
+  });
+
+  it('accepts imageScale up to 1.1', async () => {
+    mockAuth('admin');
+    mockGenerateCard.mockResolvedValue(Buffer.from('ok'));
+    const body = { ...validCardBody, imageScale: 1.1 };
+    const res = await POST(createRequest(body) as never);
+    expect(res.status).toBe(200);
+  });
+
+  it('rejects imageScale above 1.1', async () => {
+    mockAuth('admin');
+    const body = { ...validCardBody, imageScale: 1.5 };
+    const res = await POST(createRequest(body) as never);
+    expect(res.status).toBe(400);
+  });
+
+  it('accepts imageOffsetX and imageOffsetY', async () => {
+    mockAuth('admin');
+    mockGenerateCard.mockResolvedValue(Buffer.from('ok'));
+    const body = { ...validCardBody, imageOffsetX: 25, imageOffsetY: -30 };
+    const res = await POST(createRequest(body) as never);
+    expect(res.status).toBe(200);
+    const config = mockGenerateCard.mock.calls[0][0];
+    expect(config.imageOffsetX).toBe(25);
+    expect(config.imageOffsetY).toBe(-30);
+  });
+
+  it('rejects offset values outside -50..50', async () => {
+    mockAuth('admin');
+    const body = { ...validCardBody, imageOffsetX: 100 };
+    const res = await POST(createRequest(body) as never);
+    expect(res.status).toBe(400);
+  });
+
+  it('handles ai-sequence mode with PNG output', async () => {
+    mockAuth('admin');
+    const buffers = [Buffer.from('slide1'), Buffer.from('slide2')];
+    mockGenerateSlideSequence.mockResolvedValue(buffers);
+
+    const body = {
+      mode: 'ai-sequence',
+      style: 'premium-dark',
+      platform: 'instagram',
+      enabledElements: [],
+      badges: [],
+      productData: { name: 'AI Test', specs: [] },
+      slides: [
+        { type: 'title', heading: 'Test Title', body: 'Test Body' },
+        { type: 'text-only', heading: 'Slide 2', body: 'Content' },
+      ],
+      images: ['data:image/png;base64,abc'],
+      outputFormat: 'png',
+    };
+
+    const res = await POST(createRequest(body) as never);
+    expect(res.status).toBe(200);
+    const data = await res.json();
+    expect(data.images).toHaveLength(2);
+    expect(data.images[0].slideNumber).toBe(1);
+  });
+
+  it('handles ai-sequence mode with PDF output', async () => {
+    mockAuth('admin');
+    const buffers = [Buffer.from('slide1')];
+    mockGenerateSlideSequence.mockResolvedValue(buffers);
+    mockGenerateCarouselPdf.mockResolvedValue(Buffer.from('fake-pdf'));
+
+    const body = {
+      mode: 'ai-sequence',
+      style: 'minimalist',
+      platform: 'instagram',
+      enabledElements: [],
+      badges: [],
+      productData: { name: 'AI Test', specs: [] },
+      slides: [{ type: 'title', heading: 'PDF Test' }],
+      outputFormat: 'pdf',
+    };
+
+    const res = await POST(createRequest(body) as never);
+    expect(res.status).toBe(200);
+    expect(res.headers.get('Content-Type')).toBe('application/pdf');
+  });
+
+  it('returns 400 for ai-sequence with no slides', async () => {
+    mockAuth('admin');
+    const body = {
+      mode: 'ai-sequence',
+      style: 'minimalist',
+      platform: 'instagram',
+      enabledElements: [],
+      badges: [],
+      productData: { name: 'AI Test', specs: [] },
+      slides: [],
+      outputFormat: 'png',
+    };
+
+    const res = await POST(createRequest(body) as never);
+    expect(res.status).toBe(400);
+  });
+
+  it('returns 400 for card mode without productImageBase64', async () => {
+    mockAuth('admin');
+    const body = { ...validCardBody, productImageBase64: undefined };
+    const res = await POST(createRequest(body) as never);
+    expect(res.status).toBe(400);
   });
 });

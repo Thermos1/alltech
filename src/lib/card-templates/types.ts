@@ -61,6 +61,8 @@ export type CardConfig = {
   productImageBase64: string;
   outputFormat: 'png' | 'jpg';
   imageScale?: number;
+  imageOffsetX?: number;
+  imageOffsetY?: number;
   customColors?: Partial<CardStyleColors>;
   watermarkImageBase64?: string;
 };

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { z } from 'zod/v4';
-import { generateCard, generateCarousel, generateCarouselPdf } from '@/lib/card-generator';
+import { generateCard, generateCarousel, generateCarouselPdf, generateSlideSequence } from '@/lib/card-generator';
 import type { CardConfig } from '@/lib/card-templates';
 import type { CarouselData } from '@/lib/card-templates/carousel';
 
@@ -10,8 +10,16 @@ const specSchema = z.object({
   value: z.string().max(200),
 });
 
+const aiSlideSchema = z.object({
+  type: z.string().max(30),
+  imageIndex: z.number().int().min(0).optional(),
+  heading: z.string().max(200).optional(),
+  body: z.string().max(1000).optional(),
+  items: z.array(z.string().max(300)).max(20).optional(),
+});
+
 const cardGenerateSchema = z.object({
-  mode: z.enum(['card', 'carousel']),
+  mode: z.enum(['card', 'carousel', 'ai-sequence']),
   style: z.enum(['minimalist', 'premium-dark', 'gradient', 'retro']),
   platform: z.enum(['wb-ozon', 'shopify', 'instagram', 'telegram-vk', 'tiktok', 'pinterest', 'custom']),
   customWidth: z.number().int().min(200).max(4000).optional(),
@@ -30,8 +38,10 @@ const cardGenerateSchema = z.object({
     specs: z.array(specSchema).max(20).default([]),
     description: z.string().max(2000).optional(),
   }),
-  productImageBase64: z.string().min(1),
-  imageScale: z.number().min(0.2).max(0.95).optional(),
+  productImageBase64: z.string().min(1).optional(),
+  imageScale: z.number().min(0.2).max(1.1).optional(),
+  imageOffsetX: z.number().min(-50).max(50).optional(),
+  imageOffsetY: z.number().min(-50).max(50).optional(),
   customColors: z.record(z.string(), z.string()).optional(),
   watermarkImageBase64: z.string().optional(),
   carouselData: z.object({
@@ -45,6 +55,9 @@ const cardGenerateSchema = z.object({
     certifications: z.array(z.string().max(200)).max(8).optional(),
   }).optional(),
   outputFormat: z.enum(['png', 'jpg', 'pdf']).default('png'),
+  // AI sequence mode fields
+  slides: z.array(aiSlideSchema).max(30).optional(),
+  images: z.array(z.string()).max(20).optional(),
 });
 
 export async function POST(request: NextRequest) {
@@ -77,6 +90,9 @@ export async function POST(request: NextRequest) {
     const config = parseResult.data;
 
     if (config.mode === 'card') {
+      if (!config.productImageBase64) {
+        return NextResponse.json({ error: 'Загрузите фото товара' }, { status: 400 });
+      }
       const buffer = await generateCard(config as unknown as CardConfig);
       const isJpg = config.outputFormat === 'jpg';
       return new NextResponse(new Uint8Array(buffer), {
@@ -88,6 +104,9 @@ export async function POST(request: NextRequest) {
     }
 
     if (config.mode === 'carousel') {
+      if (!config.productImageBase64) {
+        return NextResponse.json({ error: 'Загрузите фото товара' }, { status: 400 });
+      }
       const cd = config.carouselData || {};
       const carouselData: CarouselData = {
         product: config.productData,
@@ -122,6 +141,38 @@ export async function POST(request: NextRequest) {
       }));
 
       return NextResponse.json({ images });
+    }
+
+    if (config.mode === 'ai-sequence') {
+      const slides = config.slides;
+      if (!slides || slides.length === 0) {
+        return NextResponse.json({ error: 'Не указаны слайды' }, { status: 400 });
+      }
+
+      const pngBuffers = await generateSlideSequence(
+        slides as import('@/lib/card-templates/carousel').AiSlide[],
+        config.images || [],
+        config.style,
+        config.platform,
+        config.customColors as Record<string, string> | undefined,
+      );
+
+      if (config.outputFormat === 'pdf') {
+        const pdfBuffer = await generateCarouselPdf(pngBuffers);
+        return new NextResponse(new Uint8Array(pdfBuffer), {
+          headers: {
+            'Content-Type': 'application/pdf',
+            'Content-Disposition': `attachment; filename="ai-carousel-${Date.now()}.pdf"`,
+          },
+        });
+      }
+
+      const generatedImages = pngBuffers.map((buf, i) => ({
+        slideNumber: i + 1,
+        dataUrl: `data:image/png;base64,${buf.toString('base64')}`,
+      }));
+
+      return NextResponse.json({ images: generatedImages });
     }
 
     return NextResponse.json({ error: 'Invalid mode' }, { status: 400 });

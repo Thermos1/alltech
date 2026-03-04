@@ -30,6 +30,8 @@ export default function CardConstructor({ initialImage, initialData, onCardGener
   const [enabledElements, setEnabledElements] = useState<CardElement[]>(DEFAULT_ELEMENTS);
   const [badges, setBadges] = useState<BadgeConfig[]>([]);
   const [imageScale, setImageScale] = useState(0.5);
+  const [imageOffsetX, setImageOffsetX] = useState(0);
+  const [imageOffsetY, setImageOffsetY] = useState(0);
   const [customColors, setCustomColors] = useState<Partial<CardStyleColors>>({});
 
   const [productData, setProductData] = useState<ProductCardData>({
@@ -127,6 +129,8 @@ export default function CardConstructor({ initialImage, initialData, onCardGener
           productImageBase64,
           outputFormat,
           imageScale,
+          imageOffsetX: imageOffsetX !== 0 ? imageOffsetX : undefined,
+          imageOffsetY: imageOffsetY !== 0 ? imageOffsetY : undefined,
           customColors: Object.keys(customColors).length > 0 ? customColors : undefined,
         }),
       });
@@ -176,6 +180,8 @@ export default function CardConstructor({ initialImage, initialData, onCardGener
           productData={productData}
           productImageBase64={productImageBase64}
           imageScale={imageScale}
+          imageOffsetX={imageOffsetX}
+          imageOffsetY={imageOffsetY}
           customColors={customColors}
         />
 
@@ -230,11 +236,41 @@ export default function CardConstructor({ initialImage, initialData, onCardGener
             <label className="text-xs text-text-muted uppercase tracking-wider">Размер фото</label>
             <span className="text-xs text-text-secondary">{Math.round(imageScale * 100)}%</span>
           </div>
-          <input type="range" min={30} max={90} value={Math.round(imageScale * 100)}
+          <input type="range" min={30} max={110} value={Math.round(imageScale * 100)}
             onChange={(e) => setImageScale(Number(e.target.value) / 100)}
             className="w-full accent-accent-yellow"
           />
         </div>
+
+        {/* Image offset sliders */}
+        <div className="space-y-1">
+          <div className="flex items-center justify-between">
+            <label className="text-xs text-text-muted uppercase tracking-wider">Смещение X</label>
+            <span className="text-xs text-text-secondary">{imageOffsetX}%</span>
+          </div>
+          <input type="range" min={-50} max={50} value={imageOffsetX}
+            onChange={(e) => setImageOffsetX(Number(e.target.value))}
+            className="w-full accent-accent-yellow"
+          />
+        </div>
+        <div className="space-y-1">
+          <div className="flex items-center justify-between">
+            <label className="text-xs text-text-muted uppercase tracking-wider">Смещение Y</label>
+            <span className="text-xs text-text-secondary">{imageOffsetY}%</span>
+          </div>
+          <input type="range" min={-50} max={50} value={imageOffsetY}
+            onChange={(e) => setImageOffsetY(Number(e.target.value))}
+            className="w-full accent-accent-yellow"
+          />
+        </div>
+        {(imageOffsetX !== 0 || imageOffsetY !== 0) && (
+          <button
+            onClick={() => { setImageOffsetX(0); setImageOffsetY(0); }}
+            className="text-xs text-accent-cyan hover:text-accent-cyan/80 transition-colors"
+          >
+            Сбросить смещение
+          </button>
+        )}
 
         <ElementToggle enabled={enabledElements} onChange={setEnabledElements} />
         <BadgeEditor badges={badges} onChange={setBadges} />

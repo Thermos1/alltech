@@ -248,7 +248,7 @@ export default function ImageCleaner({ onCleaned }: Props) {
                 className="rounded-lg border border-border-primary"
               />
               {/* Custom brush cursor */}
-              {mask.cursorPos && !mask.isDrawing && (
+              {mask.cursorPos && (
                 <div
                   className="pointer-events-none absolute border-2 border-accent-magenta rounded-full"
                   style={{

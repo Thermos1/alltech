@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import type { ProductSpec } from '@/lib/card-templates';
+import AiGenerator from './_components/AiGenerator';
 import ImageCleaner from './_components/ImageCleaner';
 import BackgroundRemover from './_components/BackgroundRemover';
 import CardConstructor from './_components/CardConstructor';
@@ -21,9 +22,10 @@ export type SlideBufferItem = {
   included: boolean;
 };
 
-type Tab = 'cleanup' | 'bg-remove' | 'card' | 'carousel';
+type Tab = 'ai-generator' | 'cleanup' | 'bg-remove' | 'card' | 'carousel';
 
 const TABS: { id: Tab; label: string }[] = [
+  { id: 'ai-generator', label: 'AI Генератор' },
   { id: 'cleanup', label: 'Очистка' },
   { id: 'bg-remove', label: 'Удаление фона' },
   { id: 'card', label: 'Карточка' },
@@ -31,7 +33,7 @@ const TABS: { id: Tab; label: string }[] = [
 ];
 
 export default function ImageToolsPage() {
-  const [activeTab, setActiveTab] = useState<Tab>('cleanup');
+  const [activeTab, setActiveTab] = useState<Tab>('ai-generator');
 
   // Cleaned image from ImageCleaner → BackgroundRemover
   const [cleanedImageBase64, setCleanedImageBase64] = useState<string | null>(null);
@@ -103,7 +105,7 @@ export default function ImageToolsPage() {
             }`}
           >
             {tab.label}
-            {tab.id === 'carousel' && bufferCount > 0 && (
+            {(tab.id === 'carousel' || tab.id === 'ai-generator') && bufferCount > 0 && (
               <span className="ml-1.5 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-bold rounded-full bg-accent-cyan text-bg-primary">
                 {bufferCount}
               </span>
@@ -132,6 +134,12 @@ export default function ImageToolsPage() {
 
       {/* Tab content */}
       <div>
+        {activeTab === 'ai-generator' && (
+          <AiGenerator
+            slideBuffer={slideBuffer}
+            onAddToBuffer={(dataUrl, label) => addToBuffer(dataUrl, label, 'card')}
+          />
+        )}
         {activeTab === 'cleanup' && (
           <ImageCleaner
             onCleaned={(imageBase64) => {

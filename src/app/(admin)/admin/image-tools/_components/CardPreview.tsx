@@ -12,6 +12,8 @@ type Props = {
   productData: ProductCardData;
   productImageBase64: string | null;
   imageScale?: number;
+  imageOffsetX?: number;
+  imageOffsetY?: number;
   customColors?: Partial<CardStyleColors>;
 };
 
@@ -25,6 +27,8 @@ export default function CardPreview({
   productData,
   productImageBase64,
   imageScale = 0.5,
+  imageOffsetX = 0,
+  imageOffsetY = 0,
   customColors,
 }: Props) {
   const baseStyle = ALL_STYLES[style];
@@ -97,8 +101,12 @@ export default function CardPreview({
               <img
                 src={productImageBase64}
                 alt="Product"
-                className="max-w-[80%] object-contain"
-                style={{ maxHeight: imageMaxHeight }}
+                className="object-contain"
+                style={{
+                  maxHeight: imageMaxHeight,
+                  maxWidth: imageScale > 0.8 ? `${Math.round(imageScale * 100)}%` : '80%',
+                  ...(imageOffsetX || imageOffsetY ? { transform: `translate(${imageOffsetX}%, ${imageOffsetY}%)` } : {}),
+                }}
               />
             ) : (
               <div className="text-center" style={{ color: colors.textSecondary }}>

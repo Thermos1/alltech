@@ -7,7 +7,20 @@ export type CarouselSlideType =
   | 'compatibility'
   | 'volumes'
   | 'usage'
-  | 'trust';
+  | 'trust'
+  | 'photo-only'
+  | 'photo-text'
+  | 'text-only'
+  | 'title'
+  | 'list';
+
+export type AiSlide = {
+  type: CarouselSlideType;
+  imageIndex?: number;
+  heading?: string;
+  body?: string;
+  items?: string[];
+};
 
 export type CarouselSlideConfig = {
   type: CarouselSlideType;

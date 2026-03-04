@@ -12,7 +12,7 @@ import {
   type ProductCardData,
   type ProductSpec,
 } from './card-templates';
-import type { CarouselData, CarouselSlideConfig } from './card-templates/carousel';
+import type { CarouselData, CarouselSlideConfig, AiSlide } from './card-templates/carousel';
 import { backgroundStyle, fontSize, scaleFactor, formatPrice, badgeColors } from './card-templates/shared';
 
 // --- Resolve dimensions ---
@@ -115,6 +115,40 @@ export async function generateCarouselPdf(pngBuffers: Buffer[]): Promise<Buffer>
 
   const pdfBytes = await pdf.save();
   return Buffer.from(pdfBytes);
+}
+
+// --- AI Slide Sequence Generation ---
+export async function generateSlideSequence(
+  slides: AiSlide[],
+  images: string[],
+  styleId: string,
+  platform: string,
+  customColors?: Partial<CardStyleDefinition['colors']>,
+): Promise<Buffer[]> {
+  const fonts = await loadFonts();
+  const dimensions = resolveDimensions({ platform });
+  const style = resolveStyle({ style: styleId, customColors });
+
+  const buffers: Buffer[] = [];
+  const totalSlides = slides.length;
+
+  for (let i = 0; i < slides.length; i++) {
+    const slide = slides[i];
+    const slideImage = slide.imageIndex != null && images[slide.imageIndex] ? images[slide.imageIndex] : null;
+    const jsx = renderAiSlideJsx(slide, slideImage, style, dimensions, i + 1, totalSlides);
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const svg = await satori(jsx as any, {
+      width: dimensions.width,
+      height: dimensions.height,
+      fonts,
+    });
+
+    const buffer = await sharp(Buffer.from(svg)).png({ quality: 90 }).toBuffer();
+    buffers.push(buffer);
+  }
+
+  return buffers;
 }
 
 // ============================================================
@@ -241,9 +275,12 @@ function renderCardJsx(
                   props: {
                     src: productImageBase64,
                     style: {
-                      maxWidth: '80%',
+                      maxWidth: imageScale > 0.8 ? `${Math.round(imageScale * 100)}%` : '80%',
                       maxHeight: Math.round(dim.height * imageScale),
                       objectFit: 'contain' as const,
+                      ...((config.imageOffsetX || config.imageOffsetY)
+                        ? { transform: `translate(${Math.round(dim.width * (config.imageOffsetX || 0) / 100)}px, ${Math.round(dim.height * (config.imageOffsetY || 0) / 100)}px)` }
+                        : {}),
                     },
                   },
                 },
@@ -813,4 +850,364 @@ function renderList(
       })),
     },
   };
+}
+
+// ============================================================
+// AI SLIDE RENDERERS (for generateSlideSequence)
+// ============================================================
+
+function renderAiSlideJsx(
+  slide: AiSlide,
+  image: string | null,
+  style: CardStyleDefinition,
+  dim: ExportDimensions,
+  slideNumber: number,
+  totalSlides: number,
+) {
+  const bg = backgroundStyle(style);
+  const pad = Math.round(40 * scaleFactor(dim));
+
+  const content = (() => {
+    switch (slide.type) {
+      case 'photo-only':
+        return renderPhotoOnlySlide(image, dim);
+      case 'photo-text':
+        return renderPhotoTextSlide(image, slide, style, dim);
+      case 'text-only':
+        return renderTextOnlySlide(slide, style, dim);
+      case 'title':
+        return renderTitleSlide(slide, style, dim);
+      case 'list':
+        return renderListSlide(slide, style, dim);
+      default:
+        // For existing types (cover, benefits, etc.) render as list with items
+        if (slide.items && slide.items.length > 0) {
+          return renderList(slide.items, style, dim, '✓');
+        }
+        // Fallback: render heading + body as text
+        return renderTextOnlySlide(slide, style, dim);
+    }
+  })();
+
+  // photo-only is full-bleed, no wrapper padding
+  if (slide.type === 'photo-only') {
+    return {
+      type: 'div',
+      props: {
+        style: {
+          display: 'flex',
+          width: dim.width,
+          height: dim.height,
+          overflow: 'hidden',
+          position: 'relative',
+        },
+        children: [content],
+      },
+    };
+  }
+
+  return {
+    type: 'div',
+    props: {
+      style: {
+        display: 'flex',
+        flexDirection: 'column',
+        width: dim.width,
+        height: dim.height,
+        ...bg,
+        padding: pad,
+        position: 'relative',
+        overflow: 'hidden',
+      },
+      children: [
+        // Slide counter
+        {
+          type: 'div',
+          props: {
+            style: {
+              display: 'flex',
+              position: 'absolute',
+              bottom: pad,
+              right: pad,
+              fontFamily: style.fonts.body,
+              fontSize: fontSize(16, dim),
+              color: style.colors.textSecondary,
+              opacity: 0.5,
+            },
+            children: `${slideNumber} / ${totalSlides}`,
+          },
+        },
+        // Heading (if present and not title/text-only which handle it internally)
+        slide.heading && !['title', 'text-only', 'photo-text'].includes(slide.type)
+          ? {
+              type: 'div',
+              props: {
+                style: {
+                  display: 'flex',
+                  fontFamily: style.fonts.heading,
+                  fontSize: fontSize(32, dim),
+                  color: style.colors.accent,
+                  marginBottom: fontSize(24, dim),
+                },
+                children: slide.heading,
+              },
+            }
+          : null,
+        content,
+      ].filter(Boolean),
+    },
+  };
+}
+
+function renderPhotoOnlySlide(image: string | null, dim: ExportDimensions) {
+  if (!image) {
+    return {
+      type: 'div',
+      props: {
+        style: {
+          display: 'flex',
+          width: dim.width,
+          height: dim.height,
+          backgroundColor: '#1a1a2e',
+          alignItems: 'center',
+          justifyContent: 'center',
+        },
+        children: '',
+      },
+    };
+  }
+  return {
+    type: 'img',
+    props: {
+      src: image,
+      style: {
+        width: dim.width,
+        height: dim.height,
+        objectFit: 'cover' as const,
+      },
+    },
+  };
+}
+
+function renderPhotoTextSlide(
+  image: string | null,
+  slide: AiSlide,
+  style: CardStyleDefinition,
+  dim: ExportDimensions,
+) {
+  const pad = Math.round(40 * scaleFactor(dim));
+
+  return {
+    type: 'div',
+    props: {
+      style: {
+        display: 'flex',
+        flexDirection: 'column',
+        width: '100%',
+        height: '100%',
+        position: 'relative',
+      },
+      children: [
+        // Background image
+        image
+          ? {
+              type: 'img',
+              props: {
+                src: image,
+                style: {
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover' as const,
+                },
+              },
+            }
+          : null,
+        // Dark overlay
+        {
+          type: 'div',
+          props: {
+            style: {
+              display: 'flex',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              background: 'linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.7))',
+            },
+            children: '',
+          },
+        },
+        // Text overlay at bottom
+        {
+          type: 'div',
+          props: {
+            style: {
+              display: 'flex',
+              flexDirection: 'column',
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              right: 0,
+              padding: pad,
+              gap: fontSize(12, dim),
+            },
+            children: [
+              slide.heading
+                ? {
+                    type: 'div',
+                    props: {
+                      style: {
+                        display: 'flex',
+                        fontFamily: style.fonts.heading,
+                        fontSize: fontSize(36, dim),
+                        color: '#ffffff',
+                        lineHeight: 1.2,
+                      },
+                      children: slide.heading,
+                    },
+                  }
+                : null,
+              slide.body
+                ? {
+                    type: 'div',
+                    props: {
+                      style: {
+                        display: 'flex',
+                        fontFamily: style.fonts.body,
+                        fontSize: fontSize(22, dim),
+                        color: 'rgba(255,255,255,0.85)',
+                        lineHeight: 1.5,
+                      },
+                      children: slide.body,
+                    },
+                  }
+                : null,
+            ].filter(Boolean),
+          },
+        },
+      ].filter(Boolean),
+    },
+  };
+}
+
+function renderTextOnlySlide(
+  slide: AiSlide,
+  style: CardStyleDefinition,
+  dim: ExportDimensions,
+) {
+  return {
+    type: 'div',
+    props: {
+      style: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexGrow: 1,
+        gap: fontSize(24, dim),
+        textAlign: 'center' as const,
+      },
+      children: [
+        slide.heading
+          ? {
+              type: 'div',
+              props: {
+                style: {
+                  display: 'flex',
+                  fontFamily: style.fonts.heading,
+                  fontSize: fontSize(42, dim),
+                  color: style.colors.text,
+                  lineHeight: 1.3,
+                  maxWidth: '90%',
+                },
+                children: slide.heading,
+              },
+            }
+          : null,
+        slide.body
+          ? {
+              type: 'div',
+              props: {
+                style: {
+                  display: 'flex',
+                  fontFamily: style.fonts.body,
+                  fontSize: fontSize(24, dim),
+                  color: style.colors.textSecondary,
+                  lineHeight: 1.6,
+                  maxWidth: '85%',
+                },
+                children: slide.body,
+              },
+            }
+          : null,
+      ].filter(Boolean),
+    },
+  };
+}
+
+function renderTitleSlide(
+  slide: AiSlide,
+  style: CardStyleDefinition,
+  dim: ExportDimensions,
+) {
+  return {
+    type: 'div',
+    props: {
+      style: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexGrow: 1,
+        gap: fontSize(20, dim),
+        textAlign: 'center' as const,
+      },
+      children: [
+        slide.heading
+          ? {
+              type: 'div',
+              props: {
+                style: {
+                  display: 'flex',
+                  fontFamily: style.fonts.heading,
+                  fontSize: fontSize(52, dim),
+                  color: style.colors.accent,
+                  lineHeight: 1.2,
+                  maxWidth: '90%',
+                },
+                children: slide.heading,
+              },
+            }
+          : null,
+        slide.body
+          ? {
+              type: 'div',
+              props: {
+                style: {
+                  display: 'flex',
+                  fontFamily: style.fonts.body,
+                  fontSize: fontSize(26, dim),
+                  color: style.colors.textSecondary,
+                  lineHeight: 1.5,
+                  maxWidth: '80%',
+                },
+                children: slide.body,
+              },
+            }
+          : null,
+      ].filter(Boolean),
+    },
+  };
+}
+
+function renderListSlide(
+  slide: AiSlide,
+  style: CardStyleDefinition,
+  dim: ExportDimensions,
+) {
+  return renderList(slide.items || [], style, dim, '•');
 }
