@@ -274,7 +274,7 @@ export default function AboutPage() {
             { title: 'CRM-система', description: 'Привязка клиентов к менеджерам. Поиск по имени/телефону, фильтры по менеджеру и статусу. Заметки к клиенту. Прогноз замены масла (обратный отсчёт в днях). WhatsApp из карточки.', status: 'live' as const },
             { title: 'Корзина менеджера', description: 'Менеджер собирает корзину из каталога, выбирает клиента, получает уникальную ссылку. Отправляет в WhatsApp — клиент открывает и оплачивает. Статусы: ожидает → просмотрена → оформлена.', status: 'live' as const },
             { title: 'Склад и инвентаризация', description: 'Таблица всех вариантов с цветокодом остатков: красный (0), жёлтый (<5), зелёный (5+). Фильтр по бренду, toggle «низкий остаток». Автосписание при оплате заказа.', status: 'live' as const },
-            { title: 'Аналитика', description: 'Выручка по месяцам, средний чек, топ товаров, топ клиентов, менеджеры по выручке, заказы по статусам. CSS-only графики без внешних библиотек.', status: 'live' as const },
+            { title: 'Аналитика и ABC-XYZ', description: 'Выручка по месяцам, средний чек, топ товаров, топ клиентов, менеджеры по выручке, заказы по статусам. ABC-XYZ анализ товарной матрицы: классификация по выручке и стабильности спроса.', status: 'live' as const },
             { title: 'Журнал действий', description: 'Аудит: кто назначил менеджера, кто создал корзину, кто оплатил заказ. Таблица: дата, автор, действие, детали. Логирование в 6 API-эндпоинтах.', status: 'live' as const },
             { title: 'Комиссии менеджеров', description: 'Автоматическое начисление с каждого оплаченного заказа. Разбивка по месяцам, история по заказам, номер и сумма. Настраиваемая ставка (по умолчанию 3%).', status: 'live' as const },
             { title: 'Панель администратора', description: 'Два уровня: Админ — 14 разделов (заказы, клиенты, менеджеры, корзины, склад, аналитика, журнал, комиссии, товары, бренды, категории, промокоды, AI-инструменты). Менеджер — 5 разделов.', status: 'live' as const },
@@ -921,10 +921,10 @@ export default function AboutPage() {
         </h2>
         <div className="grid gap-4 sm:grid-cols-4 mb-6">
           {[
-            { value: '610', label: 'тестов', sub: '44 test suites' },
-            { value: '0', label: 'ошибок TS', sub: 'strict mode' },
-            { value: '< 1 мин', label: 'CI/CD', sub: 'push — deploy' },
-            { value: '100%', label: 'крит. путей', sub: 'оплата, auth, CRM' },
+            { value: '35 000+', label: 'строк кода', sub: '216 файлов, 100+ коммитов' },
+            { value: '610', label: 'тестов', sub: '35 test suites' },
+            { value: '34', label: 'API-эндпоинта', sub: '100% покрытие маршрутов' },
+            { value: '6 дней', label: 'разработка', sub: '~84 часа (по 14 ч/день)' },
           ].map((m) => (
             <div key={m.label} className="rounded-xl border border-border-subtle bg-bg-card p-4 text-center">
               <p className="font-display text-xl text-accent-yellow">{m.value}</p>
@@ -933,14 +933,45 @@ export default function AboutPage() {
             </div>
           ))}
         </div>
+
+        {/* How this was built */}
+        <div className="rounded-xl border border-accent-yellow/20 bg-accent-yellow/5 p-5 mb-6">
+          <h3 className="text-sm font-semibold text-accent-yellow mb-3">Как это было сделано за 6 дней</h3>
+          <div className="grid gap-4 sm:grid-cols-3">
+            <div>
+              <p className="text-[10px] text-text-muted uppercase tracking-wider mb-1">Разработчик знает отрасль</p>
+              <p className="text-xs text-text-secondary leading-relaxed">
+                Не нужен долгий ресёрч продукта — разработчик <span className="text-text-primary font-medium">глубоко знает индустрию ГСМ</span>.
+                Боли клиентов, циклы закупок, маржинальность, логистика — всё из реального опыта. Каждое продуктовое решение точное, без итераций «а что если».
+              </p>
+            </div>
+            <div>
+              <p className="text-[10px] text-text-muted uppercase tracking-wider mb-1">Дизайн — без аутсорса</p>
+              <p className="text-xs text-text-secondary leading-relaxed">
+                <span className="text-text-primary font-medium">Дизайн делается самостоятельно</span> — без внешних дизайнеров, без Figma-хендоффов, без итераций с подрядчиками.
+                Прямая реализация: идея &rarr; код &rarr; продакшен. Это убирает недели согласований.
+              </p>
+            </div>
+            <div>
+              <p className="text-[10px] text-text-muted uppercase tracking-wider mb-1">Полный цикл в одних руках</p>
+              <p className="text-xs text-text-secondary leading-relaxed">
+                Один разработчик: код, дизайн, деплой, тесты, CI/CD, база данных. Плюс <span className="text-text-primary font-medium">все интеграции и комплайнсы</span>:
+                юридические документы, домен, хостинг, SMS.ru, ЮKassa — верификация и подключение каждого сервиса. AI-ассистент ускоряет, но решения принимает человек.
+              </p>
+            </div>
+          </div>
+        </div>
+
         <div className="rounded-xl border border-border-subtle bg-bg-card overflow-hidden">
           {[
             { label: 'Фронтенд', value: 'Next.js 16, React 19, TypeScript 5, Tailwind CSS 4, Zustand 5, Zod 4' },
-            { label: 'Бэкенд API', value: 'FastAPI (Python 3.11+), Pydantic v2, async, structlog' },
-            { label: 'База данных', value: 'Supabase PostgreSQL 15, Row Level Security, RBAC' },
-            { label: 'Авторизация', value: 'SMS OTP + Supabase Auth, JWT, HttpOnly cookies' },
-            { label: 'Оплата', value: 'ЮKassa production, банковские карты, СБП, SberPay, webhook' },
-            { label: 'Деплой', value: 'Docker, GitHub Actions CI/CD, Coolify, zero-downtime' },
+            { label: 'Бэкенд', value: 'Next.js API Routes (Node.js), 34 эндпоинта, Zod-валидация, FastAPI (внешний API)' },
+            { label: 'База данных', value: 'Supabase PostgreSQL 15, Row Level Security, RBAC, 21 таблица' },
+            { label: 'Авторизация', value: 'SMS OTP (SMS.ru) + Supabase Auth, JWT, HttpOnly cookies' },
+            { label: 'Оплата', value: 'ЮKassa production, банковские карты, СБП, SberPay, 54-ФЗ (НДС 22%)' },
+            { label: 'Деплой', value: 'Docker, GitHub Actions CI/CD, Coolify, zero-downtime, PS.KZ VPS' },
+            { label: 'Тесты', value: '610 тестов (Vitest), 35 suites, 100% покрытие API-маршрутов' },
+            { label: 'AI', value: 'Claude Vision (распознавание товаров), Satori+Sharp (генерация карточек)' },
           ].map((item, i, arr) => (
             <div
               key={item.label}
@@ -952,6 +983,20 @@ export default function AboutPage() {
               <span className="text-xs text-text-secondary">{item.value}</span>
             </div>
           ))}
+        </div>
+
+        {/* Copyable summary for cost estimation */}
+        <div className="rounded-xl border border-border-subtle bg-bg-card p-5 mt-6">
+          <h3 className="text-sm font-semibold text-text-primary mb-3">Сводка проекта</h3>
+          <div className="text-xs text-text-secondary leading-relaxed space-y-1.5 select-all">
+            <p>Платформа для оптово-розничной торговли ГСМ (масла, смазки, автохимия). Production, живые пользователи, реальные платежи.</p>
+            <p>35 000+ строк кода, 216 файлов, 100+ коммитов. 34 API-эндпоинта, 42 страницы, 21 таблица в БД. 610 автотестов (35 suites), 100% покрытие API.</p>
+            <p>Стек: Next.js 16, React 19, TypeScript 5 (strict), Tailwind CSS 4, Zustand, Zod 4, Supabase PostgreSQL (RLS, RBAC), Docker, GitHub Actions CI/CD.</p>
+            <p>Модули: каталог с фильтрами, SMS-авторизация (SMS.ru), онлайн-оплата (ЮKassa, 54-ФЗ, НДС 22%), личный кабинет, тиерная бонусная программа (5 уровней), промокоды, повтор заказа, CRM-система менеджера (прогноз замены масла, корзина менеджера → WhatsApp), комиссионная система, складской учёт с автосписанием, ABC-XYZ анализ, журнал аудита, AI-генератор карточек для маркетплейсов (12 типов слайдов, 4 стиля, 6 платформ), удаление фона (WASM), конструктор каруселей, REST API для внешних систем.</p>
+            <p>Панель администратора: 14 разделов (admin), 5 разделов (manager). RBAC на уровне БД.</p>
+            <p>Интеграции: SMS.ru (OTP), ЮKassa (платежи), Claude Vision AI (распознавание товаров), Satori+Sharp (генерация изображений), pdf-lib (PDF).</p>
+            <p>Срок разработки: 6 рабочих дней, ~84 часа (по 14 часов/день). Один разработчик, включая дизайн, юридику, подключение всех сервисов и комплайнсы.</p>
+          </div>
         </div>
       </section>
 
