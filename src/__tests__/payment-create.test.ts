@@ -94,21 +94,52 @@ describe('POST /api/payment/create', () => {
 
   it('creates payment successfully', async () => {
     let updateCalled = false;
+    let ordersCallCount = 0;
     mockAdminFrom.mockImplementation((table: string) => {
       if (table === 'orders') {
-        return {
-          select: () => ({
-            eq: () => ({
-              single: () => Promise.resolve({
-                data: { id: 'o1', order_number: 'ALT-001', total: 5000, payment_status: 'pending', user_id: 'user-1' },
-                error: null,
+        ordersCallCount++;
+        if (ordersCallCount === 1) {
+          // First call: verify order belongs to user
+          return {
+            select: () => ({
+              eq: () => ({
+                single: () => Promise.resolve({
+                  data: { id: 'o1', order_number: 'ALT-001', total: 5000, payment_status: 'pending', user_id: 'user-1' },
+                  error: null,
+                }),
               }),
             }),
-          }),
+          };
+        }
+        if (ordersCallCount === 2) {
+          // Second call: fetch contact_phone for receipt
+          return {
+            select: () => ({
+              eq: () => ({
+                single: () => Promise.resolve({
+                  data: { contact_phone: '+79001111111', contact_name: 'Тест' },
+                  error: null,
+                }),
+              }),
+            }),
+          };
+        }
+        // Third call: update with payment ID
+        return {
           update: () => {
             updateCalled = true;
             return { eq: () => Promise.resolve({ error: null }) };
           },
+        };
+      }
+      if (table === 'order_items') {
+        return {
+          select: () => ({
+            eq: () => Promise.resolve({
+              data: [{ product_name: 'Масло ROLF', variant_label: '4л', quantity: 2, unit_price: 2500, total_price: 5000 }],
+              error: null,
+            }),
+          }),
         };
       }
       return {};

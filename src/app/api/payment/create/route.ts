@@ -42,6 +42,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Заказ уже оплачен' }, { status: 400 });
     }
 
+    // Fetch order items + contact phone for receipt (54-ФЗ)
+    const { data: orderItems } = await admin
+      .from('order_items')
+      .select('product_name, variant_label, quantity, unit_price, total_price')
+      .eq('order_id', orderId);
+
+    const { data: orderFull } = await admin
+      .from('orders')
+      .select('contact_phone, contact_name')
+      .eq('id', orderId)
+      .single();
+
     // Idempotency key — prevents duplicate payments for the same order
     const idempotencyKey = `order_${orderId}_${Date.now()}`;
 
@@ -62,6 +74,22 @@ export async function POST(request: NextRequest) {
     // Create payment via YooKassa API
     const auth = Buffer.from(`${YOOKASSA_SHOP_ID}:${YOOKASSA_SECRET_KEY}`).toString('base64');
 
+    // Build receipt items for 54-ФЗ fiscal compliance
+    const receiptItems = (orderItems || []).map((item) => ({
+      description: `${item.product_name} (${item.variant_label})`.slice(0, 128),
+      quantity: String(item.quantity),
+      amount: {
+        value: Number(item.unit_price).toFixed(2),
+        currency: 'RUB' as const,
+      },
+      vat_code: 1, // НДС не облагается (для ИП/УСН)
+      payment_subject: 'commodity' as const,
+      payment_mode: 'full_payment' as const,
+    }));
+
+    // Customer contact for receipt
+    const customerPhone = orderFull?.contact_phone?.replace(/[^\d+]/g, '') || undefined;
+
     const yooRes = await fetch('https://api.yookassa.ru/v3/payments', {
       method: 'POST',
       headers: {
@@ -80,6 +108,12 @@ export async function POST(request: NextRequest) {
         },
         capture: true,
         description: `Заказ №${order.order_number} — АЛТЕХ`,
+        receipt: {
+          customer: {
+            ...(customerPhone ? { phone: customerPhone } : {}),
+          },
+          items: receiptItems,
+        },
         metadata: {
           order_id: orderId,
           order_number: order.order_number,
