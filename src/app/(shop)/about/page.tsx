@@ -941,7 +941,7 @@ export default function AboutPage() {
             <div>
               <p className="text-[10px] text-text-muted uppercase tracking-wider mb-1">Разработчик знает отрасль</p>
               <p className="text-xs text-text-secondary leading-relaxed">
-                Не нужен долгий ресёрч продукта — разработчик <span className="text-text-primary font-medium">глубоко знает индустрию ГСМ</span>.
+                Не нужен долгий ресёрч продукта — разработчик <span className="text-text-primary font-medium">погружен в данную отрасль и специфику</span>.
                 Боли клиентов, циклы закупок, маржинальность, логистика — всё из реального опыта. Каждое продуктовое решение точное, без итераций «а что если».
               </p>
             </div>
@@ -956,7 +956,7 @@ export default function AboutPage() {
               <p className="text-[10px] text-text-muted uppercase tracking-wider mb-1">Полный цикл в одних руках</p>
               <p className="text-xs text-text-secondary leading-relaxed">
                 Один разработчик: код, дизайн, деплой, тесты, CI/CD, база данных. Плюс <span className="text-text-primary font-medium">все интеграции и комплайнсы</span>:
-                юридические документы, домен, хостинг, SMS.ru, ЮKassa — верификация и подключение каждого сервиса. AI-ассистент ускоряет, но решения принимает человек.
+                юридические документы, домен, хостинг, SMS.ru, ЮKassa — верификация и подключение каждого сервиса.
               </p>
             </div>
           </div>
@@ -996,66 +996,6 @@ export default function AboutPage() {
             <p>Панель администратора: 14 разделов (admin), 5 разделов (manager). RBAC на уровне БД.</p>
             <p>Интеграции: SMS.ru (OTP), ЮKassa (платежи), Claude Vision AI (распознавание товаров), Satori+Sharp (генерация изображений), pdf-lib (PDF).</p>
             <p>Срок разработки: 6 рабочих дней, ~84 часа (по 14 часов/день). Один разработчик, включая дизайн, юридику, подключение всех сервисов и комплайнсы.</p>
-          </div>
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════════════
-          12. CTA — ГОТОВЫ ЗАПУСТИТЬ?
-      ═══════════════════════════════════════════════ */}
-      <section className="mb-8">
-        <div className="rounded-2xl border border-accent-yellow/30 bg-gradient-to-br from-accent-yellow/10 to-accent-yellow/5 p-8 md:p-10 text-center">
-          <h2 className="font-display text-xl md:text-2xl text-text-primary mb-3">
-            Остались вопросы?
-          </h2>
-          <p className="text-text-secondary text-sm max-w-lg mx-auto mb-4 leading-relaxed">
-            Свяжитесь с нами — поможем подобрать масло, рассчитаем объём
-            для автопарка, организуем доставку по всей России.
-          </p>
-
-          {/* Phone numbers */}
-          <div className="flex flex-col items-center gap-2 mb-6">
-            <a
-              href="tel:+79969142832"
-              className="inline-flex items-center gap-2 rounded-xl bg-accent-yellow px-6 py-3 text-sm font-bold text-bg-primary transition-all hover:shadow-[0_0_24px_rgba(255,214,0,0.3)]"
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
-              </svg>
-              +7 (996) 914-28-32
-              <span className="text-xs font-normal opacity-70">отдел продаж</span>
-            </a>
-            <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-sm">
-              <a href="tel:+79142744420" className="text-text-secondary hover:text-accent-yellow transition-colors">
-                +7 (914) 274-44-20 <span className="text-text-muted text-xs">офис</span>
-              </a>
-              <a href="tel:+79141082051" className="text-text-secondary hover:text-accent-yellow transition-colors">
-                +7 (914) 108-20-51 <span className="text-text-muted text-xs">руководитель</span>
-              </a>
-            </div>
-          </div>
-
-          {/* Address + socials */}
-          <p className="text-text-muted text-xs mb-4">
-            г. Якутск, ул. Лонгинова, 24/6, 2 этаж &middot; Пн–Пт 09:00–18:00
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-            <a
-              href="https://wa.me/79969142832"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-xl border border-green-500/30 px-6 py-3 text-sm font-medium text-green-400 transition-colors hover:border-green-400 hover:bg-green-500/10"
-            >
-              WhatsApp
-            </a>
-            <a
-              href="https://t.me/alltech14_ykt"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-xl border border-border-subtle px-6 py-3 text-sm font-medium text-text-secondary transition-colors hover:border-accent-cyan hover:text-accent-cyan"
-            >
-              Telegram
-            </a>
           </div>
         </div>
       </section>
