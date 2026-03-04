@@ -67,7 +67,7 @@ export async function middleware(request: NextRequest) {
     const isStaff = profile?.role === 'admin' || profile?.role === 'manager'
 
     const url = request.nextUrl.clone()
-    url.pathname = (pathname === '/admin-login' || isStaff) ? '/admin' : '/cabinet'
+    url.pathname = (pathname === '/admin-login' || isStaff) ? '/admin' : '/'
     return NextResponse.redirect(url)
   }
 

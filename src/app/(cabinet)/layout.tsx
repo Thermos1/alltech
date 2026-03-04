@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import MobileNav from '@/components/layout/MobileNav';
 
 const navItems = [
   { href: '/cabinet', label: 'Обзор', icon: '📊' },
@@ -57,6 +58,7 @@ export default async function CabinetLayout({
           {children}
         </main>
       </div>
+      <MobileNav />
     </div>
   );
 }

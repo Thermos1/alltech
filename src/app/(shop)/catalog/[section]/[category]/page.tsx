@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { SECTIONS } from '@/lib/constants';
 import CategoryTabs from '@/components/catalog/CategoryTabs';
-import ProductGrid from '@/components/catalog/ProductGrid';
+import FilterableProductGrid from '@/components/catalog/FilterableProductGrid';
 
 interface PageProps {
   params: Promise<{ section: string; category: string }>;
@@ -113,8 +113,8 @@ export default async function CatalogCategoryPage({ params }: PageProps) {
           </div>
         )}
 
-        {/* Product grid */}
-        <ProductGrid products={productsWithPrices} />
+        {/* Product grid with brand filter */}
+        <FilterableProductGrid products={productsWithPrices} />
       </div>
     </div>
   );

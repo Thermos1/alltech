@@ -7,7 +7,7 @@ import { createClient } from '@/lib/supabase/client'
 export default function LoginForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const nextUrl = searchParams.get('next') || searchParams.get('redirect') || '/cabinet'
+  const nextUrl = searchParams.get('next') || searchParams.get('redirect') || '/'
 
   const [phone, setPhone] = useState('')
   const [code, setCode] = useState('')
