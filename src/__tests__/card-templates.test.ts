@@ -43,13 +43,19 @@ describe('Card templates', () => {
     expect(ALL_STYLES['gradient'].colors.backgroundEnd).toBeTruthy();
   });
 
-  it('retro style uses АЛТЕХ brand colors', () => {
+  it('retro style uses dark neon colors', () => {
     expect(ALL_STYLES['retro'].colors.background).toBe('#0A0A0F');
     expect(ALL_STYLES['retro'].colors.accent).toBe('#FFD600');
   });
 
-  it('defines 6 platform presets', () => {
-    expect(Object.keys(PLATFORM_PRESETS)).toHaveLength(6);
+  it('defines 7 platform presets', () => {
+    expect(Object.keys(PLATFORM_PRESETS)).toHaveLength(7);
+  });
+
+  it('Shopify uses 2048x2048 PNG', () => {
+    expect(PLATFORM_PRESETS['shopify'].width).toBe(2048);
+    expect(PLATFORM_PRESETS['shopify'].height).toBe(2048);
+    expect(PLATFORM_PRESETS['shopify'].format).toBe('png');
   });
 
   it('WB/Ozon uses 900x1200 JPG', () => {

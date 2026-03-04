@@ -1,12 +1,6 @@
 'use client';
 
-import { ALL_STYLES, PLATFORM_PRESETS, type CardStyleId, type CardElement, type BadgeConfig, type ProductCardData, type ExportPlatform } from '@/lib/card-templates';
-
-const BASE_TYPE_LABELS: Record<string, string> = {
-  synthetic: 'Синтетика',
-  semi_synthetic: 'Полусинтетика',
-  mineral: 'Минеральное',
-};
+import { ALL_STYLES, PLATFORM_PRESETS, type CardStyleId, type CardElement, type BadgeConfig, type ProductCardData, type ExportPlatform, type CardStyleColors } from '@/lib/card-templates';
 
 type Props = {
   style: CardStyleId;
@@ -17,6 +11,8 @@ type Props = {
   badges: BadgeConfig[];
   productData: ProductCardData;
   productImageBase64: string | null;
+  imageScale?: number;
+  customColors?: Partial<CardStyleColors>;
 };
 
 export default function CardPreview({
@@ -28,23 +24,27 @@ export default function CardPreview({
   badges,
   productData,
   productImageBase64,
+  imageScale = 0.5,
+  customColors,
 }: Props) {
-  const styleDef = ALL_STYLES[style];
+  const baseStyle = ALL_STYLES[style];
+  const colors = customColors && Object.keys(customColors).length > 0
+    ? { ...baseStyle.colors, ...customColors }
+    : baseStyle.colors;
+
   const dim = platform === 'custom'
     ? { width: customWidth || 1080, height: customHeight || 1080 }
     : PLATFORM_PRESETS[platform];
 
   const has = (el: CardElement) => enabledElements.includes(el);
 
-  const specs: string[] = [];
-  if (has('viscosity') && productData.viscosity) specs.push(productData.viscosity);
-  if (has('baseType') && productData.baseType) specs.push(BASE_TYPE_LABELS[productData.baseType] || productData.baseType);
-  if (has('apiSpec') && productData.apiSpec) specs.push(`API ${productData.apiSpec}`);
-  if (has('aceaSpec') && productData.aceaSpec) specs.push(`ACEA ${productData.aceaSpec}`);
+  const visibleSpecs = (productData.specs || []).filter(s => s.value);
 
-  const bgStyle = styleDef.colors.backgroundEnd
-    ? { backgroundImage: `linear-gradient(135deg, ${styleDef.colors.background}, ${styleDef.colors.backgroundEnd})` }
-    : { backgroundColor: styleDef.colors.background };
+  const bgStyle = colors.backgroundEnd
+    ? { backgroundImage: `linear-gradient(135deg, ${colors.background}, ${colors.backgroundEnd})` }
+    : { backgroundColor: colors.background };
+
+  const imageMaxHeight = `${Math.round(imageScale * 100)}%`;
 
   return (
     <div className="rounded-xl border border-border-subtle overflow-hidden">
@@ -66,16 +66,6 @@ export default function CardPreview({
             padding: '5%',
           }}
         >
-          {/* Watermark */}
-          {has('watermark') && (
-            <img
-              src="/images/logo-white.png"
-              alt=""
-              className="absolute inset-0 m-auto opacity-[0.04]"
-              style={{ width: '50%', height: 'auto', objectFit: 'contain' }}
-            />
-          )}
-
           {/* Badges */}
           {has('badges') && badges.length > 0 && (
             <div className="absolute top-[5%] right-[5%] flex gap-1 z-10">
@@ -83,7 +73,7 @@ export default function CardPreview({
                 <span
                   key={i}
                   className="text-xs font-bold px-2 py-1 rounded"
-                  style={{ backgroundColor: styleDef.colors.badgeBg, color: styleDef.colors.badgeText }}
+                  style={{ backgroundColor: colors.badgeBg, color: colors.badgeText }}
                 >
                   {badge.text}
                 </span>
@@ -95,7 +85,7 @@ export default function CardPreview({
           {has('brandName') && productData.brand && (
             <div
               className="text-xs font-bold uppercase tracking-widest mb-1"
-              style={{ color: styleDef.colors.textSecondary }}
+              style={{ color: colors.textSecondary }}
             >
               {productData.brand}
             </div>
@@ -107,11 +97,11 @@ export default function CardPreview({
               <img
                 src={productImageBase64}
                 alt="Product"
-                className="max-h-full max-w-[80%] object-contain"
-                style={{ maxHeight: '55%' }}
+                className="max-w-[80%] object-contain"
+                style={{ maxHeight: imageMaxHeight }}
               />
             ) : (
-              <div className="text-center" style={{ color: styleDef.colors.textSecondary }}>
+              <div className="text-center" style={{ color: colors.textSecondary }}>
                 <div className="text-4xl mb-2 opacity-30">📦</div>
                 <div className="text-xs opacity-50">Загрузите фото</div>
               </div>
@@ -123,7 +113,7 @@ export default function CardPreview({
             <div
               className="font-display leading-tight"
               style={{
-                color: styleDef.colors.text,
+                color: colors.text,
                 fontSize: 'clamp(14px, 3.5vw, 22px)',
               }}
             >
@@ -132,15 +122,15 @@ export default function CardPreview({
           )}
 
           {/* Specs pills */}
-          {specs.length > 0 && (
+          {has('specs') && visibleSpecs.length > 0 && (
             <div className="flex flex-wrap gap-1 mt-1.5">
-              {specs.map((spec, i) => (
+              {visibleSpecs.map((spec, i) => (
                 <span
                   key={i}
                   className="text-[10px] px-2 py-0.5 rounded"
-                  style={{ backgroundColor: styleDef.colors.specBg, color: styleDef.colors.specText }}
+                  style={{ backgroundColor: colors.specBg, color: colors.specText }}
                 >
-                  {spec}
+                  {spec.label} {spec.value}
                 </span>
               ))}
             </div>
@@ -152,15 +142,15 @@ export default function CardPreview({
               <span
                 className="font-display"
                 style={{
-                  color: styleDef.colors.accent,
+                  color: colors.accent,
                   fontSize: 'clamp(16px, 4vw, 26px)',
                 }}
               >
-                {productData.price.toLocaleString('ru-RU')} ₽
+                {productData.price.toLocaleString('ru-RU')} {productData.priceUnit || '₽'}
               </span>
-              {productData.volume && (
-                <span className="text-[10px]" style={{ color: styleDef.colors.textSecondary }}>
-                  / {productData.volume}
+              {has('subtitle') && productData.subtitle && (
+                <span className="text-[10px]" style={{ color: colors.textSecondary }}>
+                  / {productData.subtitle}
                 </span>
               )}
             </div>

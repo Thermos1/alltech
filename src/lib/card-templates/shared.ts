@@ -1,5 +1,4 @@
-import type { CardStyleDefinition, ExportDimensions, BadgeConfig, BASE_TYPE_LABELS } from './types';
-import type { ReactNode } from 'react';
+import type { CardStyleDefinition, ExportDimensions, BadgeConfig } from './types';
 
 // Scale factor based on dimensions (relative to 1080x1350 reference)
 export function scaleFactor(dimensions: ExportDimensions): number {
@@ -46,14 +45,4 @@ export function badgeColors(badge: BadgeConfig, style: CardStyleDefinition): { b
     default:
       return { bg: style.colors.badgeBg, text: style.colors.badgeText };
   }
-}
-
-// Human-readable base type label
-export function baseTypeLabel(baseType: string): string {
-  const labels: Record<string, string> = {
-    synthetic: 'Синтетика',
-    semi_synthetic: 'Полусинтетика',
-    mineral: 'Минеральное',
-  };
-  return labels[baseType] || baseType;
 }

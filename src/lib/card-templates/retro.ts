@@ -3,7 +3,7 @@ import type { CardStyleDefinition } from './types';
 export const retroStyle: CardStyleDefinition = {
   id: 'retro',
   nameRu: 'Ретрофутуризм',
-  description: 'Фирменный стиль АЛТЕХ — неон, тёмный фон',
+  description: 'Тёмный неоновый стиль — киберпанк эстетика',
   colors: {
     background: '#0A0A0F',
     text: '#F0F0F5',

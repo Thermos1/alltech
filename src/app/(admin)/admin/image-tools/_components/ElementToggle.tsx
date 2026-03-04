@@ -6,10 +6,8 @@ const ELEMENT_LABELS: Record<CardElement, string> = {
   productName: 'Название товара',
   price: 'Цена',
   brandName: 'Бренд',
-  viscosity: 'Вязкость',
-  apiSpec: 'API спецификация',
-  aceaSpec: 'ACEA спецификация',
-  baseType: 'Тип базового масла',
+  subtitle: 'Подпись (объём, размер)',
+  specs: 'Характеристики',
   badges: 'Бейджи',
   watermark: 'Водяной знак',
   slideNumber: 'Нумерация',
@@ -30,8 +28,8 @@ export default function ElementToggle({ enabled, onChange }: Props) {
   }
 
   const elements: CardElement[] = [
-    'productName', 'price', 'brandName', 'viscosity',
-    'apiSpec', 'aceaSpec', 'baseType', 'badges', 'watermark',
+    'productName', 'price', 'brandName', 'subtitle',
+    'specs', 'badges', 'watermark',
   ];
 
   return (

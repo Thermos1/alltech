@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import type { ProductSpec } from '@/lib/card-templates';
 import ImageCleaner from './_components/ImageCleaner';
 import BackgroundRemover from './_components/BackgroundRemover';
 import CardConstructor from './_components/CardConstructor';
@@ -8,12 +9,8 @@ import CarouselConstructor from './_components/CarouselConstructor';
 
 type RecognizedProduct = {
   brand?: string;
-  viscosity?: string;
-  base_type?: string;
-  api_spec?: string;
-  acea_spec?: string;
-  approvals?: string;
-  volume?: string;
+  specs?: ProductSpec[];
+  subtitle?: string;
 };
 
 type Tab = 'cleanup' | 'bg-remove' | 'card' | 'carousel';

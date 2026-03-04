@@ -3,7 +3,7 @@ import type { CardStyleDefinition } from './types';
 export const premiumDarkStyle: CardStyleDefinition = {
   id: 'premium-dark',
   nameRu: 'Премиум тёмный',
-  description: 'Тёмный фон, золотые акценты — для премиальных масел',
+  description: 'Тёмный фон, золотые акценты — для премиальных товаров',
   colors: {
     background: '#0F0F1A',
     text: '#F0F0F5',

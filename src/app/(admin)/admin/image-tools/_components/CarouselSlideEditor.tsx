@@ -12,10 +12,8 @@ type Props = {
   onCompatibilityChange: (v: string[]) => void;
   volumes: { volume: string; price: number }[];
   onVolumesChange: (v: { volume: string; price: number }[]) => void;
-  changeInterval: string;
-  onChangeIntervalChange: (v: string) => void;
-  storageConditions: string;
-  onStorageConditionsChange: (v: string) => void;
+  usageTips: string[];
+  onUsageTipsChange: (v: string[]) => void;
   certifications: string[];
   onCertificationsChange: (v: string[]) => void;
 };
@@ -31,13 +29,13 @@ export default function CarouselSlideEditor(props: Props) {
 
       {slideType === 'cover' && (
         <p className="text-xs text-text-muted">
-          Обложка автоматически использует фото товара, название и вязкость из данных товара.
+          Обложка автоматически использует фото товара, название и характеристики из данных товара.
         </p>
       )}
 
       {slideType === 'specs' && (
         <p className="text-xs text-text-muted">
-          Характеристики берутся из данных товара (API, ACEA, тип базы, допуски).
+          Характеристики берутся из данных товара (заполните выше).
         </p>
       )}
 
@@ -54,7 +52,7 @@ export default function CarouselSlideEditor(props: Props) {
         <EditableList
           items={props.compatibility}
           onChange={props.onCompatibilityChange}
-          placeholder="Марка техники"
+          placeholder="Совместимость / применение"
           maxItems={10}
         />
       )}
@@ -67,29 +65,19 @@ export default function CarouselSlideEditor(props: Props) {
       )}
 
       {slideType === 'usage' && (
-        <div className="space-y-2">
-          <input
-            type="text"
-            value={props.changeInterval}
-            onChange={(e) => props.onChangeIntervalChange(e.target.value)}
-            placeholder="Интервал замены (напр. 10 000 км)"
-            className="w-full rounded-lg bg-bg-secondary border border-border-subtle px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:border-accent-yellow focus:outline-none"
-          />
-          <input
-            type="text"
-            value={props.storageConditions}
-            onChange={(e) => props.onStorageConditionsChange(e.target.value)}
-            placeholder="Условия хранения"
-            className="w-full rounded-lg bg-bg-secondary border border-border-subtle px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:border-accent-yellow focus:outline-none"
-          />
-        </div>
+        <EditableList
+          items={props.usageTips}
+          onChange={props.onUsageTipsChange}
+          placeholder="Совет по использованию"
+          maxItems={6}
+        />
       )}
 
       {slideType === 'trust' && (
         <EditableList
           items={props.certifications}
           onChange={props.onCertificationsChange}
-          placeholder="Сертификат/допуск"
+          placeholder="Сертификат / гарантия"
           maxItems={6}
         />
       )}
@@ -184,7 +172,7 @@ function VolumeEditor({
             type="text"
             value={v.volume}
             onChange={(e) => updateVolume(i, 'volume', e.target.value)}
-            placeholder="Объём (напр. 4л)"
+            placeholder="Вариант (напр. 4л, XL)"
             className="flex-1 rounded-lg bg-bg-secondary border border-border-subtle px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:border-accent-yellow focus:outline-none"
           />
           <input
@@ -207,7 +195,7 @@ function VolumeEditor({
           onClick={addVolume}
           className="text-xs text-accent-cyan hover:text-accent-cyan/80 transition-colors"
         >
-          + Добавить объём
+          + Добавить вариант
         </button>
       )}
     </div>

@@ -1,7 +1,5 @@
 import satori from 'satori';
 import sharp from 'sharp';
-import { readFile } from 'fs/promises';
-import { join } from 'path';
 import { loadFonts } from './fonts';
 import {
   ALL_STYLES,
@@ -11,26 +9,11 @@ import {
   type CardStyleDefinition,
   type ExportDimensions,
   type CardElement,
-  type BadgeConfig,
   type ProductCardData,
+  type ProductSpec,
 } from './card-templates';
 import type { CarouselData, CarouselSlideConfig } from './card-templates/carousel';
-import { backgroundStyle, fontSize, padding, formatPrice, badgeColors, baseTypeLabel, scaleFactor } from './card-templates/shared';
-
-// --- Watermark logo cache ---
-let cachedLogoBase64: string | null = null;
-
-async function getLogoBase64(): Promise<string> {
-  if (cachedLogoBase64) return cachedLogoBase64;
-  try {
-    const logoPath = join(process.cwd(), 'public', 'images', 'logo-white.png');
-    const buffer = await readFile(logoPath);
-    cachedLogoBase64 = `data:image/png;base64,${buffer.toString('base64')}`;
-    return cachedLogoBase64;
-  } catch {
-    return '';
-  }
-}
+import { backgroundStyle, fontSize, scaleFactor, formatPrice, badgeColors } from './card-templates/shared';
 
 // --- Resolve dimensions ---
 function resolveDimensions(config: { platform: string; customWidth?: number; customHeight?: number }): ExportDimensions {
@@ -45,14 +28,23 @@ function resolveDimensions(config: { platform: string; customWidth?: number; cus
   return PLATFORM_PRESETS[config.platform as keyof typeof PLATFORM_PRESETS] || PLATFORM_PRESETS['instagram'];
 }
 
+// --- Resolve style with custom color overrides ---
+function resolveStyle(config: { style: string; customColors?: Partial<CardStyleDefinition['colors']> }): CardStyleDefinition {
+  const base = ALL_STYLES[config.style as keyof typeof ALL_STYLES] || ALL_STYLES['minimalist'];
+  if (!config.customColors) return base;
+  return {
+    ...base,
+    colors: { ...base.colors, ...config.customColors },
+  };
+}
+
 // --- Single Card Generation ---
 export async function generateCard(config: CardConfig): Promise<Buffer> {
   const fonts = await loadFonts();
   const dimensions = resolveDimensions(config);
-  const style = ALL_STYLES[config.style];
-  const logoBase64 = await getLogoBase64();
+  const style = resolveStyle(config);
 
-  const jsx = renderCardJsx(config, style, dimensions, logoBase64);
+  const jsx = renderCardJsx(config, style, dimensions);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Satori accepts object JSX at runtime
   const svg = await satori(jsx as any, {
@@ -76,17 +68,17 @@ export async function generateCarousel(
   styleId: string,
   platform: string,
   productImageBase64: string,
+  customColors?: Partial<CardStyleDefinition['colors']>,
 ): Promise<Buffer[]> {
   const fonts = await loadFonts();
   const dimensions = resolveDimensions({ platform });
-  const style = ALL_STYLES[styleId as keyof typeof ALL_STYLES];
-  const logoBase64 = await getLogoBase64();
+  const style = resolveStyle({ style: styleId, customColors });
 
   const buffers: Buffer[] = [];
 
   // SEQUENTIAL processing to limit memory (~70MB peak for 7 slides)
   for (const slide of CAROUSEL_SLIDES) {
-    const jsx = renderCarouselSlideJsx(slide, carouselData, style, dimensions, productImageBase64, logoBase64);
+    const jsx = renderCarouselSlideJsx(slide, carouselData, style, dimensions, productImageBase64);
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Satori accepts object JSX at runtime
     const svg = await satori(jsx as any, {
@@ -137,12 +129,11 @@ function renderCardJsx(
   config: CardConfig,
   style: CardStyleDefinition,
   dim: ExportDimensions,
-  logoBase64: string,
 ) {
   const { productData, enabledElements, badges, productImageBase64 } = config;
-  const s = scaleFactor(dim);
-  const pad = Math.round(40 * s);
+  const pad = Math.round(40 * scaleFactor(dim));
   const bg = backgroundStyle(style);
+  const imageScale = config.imageScale || 0.5;
 
   return {
     type: 'div',
@@ -158,12 +149,12 @@ function renderCardJsx(
         overflow: 'hidden',
       },
       children: [
-        // Watermark
-        has(enabledElements, 'watermark') && logoBase64
+        // Watermark (user-uploaded logo or none)
+        has(enabledElements, 'watermark') && config.watermarkImageBase64
           ? {
               type: 'img',
               props: {
-                src: logoBase64,
+                src: config.watermarkImageBase64,
                 width: Math.round(dim.width * 0.5),
                 height: Math.round(dim.width * 0.5),
                 style: {
@@ -251,7 +242,7 @@ function renderCardJsx(
                     src: productImageBase64,
                     style: {
                       maxWidth: '80%',
-                      maxHeight: Math.round(dim.height * 0.5),
+                      maxHeight: Math.round(dim.height * imageScale),
                       objectFit: 'contain' as const,
                     },
                   },
@@ -278,10 +269,10 @@ function renderCardJsx(
             }
           : null,
 
-        // Specs row
-        renderSpecsRow(productData, enabledElements, style, dim),
+        // Specs row (universal)
+        has(enabledElements, 'specs') ? renderSpecsRow(productData.specs, style, dim) : null,
 
-        // Price
+        // Price + subtitle
         has(enabledElements, 'price') && productData.price
           ? {
               type: 'div',
@@ -302,10 +293,10 @@ function renderCardJsx(
                         fontSize: fontSize(40, dim),
                         color: style.colors.accent,
                       },
-                      children: `${formatPrice(productData.price)} ₽`,
+                      children: `${formatPrice(productData.price)} ${productData.priceUnit || '₽'}`,
                     },
                   },
-                  productData.volume
+                  has(enabledElements, 'subtitle') && productData.subtitle
                     ? {
                         type: 'div',
                         props: {
@@ -315,7 +306,7 @@ function renderCardJsx(
                             fontSize: fontSize(20, dim),
                             color: style.colors.textSecondary,
                           },
-                          children: `/ ${productData.volume}`,
+                          children: `/ ${productData.subtitle}`,
                         },
                       }
                     : null,
@@ -329,19 +320,12 @@ function renderCardJsx(
 }
 
 function renderSpecsRow(
-  data: ProductCardData,
-  elements: CardElement[],
+  specs: ProductSpec[],
   style: CardStyleDefinition,
   dim: ExportDimensions,
 ) {
-  const specs: string[] = [];
-
-  if (has(elements, 'viscosity') && data.viscosity) specs.push(data.viscosity);
-  if (has(elements, 'baseType') && data.baseType) specs.push(baseTypeLabel(data.baseType));
-  if (has(elements, 'apiSpec') && data.apiSpec) specs.push(`API ${data.apiSpec}`);
-  if (has(elements, 'aceaSpec') && data.aceaSpec) specs.push(`ACEA ${data.aceaSpec}`);
-
-  if (specs.length === 0) return null;
+  const visibleSpecs = specs.filter(s => s.value);
+  if (visibleSpecs.length === 0) return null;
 
   return {
     type: 'div',
@@ -352,7 +336,7 @@ function renderSpecsRow(
         gap: fontSize(8, dim),
         marginTop: fontSize(10, dim),
       },
-      children: specs.map((spec, i) => ({
+      children: visibleSpecs.map((spec, i) => ({
         type: 'div',
         key: String(i),
         props: {
@@ -365,7 +349,7 @@ function renderSpecsRow(
             padding: `${fontSize(6, dim)}px ${fontSize(12, dim)}px`,
             borderRadius: fontSize(6, dim),
           },
-          children: spec,
+          children: `${spec.label} ${spec.value}`,
         },
       })),
     },
@@ -382,7 +366,6 @@ function renderCarouselSlideJsx(
   style: CardStyleDefinition,
   dim: ExportDimensions,
   productImageBase64: string,
-  logoBase64: string,
 ) {
   const bg = backgroundStyle(style);
   const pad = Math.round(40 * scaleFactor(dim));
@@ -402,7 +385,7 @@ function renderCarouselSlideJsx(
       case 'usage':
         return renderUsageSlide(data, style, dim);
       case 'trust':
-        return renderTrustSlide(data, style, dim, logoBase64);
+        return renderTrustSlide(data, style, dim);
     }
   })();
 
@@ -420,24 +403,6 @@ function renderCarouselSlideJsx(
         overflow: 'hidden',
       },
       children: [
-        // Watermark
-        logoBase64
-          ? {
-              type: 'img',
-              props: {
-                src: logoBase64,
-                width: Math.round(dim.width * 0.4),
-                height: Math.round(dim.width * 0.4),
-                style: {
-                  position: 'absolute',
-                  top: '50%',
-                  left: '50%',
-                  transform: 'translate(-50%, -50%)',
-                  opacity: 0.03,
-                },
-              },
-            }
-          : null,
         // Slide number
         {
           type: 'div',
@@ -485,6 +450,8 @@ function renderCoverSlide(
   dim: ExportDimensions,
   productImageBase64: string,
 ) {
+  const highlightSpec = data.product.specs.find(s => s.value);
+
   return {
     type: 'div',
     props: {
@@ -523,7 +490,7 @@ function renderCoverSlide(
             children: data.product.name,
           },
         },
-        data.product.viscosity
+        highlightSpec
           ? {
               type: 'div',
               props: {
@@ -534,7 +501,7 @@ function renderCoverSlide(
                   fontSize: fontSize(28, dim),
                   color: style.colors.accent,
                 },
-                children: data.product.viscosity,
+                children: `${highlightSpec.label}: ${highlightSpec.value}`,
               },
             }
           : null,
@@ -561,17 +528,8 @@ function renderCoverSlide(
 
 // --- Slide 2: Specs ---
 function renderSpecsSlide(data: CarouselData, style: CardStyleDefinition, dim: ExportDimensions) {
-  const specs: { label: string; value: string }[] = [];
-  if (data.product.viscosity) specs.push({ label: 'Вязкость', value: data.product.viscosity });
-  if (data.product.baseType) specs.push({ label: 'Тип базы', value: baseTypeLabel(data.product.baseType) });
-  if (data.product.apiSpec) specs.push({ label: 'API', value: data.product.apiSpec });
-  if (data.product.aceaSpec) specs.push({ label: 'ACEA', value: data.product.aceaSpec });
-  if (data.product.approvals) specs.push({ label: 'Допуски', value: data.product.approvals });
-
-  return renderGrid(specs.map(s => ({
-    title: s.label,
-    text: s.value,
-  })), style, dim);
+  const specs = data.product.specs.filter(s => s.value);
+  return renderGrid(specs.map(s => ({ title: s.label, text: s.value })), style, dim);
 }
 
 // --- Slide 3: Benefits ---
@@ -581,14 +539,13 @@ function renderBenefitsSlide(data: CarouselData, style: CardStyleDefinition, dim
 
 // --- Slide 4: Compatibility ---
 function renderCompatibilitySlide(data: CarouselData, style: CardStyleDefinition, dim: ExportDimensions) {
-  return renderGrid(data.compatibility.map(c => ({
-    title: c,
-    text: '',
-  })), style, dim);
+  return renderGrid(data.compatibility.map(c => ({ title: c, text: '' })), style, dim);
 }
 
 // --- Slide 5: Volumes ---
 function renderVolumesSlide(data: CarouselData, style: CardStyleDefinition, dim: ExportDimensions) {
+  const priceUnit = data.product.priceUnit || '₽';
+
   return {
     type: 'div',
     props: {
@@ -633,7 +590,7 @@ function renderVolumesSlide(data: CarouselData, style: CardStyleDefinition, dim:
                   fontSize: fontSize(28, dim),
                   color: style.colors.accent,
                 },
-                children: `${formatPrice(v.price)} ₽`,
+                children: `${formatPrice(v.price)} ${priceUnit}`,
               },
             },
           ],
@@ -645,12 +602,7 @@ function renderVolumesSlide(data: CarouselData, style: CardStyleDefinition, dim:
 
 // --- Slide 6: Usage ---
 function renderUsageSlide(data: CarouselData, style: CardStyleDefinition, dim: ExportDimensions) {
-  const items: string[] = [];
-  if (data.changeInterval) items.push(`Интервал замены: ${data.changeInterval}`);
-  if (data.storageConditions) items.push(`Условия хранения: ${data.storageConditions}`);
-  items.push('Проверяйте уровень масла каждые 5 000 км');
-  items.push('Используйте оригинальные фильтры');
-
+  const items = data.usageTips.filter(t => t);
   return renderList(items, style, dim, '•');
 }
 
@@ -659,7 +611,6 @@ function renderTrustSlide(
   data: CarouselData,
   style: CardStyleDefinition,
   dim: ExportDimensions,
-  logoBase64: string,
 ) {
   return {
     type: 'div',
@@ -673,14 +624,19 @@ function renderTrustSlide(
         gap: fontSize(24, dim),
       },
       children: [
-        logoBase64
+        data.product.brand
           ? {
-              type: 'img',
+              type: 'div',
               props: {
-                src: logoBase64,
-                width: Math.round(dim.width * 0.3),
-                height: Math.round(dim.width * 0.15),
-                style: { objectFit: 'contain' as const, opacity: 0.8 },
+                style: {
+                  display: 'flex',
+                  fontFamily: style.fonts.heading,
+                  fontSize: fontSize(36, dim),
+                  color: style.colors.accent,
+                  textTransform: 'uppercase' as const,
+                  letterSpacing: '0.1em',
+                },
+                children: data.product.brand,
               },
             }
           : null,
@@ -725,19 +681,6 @@ function renderTrustSlide(
             ],
           },
         })),
-        {
-          type: 'div',
-          props: {
-            style: {
-              display: 'flex',
-              fontFamily: style.fonts.body,
-              fontSize: fontSize(16, dim),
-              color: style.colors.textSecondary,
-              marginTop: fontSize(16, dim),
-            },
-            children: 'АЛТЕХ — Родом из Якутии',
-          },
-        },
       ].filter(Boolean),
     },
   };

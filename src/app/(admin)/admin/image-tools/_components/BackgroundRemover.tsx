@@ -2,8 +2,10 @@
 
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { removeBackground, type Config } from '@imgly/background-removal';
+import type { ProductSpec } from '@/lib/card-templates';
 
-type RecognizedProduct = {
+/** Raw response from the recognition API (oil-specific fields for now) */
+type RawRecognized = {
   brand?: string;
   viscosity?: string;
   base_type?: 'synthetic' | 'semi_synthetic' | 'mineral';
@@ -15,15 +17,38 @@ type RecognizedProduct = {
   description?: string;
 };
 
+/** Universal format passed to card/carousel constructors */
+type UniversalRecognized = {
+  brand?: string;
+  specs?: ProductSpec[];
+  subtitle?: string;
+};
+
 const BASE_TYPE_LABELS: Record<string, string> = {
   synthetic: 'Синтетика',
   semi_synthetic: 'Полусинтетика',
   mineral: 'Минеральное',
 };
 
+/** Convert old oil-specific recognized data to universal specs format */
+function toUniversal(raw: RawRecognized): UniversalRecognized {
+  const specs: ProductSpec[] = [];
+  if (raw.viscosity) specs.push({ label: 'Вязкость', value: raw.viscosity });
+  if (raw.base_type) specs.push({ label: 'Тип базы', value: BASE_TYPE_LABELS[raw.base_type] || raw.base_type });
+  if (raw.api_spec) specs.push({ label: 'API', value: raw.api_spec });
+  if (raw.acea_spec) specs.push({ label: 'ACEA', value: raw.acea_spec });
+  if (raw.approvals) specs.push({ label: 'Допуски', value: raw.approvals });
+  if (raw.oem_number) specs.push({ label: 'OEM-номер', value: raw.oem_number });
+  return {
+    brand: raw.brand,
+    specs: specs.length > 0 ? specs : undefined,
+    subtitle: raw.volume,
+  };
+}
+
 type Props = {
   initialCleanedImage?: string | null;
-  onProcessed?: (imageBase64: string, recognized: RecognizedProduct | null) => void;
+  onProcessed?: (imageBase64: string, recognized: UniversalRecognized | null) => void;
 };
 
 export default function BackgroundRemover({ initialCleanedImage, onProcessed }: Props) {
@@ -34,7 +59,7 @@ export default function BackgroundRemover({ initialCleanedImage, onProcessed }: 
   const [bgStatus, setBgStatus] = useState<'idle' | 'loading' | 'processing' | 'done' | 'error'>('idle');
   const [bgProgress, setBgProgress] = useState('');
   const [recognizeStatus, setRecognizeStatus] = useState<'idle' | 'loading' | 'done' | 'error' | 'no-key'>('idle');
-  const [recognized, setRecognized] = useState<RecognizedProduct | null>(null);
+  const [recognized, setRecognized] = useState<RawRecognized | null>(null);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const cleanedImageUsedRef = useRef<string | null>(null);
@@ -69,7 +94,7 @@ export default function BackgroundRemover({ initialCleanedImage, onProcessed }: 
     setOriginalUrl(origUrl);
 
     let processedBase64: string | null = null;
-    let recognizedResult: RecognizedProduct | null = null;
+    let recognizedResult: RawRecognized | null = null;
 
     const bgPromise = (async () => {
       try {
@@ -153,7 +178,7 @@ export default function BackgroundRemover({ initialCleanedImage, onProcessed }: 
     await Promise.allSettled([bgPromise, recognizePromise]);
 
     if (processedBase64 && onProcessed) {
-      onProcessed(processedBase64, recognizedResult);
+      onProcessed(processedBase64, recognizedResult ? toUniversal(recognizedResult) : null);
     }
   }, [onProcessed]);
 

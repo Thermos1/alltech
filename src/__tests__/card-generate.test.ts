@@ -53,6 +53,10 @@ const validCardBody = {
     name: 'ROLF GT 5W-40',
     brand: 'ROLF',
     price: 2450,
+    specs: [
+      { label: 'Вязкость', value: '5W-40' },
+      { label: 'API', value: 'SN/CF' },
+    ],
   },
   productImageBase64: 'data:image/png;base64,iVBOR',
   outputFormat: 'png',
@@ -129,8 +133,9 @@ describe('POST /api/admin/cards/generate', () => {
       mode: 'carousel',
       carouselData: {
         benefits: ['Test benefit'],
-        compatibility: ['HOWO'],
+        compatibility: ['Toyota'],
         certifications: ['ISO 9001'],
+        usageTips: ['Read the manual'],
       },
     };
     const res = await POST(createRequest(body) as never);
@@ -172,5 +177,68 @@ describe('POST /api/admin/cards/generate', () => {
     expect(config.style).toBe('minimalist');
     expect(config.platform).toBe('wb-ozon');
     expect(config.productData.name).toBe('ROLF GT 5W-40');
+    expect(config.productData.specs).toEqual([
+      { label: 'Вязкость', value: '5W-40' },
+      { label: 'API', value: 'SN/CF' },
+    ]);
+  });
+
+  it('accepts shopify platform', async () => {
+    mockAuth('admin');
+    mockGenerateCard.mockResolvedValue(Buffer.from('shopify-card'));
+    const body = { ...validCardBody, platform: 'shopify' };
+    const res = await POST(createRequest(body) as never);
+    expect(res.status).toBe(200);
+    const config = mockGenerateCard.mock.calls[0][0];
+    expect(config.platform).toBe('shopify');
+  });
+
+  it('accepts imageScale parameter', async () => {
+    mockAuth('admin');
+    mockGenerateCard.mockResolvedValue(Buffer.from('ok'));
+    const body = { ...validCardBody, imageScale: 0.7 };
+    await POST(createRequest(body) as never);
+    const config = mockGenerateCard.mock.calls[0][0];
+    expect(config.imageScale).toBe(0.7);
+  });
+
+  it('accepts customColors parameter', async () => {
+    mockAuth('admin');
+    mockGenerateCard.mockResolvedValue(Buffer.from('ok'));
+    const body = { ...validCardBody, customColors: { background: '#FF0000', text: '#FFFFFF' } };
+    await POST(createRequest(body) as never);
+    const config = mockGenerateCard.mock.calls[0][0];
+    expect(config.customColors).toEqual({ background: '#FF0000', text: '#FFFFFF' });
+  });
+
+  it('accepts productData with priceUnit and subtitle', async () => {
+    mockAuth('admin');
+    mockGenerateCard.mockResolvedValue(Buffer.from('ok'));
+    const body = {
+      ...validCardBody,
+      productData: {
+        name: 'Test Product',
+        price: 1500,
+        priceUnit: '$',
+        subtitle: '250ml',
+        specs: [],
+      },
+    };
+    await POST(createRequest(body) as never);
+    const config = mockGenerateCard.mock.calls[0][0];
+    expect(config.productData.priceUnit).toBe('$');
+    expect(config.productData.subtitle).toBe('250ml');
+  });
+
+  it('defaults specs to empty array when not provided', async () => {
+    mockAuth('admin');
+    mockGenerateCard.mockResolvedValue(Buffer.from('ok'));
+    const body = {
+      ...validCardBody,
+      productData: { name: 'No specs product' },
+    };
+    await POST(createRequest(body) as never);
+    const config = mockGenerateCard.mock.calls[0][0];
+    expect(config.productData.specs).toEqual([]);
   });
 });

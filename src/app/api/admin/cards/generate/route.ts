@@ -5,10 +5,15 @@ import { generateCard, generateCarousel, generateCarouselPdf } from '@/lib/card-
 import type { CardConfig } from '@/lib/card-templates';
 import type { CarouselData } from '@/lib/card-templates/carousel';
 
+const specSchema = z.object({
+  label: z.string().max(100),
+  value: z.string().max(200),
+});
+
 const cardGenerateSchema = z.object({
   mode: z.enum(['card', 'carousel']),
   style: z.enum(['minimalist', 'premium-dark', 'gradient', 'retro']),
-  platform: z.enum(['wb-ozon', 'instagram', 'telegram-vk', 'tiktok', 'pinterest', 'custom']),
+  platform: z.enum(['wb-ozon', 'shopify', 'instagram', 'telegram-vk', 'tiktok', 'pinterest', 'custom']),
   customWidth: z.number().int().min(200).max(4000).optional(),
   customHeight: z.number().int().min(200).max(4000).optional(),
   enabledElements: z.array(z.string()),
@@ -19,15 +24,16 @@ const cardGenerateSchema = z.object({
   productData: z.object({
     name: z.string().min(1).max(200),
     brand: z.string().max(50).optional(),
-    viscosity: z.string().max(30).optional(),
-    baseType: z.string().max(30).optional(),
-    apiSpec: z.string().max(50).optional(),
-    aceaSpec: z.string().max(50).optional(),
-    approvals: z.string().max(500).optional(),
     price: z.number().min(0).optional(),
-    volume: z.string().max(30).optional(),
+    priceUnit: z.string().max(5).optional(),
+    subtitle: z.string().max(50).optional(),
+    specs: z.array(specSchema).max(20).default([]),
+    description: z.string().max(2000).optional(),
   }),
   productImageBase64: z.string().min(1),
+  imageScale: z.number().min(0.2).max(0.95).optional(),
+  customColors: z.record(z.string(), z.string()).optional(),
+  watermarkImageBase64: z.string().optional(),
   carouselData: z.object({
     benefits: z.array(z.string().max(200)).max(8).optional(),
     compatibility: z.array(z.string().max(100)).max(12).optional(),
@@ -35,8 +41,7 @@ const cardGenerateSchema = z.object({
       volume: z.string(),
       price: z.number(),
     })).max(10).optional(),
-    changeInterval: z.string().max(200).optional(),
-    storageConditions: z.string().max(200).optional(),
+    usageTips: z.array(z.string().max(300)).max(8).optional(),
     certifications: z.array(z.string().max(200)).max(8).optional(),
   }).optional(),
   outputFormat: z.enum(['png', 'jpg', 'pdf']).default('png'),
@@ -86,11 +91,10 @@ export async function POST(request: NextRequest) {
       const cd = config.carouselData || {};
       const carouselData: CarouselData = {
         product: config.productData,
-        benefits: cd.benefits || ['Надёжная защита двигателя', 'Экономия топлива', 'Стабильная работа при низких температурах'],
-        compatibility: cd.compatibility || ['SHACMAN', 'HOWO', 'FAW', 'SITRAK'],
+        benefits: cd.benefits || ['Высокое качество', 'Выгодные условия', 'Быстрая доставка'],
+        compatibility: cd.compatibility || [],
         volumes: cd.volumes || [],
-        changeInterval: cd.changeInterval,
-        storageConditions: cd.storageConditions,
+        usageTips: cd.usageTips || ['Ознакомьтесь с инструкцией'],
         certifications: cd.certifications || ['Оригинальная продукция', 'Сертификат соответствия'],
       };
 
@@ -99,6 +103,7 @@ export async function POST(request: NextRequest) {
         config.style,
         config.platform,
         config.productImageBase64,
+        config.customColors as Record<string, string> | undefined,
       );
 
       if (config.outputFormat === 'pdf') {
