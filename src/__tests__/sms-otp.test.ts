@@ -120,10 +120,10 @@ describe('POST /api/auth/send-otp', () => {
     const body = await res.json();
     expect(body.success).toBe(true);
     expect(mockInsert).toHaveBeenCalled();
-    expect(sendSms).toHaveBeenCalledWith('79241716122', 'ALTEH: Vash kod: 1234');
+    expect(sendSms).toHaveBeenCalledWith('79241716122', 'АЛТЕХ: Ваш код: 1234');
   });
 
-  it('sends OTP with Latin text (not Cyrillic)', async () => {
+  it('sends OTP with Cyrillic text and correct format', async () => {
     let callCount = 0;
     mockFrom.mockImplementation(() => {
       if (callCount === 0) {
@@ -153,10 +153,56 @@ describe('POST /api/auth/send-otp', () => {
       body: JSON.stringify({ phone: '89141082051' }),
     });
     await POST(req as never);
-    // Verify SMS text is Latin (critical for SMS.ru delivery)
+    // Verify SMS text is Cyrillic with brand name
     const smsCall = vi.mocked(sendSms).mock.calls[0];
-    expect(smsCall[1]).toMatch(/^ALTEH: Vash kod: \d{4}$/);
-    expect(smsCall[1]).not.toMatch(/[а-яА-ЯёЁ]/); // No Cyrillic
+    expect(smsCall[0]).toBe('89141082051');
+    expect(smsCall[1]).toMatch(/^АЛТЕХ: Ваш код: \d{4}$/);
+  });
+
+  it('does NOT return devCode when SMS_RU_API_KEY is set (production)', async () => {
+    // Simulate production: SMS_RU_API_KEY is set
+    const originalKey = process.env.SMS_RU_API_KEY;
+    process.env.SMS_RU_API_KEY = 'fake-production-key';
+
+    let callCount = 0;
+    mockFrom.mockImplementation(() => {
+      if (callCount === 0) {
+        callCount++;
+        return {
+          select: () => ({
+            eq: () => ({
+              eq: () => ({
+                order: () => ({
+                  limit: () => ({
+                    single: () => Promise.resolve({ data: null, error: null }),
+                  }),
+                }),
+              }),
+            }),
+          }),
+        };
+      }
+      return { insert: vi.fn().mockResolvedValue({ error: null }) };
+    });
+
+    const { POST } = await import('@/app/api/auth/send-otp/route');
+    const req = new Request('http://localhost/api/auth/send-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone: '+79241716122' }),
+    });
+    const res = await POST(req as never);
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.success).toBe(true);
+    expect(body.devCode).toBeUndefined(); // CRITICAL: never expose OTP in production
+
+    // Restore
+    if (originalKey) {
+      process.env.SMS_RU_API_KEY = originalKey;
+    } else {
+      delete process.env.SMS_RU_API_KEY;
+    }
   });
 
   it('returns 500 when SMS send fails', async () => {

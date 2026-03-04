@@ -46,15 +46,17 @@ export async function POST(request: NextRequest) {
       expires_at: expiresAt,
     });
 
-    // Send SMS
-    const sent = await sendSms(cleanPhone, `ALTEH: Vash kod: ${code}`);
+    // Send SMS (Cyrillic — fits in 1 SMS at 70 chars: "АЛТЕХ: Ваш код: 1234" = 20 chars)
+    const sent = await sendSms(cleanPhone, `АЛТЕХ: Ваш код: ${code}`);
 
     if (!sent) {
       return NextResponse.json({ error: 'Не удалось отправить SMS' }, { status: 500 });
     }
 
-    // Always return devCode until SMS sender is verified for all operators
-    return NextResponse.json({ success: true, devCode: code });
+    // Production: never expose OTP code in response
+    // Dev mode (no SMS_RU_API_KEY): return code for testing
+    const isDev = !process.env.SMS_RU_API_KEY;
+    return NextResponse.json({ success: true, ...(isDev ? { devCode: code } : {}) });
   } catch (error) {
     console.error('Send OTP error:', error);
     return NextResponse.json({ error: 'Ошибка сервера' }, { status: 500 });
