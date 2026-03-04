@@ -1,16 +1,18 @@
 'use client';
 
+import { formatPriceShort } from '@/lib/utils';
+
 export default function BarChart({
   data,
   maxValue,
-  valueFormat,
+  formatAs,
 }: {
   data: { label: string; value: number; color?: string }[];
   maxValue?: number;
-  valueFormat?: (v: number) => string;
+  formatAs?: 'price' | 'number';
 }) {
   const max = maxValue || Math.max(...data.map((d) => d.value), 1);
-  const format = valueFormat || ((v: number) => v.toString());
+  const format = formatAs === 'price' ? formatPriceShort : (v: number) => v.toString();
 
   return (
     <div className="space-y-2">

@@ -198,7 +198,7 @@ export default async function AnalyticsPage() {
         <h2 className="text-text-primary font-medium mb-4">Выручка по месяцам</h2>
         <BarChart
           data={monthlyRevenue}
-          valueFormat={(v) => formatPriceShort(v)}
+          formatAs="price"
         />
       </div>
 
@@ -219,7 +219,7 @@ export default async function AnalyticsPage() {
           {topProducts.length > 0 ? (
             <BarChart
               data={topProducts}
-              valueFormat={(v) => formatPriceShort(v)}
+              formatAs="price"
             />
           ) : (
             <p className="text-text-muted text-sm">Нет данных</p>
@@ -232,7 +232,7 @@ export default async function AnalyticsPage() {
           {topClients.length > 0 ? (
             <BarChart
               data={topClients}
-              valueFormat={(v) => formatPriceShort(v)}
+              formatAs="price"
             />
           ) : (
             <p className="text-text-muted text-sm">Нет данных</p>
@@ -245,7 +245,7 @@ export default async function AnalyticsPage() {
           {managerStats.length > 0 ? (
             <BarChart
               data={managerStats}
-              valueFormat={(v) => formatPriceShort(v)}
+              formatAs="price"
             />
           ) : (
             <p className="text-text-muted text-sm">Нет данных</p>
