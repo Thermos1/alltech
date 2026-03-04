@@ -96,9 +96,13 @@ export default async function AnalyticsPage() {
   const { data: orderItems } = orderIds.length > 0
     ? await admin
         .from('order_items')
-        .select('product_name, quantity, unit_price')
+        .select('product_name, quantity, unit_price, order_id')
         .in('order_id', orderIds)
     : { data: [] };
+
+  // Map order_id → created_at for XYZ analysis
+  const orderDateMap: Record<string, string> = {};
+  orders.forEach((o) => { orderDateMap[o.id] = o.created_at; });
 
   const productSales: Record<string, { qty: number; revenue: number }> = {};
   (orderItems || []).forEach((item) => {
@@ -172,6 +176,87 @@ export default async function AnalyticsPage() {
       value: revenue,
     };
   }).sort((a, b) => b.value - a.value);
+
+  // === ABC-XYZ Analysis ===
+  const allProductsSorted = Object.entries(productSales)
+    .map(([name, stats]) => ({ name, ...stats }))
+    .sort((a, b) => b.revenue - a.revenue);
+
+  const totalProductRevenue = allProductsSorted.reduce((s, p) => s + p.revenue, 0);
+
+  // ABC classification by cumulative revenue share
+  let cumRevenue = 0;
+  const abcMap: Record<string, 'A' | 'B' | 'C'> = {};
+  for (const p of allProductsSorted) {
+    cumRevenue += p.revenue;
+    const share = totalProductRevenue > 0 ? cumRevenue / totalProductRevenue : 0;
+    abcMap[p.name] = share <= 0.8 ? 'A' : share <= 0.95 ? 'B' : 'C';
+  }
+
+  // XYZ classification by coefficient of variation of monthly revenue
+  // Build monthly revenue per product (last 6 months)
+  const monthlyProductRevenue: Record<string, number[]> = {};
+  for (const p of allProductsSorted) {
+    monthlyProductRevenue[p.name] = Array(6).fill(0);
+  }
+  (orderItems || []).forEach((item) => {
+    const orderDate = orderDateMap[item.order_id];
+    if (!orderDate) return;
+    const d = new Date(orderDate);
+    for (let i = 0; i < 6; i++) {
+      const mStart = new Date(now.getFullYear(), now.getMonth() - (5 - i), 1);
+      const mEnd = new Date(mStart.getFullYear(), mStart.getMonth() + 1, 0, 23, 59, 59);
+      if (d >= mStart && d <= mEnd) {
+        if (monthlyProductRevenue[item.product_name]) {
+          monthlyProductRevenue[item.product_name][i] += Number(item.unit_price) * item.quantity;
+        }
+        break;
+      }
+    }
+  });
+
+  const xyzMap: Record<string, 'X' | 'Y' | 'Z'> = {};
+  for (const p of allProductsSorted) {
+    const monthly = monthlyProductRevenue[p.name];
+    const nonZeroMonths = monthly.filter((v) => v > 0).length;
+    if (nonZeroMonths < 3) {
+      // Not enough data for variation — mark as Z (unstable/unknown)
+      xyzMap[p.name] = 'Z';
+      continue;
+    }
+    const mean = monthly.reduce((s, v) => s + v, 0) / 6;
+    if (mean === 0) { xyzMap[p.name] = 'Z'; continue; }
+    const variance = monthly.reduce((s, v) => s + (v - mean) ** 2, 0) / 6;
+    const cv = Math.sqrt(variance) / mean; // coefficient of variation
+    xyzMap[p.name] = cv <= 0.1 ? 'X' : cv <= 0.25 ? 'Y' : 'Z';
+  }
+
+  const abcXyzData = allProductsSorted.map((p) => ({
+    name: p.name,
+    revenue: p.revenue,
+    qty: p.qty,
+    abc: abcMap[p.name],
+    xyz: xyzMap[p.name],
+    group: `${abcMap[p.name]}${xyzMap[p.name]}` as string,
+    share: totalProductRevenue > 0 ? ((p.revenue / totalProductRevenue) * 100) : 0,
+  }));
+
+  const abcColors: Record<string, string> = {
+    A: 'text-accent-yellow',
+    B: 'text-accent-cyan',
+    C: 'text-text-muted',
+  };
+  const xyzColors: Record<string, string> = {
+    X: 'text-green-400',
+    Y: 'text-accent-yellow',
+    Z: 'text-accent-magenta',
+  };
+
+  // Count products per group for summary matrix
+  const groupCounts: Record<string, number> = {};
+  abcXyzData.forEach((p) => {
+    groupCounts[p.group] = (groupCounts[p.group] || 0) + 1;
+  });
 
   return (
     <div className="space-y-8">
@@ -251,6 +336,77 @@ export default async function AnalyticsPage() {
             <p className="text-text-muted text-sm">Нет данных</p>
           )}
         </div>
+      </div>
+
+      {/* ABC-XYZ Analysis */}
+      <div className="rounded-xl bg-bg-card border border-border-subtle p-5">
+        <h2 className="text-text-primary font-medium mb-2">ABC-XYZ анализ товаров</h2>
+        <p className="text-text-muted text-xs mb-4">
+          ABC — доля в выручке (A=80%, B=15%, C=5%). XYZ — стабильность спроса за 6 мес. (X — стабильный, Y — сезонный, Z — хаотичный/мало данных)
+        </p>
+
+        {abcXyzData.length > 0 ? (
+          <>
+            {/* Matrix summary */}
+            <div className="mb-5 overflow-x-auto">
+              <table className="text-xs text-center">
+                <thead>
+                  <tr>
+                    <th className="p-2" />
+                    <th className="p-2 text-green-400 font-medium">X (стаб.)</th>
+                    <th className="p-2 text-accent-yellow font-medium">Y (сезон.)</th>
+                    <th className="p-2 text-accent-magenta font-medium">Z (хаот.)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(['A', 'B', 'C'] as const).map((abc) => (
+                    <tr key={abc}>
+                      <td className={`p-2 font-medium ${abcColors[abc]}`}>{abc}</td>
+                      {(['X', 'Y', 'Z'] as const).map((xyz) => {
+                        const count = groupCounts[`${abc}${xyz}`] || 0;
+                        return (
+                          <td key={xyz} className={`p-2 ${count > 0 ? 'text-text-primary' : 'text-text-muted/30'}`}>
+                            {count || '—'}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Product table */}
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs">
+                <thead>
+                  <tr className="border-b border-border-subtle">
+                    <th className="text-left text-text-muted p-2 font-medium">Товар</th>
+                    <th className="text-right text-text-muted p-2 font-medium">Выручка</th>
+                    <th className="text-right text-text-muted p-2 font-medium">Доля</th>
+                    <th className="text-right text-text-muted p-2 font-medium">Кол-во</th>
+                    <th className="text-center text-text-muted p-2 font-medium">ABC</th>
+                    <th className="text-center text-text-muted p-2 font-medium">XYZ</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {abcXyzData.map((p) => (
+                    <tr key={p.name} className="border-b border-border-subtle/50">
+                      <td className="p-2 text-text-secondary max-w-[200px] truncate">{p.name}</td>
+                      <td className="p-2 text-right text-text-primary">{formatPriceShort(p.revenue)}</td>
+                      <td className="p-2 text-right text-text-muted">{p.share.toFixed(1)}%</td>
+                      <td className="p-2 text-right text-text-muted">{p.qty}</td>
+                      <td className={`p-2 text-center font-bold ${abcColors[p.abc]}`}>{p.abc}</td>
+                      <td className={`p-2 text-center font-bold ${xyzColors[p.xyz]}`}>{p.xyz}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
+        ) : (
+          <p className="text-text-muted text-sm">Нет данных о продажах</p>
+        )}
       </div>
     </div>
   );
