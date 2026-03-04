@@ -6,17 +6,13 @@
  *
  * Model: Carve/LaMa-ONNX (208 MB, cached by browser after first download)
  * Input: image [1,3,512,512] float32 (0-1) + mask [1,1,512,512] float32 (0=keep, 1=inpaint)
- * Output: [1,3,512,512] float32 (already 0-255, do NOT multiply again)
+ * Output: [1,3,512,512] float32 (0-1 normalized, auto-detected and scaled to 0-255)
  */
 
 import * as ort from 'onnxruntime-web';
 
 // CDN for WASM runtime files (avoids bundling in webpack)
 ort.env.wasm.wasmPaths = 'https://cdn.jsdelivr.net/npm/onnxruntime-web@1.21.0/dist/';
-// Run inference in Web Worker so UI doesn't freeze during 1-3s computation
-ort.env.wasm.proxy = true;
-// Use all available CPU cores for parallel WASM execution
-ort.env.wasm.numThreads = typeof navigator !== 'undefined' ? (navigator.hardwareConcurrency ?? 4) : 1;
 
 const MODEL_URL = 'https://huggingface.co/Carve/LaMa-ONNX/resolve/main/lama_fp32.onnx';
 const INPAINT_SIZE = 512;
@@ -163,7 +159,7 @@ function canvasToMaskTensor(canvas: HTMLCanvasElement): Float32Array {
   return chw;
 }
 
-/** Convert CHW float32 output (0-255) back to canvas ImageData */
+/** Convert CHW float32 output back to canvas ImageData */
 function outputToCanvas(output: Float32Array, width: number, height: number): HTMLCanvasElement {
   const canvas = document.createElement('canvas');
   canvas.width = width;
@@ -172,11 +168,17 @@ function outputToCanvas(output: Float32Array, width: number, height: number): HT
   const imageData = ctx.createImageData(width, height);
   const pixels = width * height;
 
+  // Auto-detect output range: if max value <= 1.0, it's normalized 0-1 and needs * 255
+  let maxVal = 0;
+  for (let i = 0; i < Math.min(1000, output.length); i++) {
+    if (output[i] > maxVal) maxVal = output[i];
+  }
+  const scale = maxVal <= 1.0 ? 255.0 : 1.0;
+
   for (let i = 0; i < pixels; i++) {
-    // Output is ALREADY 0-255 — do NOT multiply by 255 again
-    imageData.data[i * 4 + 0] = Math.max(0, Math.min(255, Math.round(output[0 * pixels + i]))); // R
-    imageData.data[i * 4 + 1] = Math.max(0, Math.min(255, Math.round(output[1 * pixels + i]))); // G
-    imageData.data[i * 4 + 2] = Math.max(0, Math.min(255, Math.round(output[2 * pixels + i]))); // B
+    imageData.data[i * 4 + 0] = Math.max(0, Math.min(255, Math.round(output[0 * pixels + i] * scale))); // R
+    imageData.data[i * 4 + 1] = Math.max(0, Math.min(255, Math.round(output[1 * pixels + i] * scale))); // G
+    imageData.data[i * 4 + 2] = Math.max(0, Math.min(255, Math.round(output[2 * pixels + i] * scale))); // B
     imageData.data[i * 4 + 3] = 255; // A
   }
 
