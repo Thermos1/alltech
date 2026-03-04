@@ -40,7 +40,7 @@ export default async function ProductPage({ params }: PageProps) {
   const { data: product } = await supabase
     .from('products')
     .select(
-      '*, brands(name, slug), product_variants(id, volume, unit, price, price_per_liter, sku)'
+      '*, brands(name, slug), product_variants(id, volume, unit, price, price_per_liter, sku, is_active)'
     )
     .eq('slug', slug)
     .single();
@@ -58,6 +58,7 @@ export default async function ProductPage({ params }: PageProps) {
     : null;
 
   const variants = (product.product_variants ?? [])
+    .filter((v: { is_active?: boolean }) => v.is_active !== false)
     .slice()
     .sort((a: { price: number }, b: { price: number }) => a.price - b.price);
 
