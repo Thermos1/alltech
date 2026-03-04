@@ -82,7 +82,7 @@ export async function POST(request: NextRequest) {
         value: Number(item.unit_price).toFixed(2),
         currency: 'RUB' as const,
       },
-      vat_code: 1, // НДС не облагается (для ИП/УСН)
+      vat_code: 7, // НДС 22% (ОСНО)
       payment_subject: 'commodity' as const,
       payment_mode: 'full_payment' as const,
     }));
