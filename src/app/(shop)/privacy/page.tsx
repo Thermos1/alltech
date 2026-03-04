@@ -23,7 +23,7 @@ export default function PrivacyPage() {
             Настоящая Политика конфиденциальности (далее — Политика) определяет порядок обработки
             и защиты персональных данных пользователей (далее — Пользователи) интернет-магазина
             АЛТЕХ (далее — Оператор), расположенного по адресу{' '}
-            <span className="text-accent-cyan">altech-store.ru</span>.
+            <span className="text-accent-cyan">altehspec.ru</span>.
           </p>
           <p className="mt-2">
             Оператор персональных данных: ООО &laquo;АЛТЕХ&raquo;, ОГРН 1221400010182,
