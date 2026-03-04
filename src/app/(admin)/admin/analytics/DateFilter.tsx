@@ -16,11 +16,11 @@ const PERIODS = [
 export default function DateFilter() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const active = searchParams.get('period') || 'all';
+  const active = searchParams.get('period') || 'month';
 
   function handleClick(key: string) {
     const params = new URLSearchParams(searchParams.toString());
-    if (key === 'all') {
+    if (key === 'month') {
       params.delete('period');
     } else {
       params.set('period', key);

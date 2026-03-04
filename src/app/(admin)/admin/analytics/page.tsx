@@ -41,9 +41,13 @@ function getPeriodRange(period: string | undefined): { from: Date; to: Date } {
       const from = new Date(now.getFullYear(), 0, 1);
       return { from, to };
     }
-    default: {
-      // 'all' — from very beginning
+    case 'all': {
       const from = new Date(2020, 0, 1);
+      return { from, to };
+    }
+    default: {
+      // default = month
+      const from = new Date(now.getFullYear(), now.getMonth(), 1);
       return { from, to };
     }
   }
@@ -73,7 +77,7 @@ interface PageProps {
 
 export default async function AnalyticsPage({ searchParams }: PageProps) {
   const { period } = await searchParams;
-  const { from, to } = getPeriodRange(period);
+  let { from, to } = getPeriodRange(period);
 
   const supabase = await createClient();
   const admin = createAdminClient();
@@ -103,8 +107,18 @@ export default async function AnalyticsPage({ searchParams }: PageProps) {
     .select('id, total, user_id, created_at, status')
     .eq('payment_status', 'succeeded');
 
+  // For 'all' period, start from first order date (not 2020)
+  const allPaid = paidOrders || [];
+  if ((!period || period === 'all') && allPaid.length > 0) {
+    const firstDate = allPaid
+      .map((o) => new Date(o.created_at).getTime())
+      .reduce((min, t) => Math.min(min, t), Date.now());
+    from.setTime(firstDate);
+    from.setHours(0, 0, 0, 0);
+  }
+
   // Filter by period
-  const orders = (paidOrders || []).filter((o) => {
+  const orders = allPaid.filter((o) => {
     const d = new Date(o.created_at);
     return d >= from && d <= to;
   });
@@ -114,8 +128,13 @@ export default async function AnalyticsPage({ searchParams }: PageProps) {
   const totalOrders = orders.length;
   const avgCheck = totalOrders > 0 ? Math.round(totalRevenue / totalOrders) : 0;
 
-  // Monthly revenue (dynamic based on period)
-  const monthBuckets = getMonthBuckets(from, to);
+  // Monthly revenue (dynamic based on period, max 12 months for chart)
+  let chartFrom = from;
+  const monthsDiff = (to.getFullYear() - from.getFullYear()) * 12 + (to.getMonth() - from.getMonth());
+  if (monthsDiff > 12) {
+    chartFrom = new Date(to.getFullYear(), to.getMonth() - 11, 1);
+  }
+  const monthBuckets = getMonthBuckets(chartFrom, to);
   const monthlyRevenue = monthBuckets.map((bucket) => {
     const monthOrders = orders.filter((o) => {
       const oDate = new Date(o.created_at);
@@ -336,7 +355,7 @@ export default async function AnalyticsPage({ searchParams }: PageProps) {
     year: 'за год',
     all: 'за всё время',
   };
-  const periodLabel = periodLabels[period || 'all'] || 'за всё время';
+  const periodLabel = periodLabels[period || 'month'] || 'за месяц';
 
   return (
     <div className="space-y-8">
@@ -347,7 +366,7 @@ export default async function AnalyticsPage({ searchParams }: PageProps) {
 
       <p className="text-text-muted text-xs -mt-4">
         Данные {periodLabel}
-        {period && period !== 'all' && (
+        {period && period !== 'all' && period !== 'month' && (
           <span className="ml-2 text-text-muted/60">
             {from.toLocaleDateString('ru-RU')} — {to.toLocaleDateString('ru-RU')}
           </span>
