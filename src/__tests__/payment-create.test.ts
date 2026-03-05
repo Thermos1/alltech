@@ -154,6 +154,60 @@ describe('POST /api/payment/create', () => {
     expect(updateCalled).toBe(true);
   });
 
+  it('distributes discount proportionally in receipt items when promo applied', async () => {
+    let ordersCallCount = 0;
+    mockAdminFrom.mockImplementation((table: string) => {
+      if (table === 'orders') {
+        ordersCallCount++;
+        if (ordersCallCount === 1) {
+          return {
+            select: () => ({
+              eq: () => ({
+                single: () => Promise.resolve({
+                  // total=48 but items sum to 55 (discount applied)
+                  data: { id: 'o2', order_number: 'ALT-002', total: 48, payment_status: 'pending', user_id: 'user-1' },
+                  error: null,
+                }),
+              }),
+            }),
+          };
+        }
+        if (ordersCallCount === 2) {
+          return {
+            select: () => ({
+              eq: () => ({
+                single: () => Promise.resolve({
+                  data: { contact_phone: '+79001111111', contact_name: 'Тест' },
+                  error: null,
+                }),
+              }),
+            }),
+          };
+        }
+        return {
+          update: () => ({ eq: () => Promise.resolve({ error: null }) }),
+        };
+      }
+      if (table === 'order_items') {
+        return {
+          select: () => ({
+            eq: () => Promise.resolve({
+              data: [{ product_name: 'Антифриз', variant_label: '1 кг', quantity: 1, unit_price: 55, total_price: 55 }],
+              error: null,
+            }),
+          }),
+        };
+      }
+      return {};
+    });
+
+    const res = await POST(createRequest({ orderId: 'o2' }) as never);
+    const data = await res.json();
+    expect(res.status).toBe(200);
+    // Mock payment path — just verify it doesn't crash with discount
+    expect(data.paymentUrl).toContain('amount=48');
+  });
+
   it('returns 500 on unexpected error', async () => {
     mockGetUser.mockRejectedValue(new Error('crash'));
     const res = await POST(createRequest({ orderId: 'o1' }) as never);

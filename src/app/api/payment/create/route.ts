@@ -75,17 +75,65 @@ export async function POST(request: NextRequest) {
     const auth = Buffer.from(`${YOOKASSA_SHOP_ID}:${YOOKASSA_SECRET_KEY}`).toString('base64');
 
     // Build receipt items for 54-ФЗ fiscal compliance
-    const receiptItems = (orderItems || []).map((item) => ({
-      description: `${item.product_name} (${item.variant_label})`.slice(0, 128),
-      quantity: String(item.quantity),
-      amount: {
-        value: Number(item.unit_price).toFixed(2),
-        currency: 'RUB' as const,
-      },
-      vat_code: 7, // НДС 22% (ОСНО)
-      payment_subject: 'commodity' as const,
-      payment_mode: 'full_payment' as const,
-    }));
+    // YooKassa requires: sum of all item amounts = payment amount
+    // When promo/bonuses applied, distribute discount proportionally across items
+    const items = orderItems || [];
+    const itemsSubtotal = items.reduce((sum, i) => sum + Number(i.total_price), 0);
+    const paymentTotal = Number(order.total);
+
+    let receiptItems: Array<{
+      description: string;
+      quantity: string;
+      amount: { value: string; currency: 'RUB' };
+      vat_code: number;
+      payment_subject: 'commodity';
+      payment_mode: 'full_payment';
+    }>;
+
+    if (itemsSubtotal <= 0 || itemsSubtotal === paymentTotal) {
+      // No discount — use original prices
+      receiptItems = items.map((item) => ({
+        description: `${item.product_name} (${item.variant_label})`.slice(0, 128),
+        quantity: String(item.quantity),
+        amount: {
+          value: Number(item.unit_price).toFixed(2),
+          currency: 'RUB' as const,
+        },
+        vat_code: 7, // НДС 22% (ОСНО)
+        payment_subject: 'commodity' as const,
+        payment_mode: 'full_payment' as const,
+      }));
+    } else {
+      // Discount applied — distribute proportionally so sum matches payment total
+      const ratio = paymentTotal / itemsSubtotal;
+      let distributed = 0;
+
+      receiptItems = items.map((item, idx) => {
+        const originalItemTotal = Number(item.total_price);
+        let adjustedPerUnit: number;
+
+        if (idx === items.length - 1) {
+          // Last item absorbs rounding difference
+          const remaining = paymentTotal - distributed;
+          adjustedPerUnit = Number((remaining / item.quantity).toFixed(2));
+        } else {
+          adjustedPerUnit = Number((Number(item.unit_price) * ratio).toFixed(2));
+          distributed += adjustedPerUnit * item.quantity;
+        }
+
+        return {
+          description: `${item.product_name} (${item.variant_label})`.slice(0, 128),
+          quantity: String(item.quantity),
+          amount: {
+            value: adjustedPerUnit.toFixed(2),
+            currency: 'RUB' as const,
+          },
+          vat_code: 7, // НДС 22% (ОСНО)
+          payment_subject: 'commodity' as const,
+          payment_mode: 'full_payment' as const,
+        };
+      });
+    }
 
     // Customer contact for receipt
     const customerPhone = orderFull?.contact_phone?.replace(/[^\d+]/g, '') || undefined;

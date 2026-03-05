@@ -35,7 +35,7 @@ curl -X POST -H "Authorization: Bearer 3|Q0uWpHphaUL6GBFRAeVkc8E6TpbNrMPbmbDIyIu
 | Frontend | Next.js 15, React, TypeScript, Tailwind CSS v4 |
 | UI/анимации | Framer Motion, CSS neon effects |
 | Backend/БД | Supabase (Auth, PostgreSQL, Storage, RLS) |
-| Платежи | ЮKassa (ещё не подключена) |
+| Платежи | ЮKassa (production, Shop ID 1291070) |
 | Стейт | Zustand (корзина с localStorage persist) |
 | Валидация | Zod |
 | Шрифты | Dela Gothic One (display, cyrillic), Golos Text (body, cyrillic) |
@@ -80,10 +80,11 @@ src/app/
 │   ├── cart/                          # Корзина
 │   ├── checkout/                      # Оформление (TODO)
 │   └── filters/                       # Подбор по авто (TODO)
-├── (auth)/          # Авторизация (TODO)
-├── (cabinet)/       # Личный кабинет (TODO)
-├── (admin)/         # Админ-панель (TODO)
-└── api/payment/     # ЮKassa webhooks (TODO)
+├── (auth)/          # Авторизация (SMS OTP customers, email/password staff)
+├── (cabinet)/       # Личный кабинет (заказы, бонусы, реферал, настройки)
+├── (admin)/         # Админ-панель (14 секций admin, 5 manager)
+│   └── admin/image-tools/  # Image Tools (4 таба: очистка, фон, карточки, карусели)
+└── api/             # 34 API routes (все покрыты тестами)
 ```
 
 ### Supabase клиенты
@@ -118,3 +119,27 @@ TODO: загрузить в Supabase Storage и привязать к product.im
 - Обновляй CONTEXT.md после значимых изменений
 - Mobile-first дизайн (375px как минимум)
 - Все тексты на русском языке
+
+## Тесты
+
+- **610+ unit tests** (Vitest), **44 suites**, 100% API route coverage (34 routes)
+- **E2E тесты**: 4 спеки (Playwright) — auth, catalog, pages, cart-checkout
+- Запуск unit: `npx vitest run`
+- Запуск E2E: `npx playwright test` (требует запущенный сервер или E2E_BASE_URL)
+- Тесты мокают Supabase — никакой зависимости от реальной БД
+
+## Image Tools (/admin/image-tools)
+
+4 таба:
+1. **Очистка** — LaMa ONNX inpainting (208MB, HuggingFace CDN, browser WASM)
+2. **Удаление фона** — @imgly/background-removal (browser WASM)
+3. **Карточка** — генератор карточек (4 стиля × 7 платформ, Satori+Sharp+pdf-lib)
+4. **Карусель** — 7 слайдов, PNG/PDF, AI-заполнение через Claude API
+
+Ключевые файлы:
+- `src/lib/card-generator.ts` — генерация (Satori→SVG→Sharp→PNG)
+- `src/lib/card-templates/` — стили и пресеты платформ
+- `src/lib/ai-carousel.ts` — AI-генерация контента для слайдов
+- `src/lib/lama-inpainter.ts` — LaMa ONNX wrapper
+- `src/lib/image-processing.ts` — Claude Vision AI-распознавание
+- `src/app/(admin)/admin/image-tools/` — UI компоненты

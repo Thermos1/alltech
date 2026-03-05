@@ -6,7 +6,7 @@
 ## Статус проекта
 
 **Фаза**: Production — полнофункциональный e-commerce
-**Дата**: 2026-03-03
+**Дата**: 2026-03-05
 
 ### Что сделано
 
@@ -77,8 +77,18 @@
 - [x] Market Analytics (TAM ~200 млрд), Delivery Economics, Scaling
 - [x] Credits: techdab.net + sipmind.net
 
+#### Image Tools (/admin/image-tools) — 4 таба
+- [x] Очистка (LaMa ONNX inpainting, 208MB, browser WASM) — убирает объекты с фото
+- [x] Удаление фона (@imgly/background-removal, browser WASM)
+- [x] Карточка товара: 4 стиля (retro, minimalist, premium-dark, +carousel), 7 платформ (WB/Ozon, Shopify, Instagram, Telegram/VK, TikTok, Pinterest, Custom), Satori+Sharp+pdf-lib
+- [x] Карусель: 7 слайдов, PNG/PDF, AI-заполнение через Claude API
+- [x] AI-распознавание характеристик (Claude Vision API)
+- [x] Slide Buffer: карточки → буфер → доступны в карусели
+- [x] Универсальная модель: ProductSpec[] для любой ниши, кастомные цвета, слайдер размера фото
+
 #### Тесты
-- [x] 438 unit tests (Vitest), 33 suites, 100% API route coverage (34 routes)
+- [x] 610+ unit tests (Vitest), 44 suites, 100% API route coverage (34 routes)
+- [x] E2E тесты: 4 спеки (Playwright) — auth, catalog, pages, cart-checkout
 
 #### Инфраструктура
 - [x] Docker standalone build, Coolify на PS.KZ VPS
@@ -158,7 +168,7 @@
 | Параметр | Значение |
 |----------|---------|
 | Репо | https://github.com/Thermos1/alltech |
-| Видимость | public (для Coolify deploy) |
+| Видимость | **private** (переключено 2026-03-05) |
 | Branch | main |
 | Deploy key | ED25519 `coolify-altech-deploy` |
 
@@ -236,4 +246,4 @@ NEXT_PUBLIC_APP_URL=https://altehspec.ru
 
 ---
 
-*Последнее обновление: 2026-03-03*
+*Последнее обновление: 2026-03-05*
