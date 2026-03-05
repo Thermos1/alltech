@@ -83,7 +83,7 @@ export default async function ProductPage({ params }: PageProps) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Product image */}
-          <div className="aspect-square flex items-center justify-center overflow-hidden">
+          <div className="aspect-square rounded-xl flex items-center justify-center overflow-hidden">
             {product.image_url ? (
               <Image
                 src={product.image_url}

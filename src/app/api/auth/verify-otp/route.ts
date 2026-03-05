@@ -3,7 +3,7 @@ import { createAdminClient } from '@/lib/supabase/admin';
 
 export async function POST(request: NextRequest) {
   try {
-    const { phone, code } = await request.json();
+    const { phone, code, refCode } = await request.json();
 
     if (!phone || !code) {
       return NextResponse.json({ error: 'Введите код' }, { status: 400 });
@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
         password: `otp_${cleanPhone}_${Date.now()}`,
         email_confirm: true,
         phone_confirm: true,
-        user_metadata: { phone: cleanPhone },
+        user_metadata: { phone: cleanPhone, ...(refCode ? { referral_code: refCode } : {}) },
       });
 
       if (createError || !newUser?.user) {
@@ -74,6 +74,23 @@ export async function POST(request: NextRequest) {
 
       userId = newUser.user.id;
       isNewUser = true;
+
+      // Fallback: if trigger didn't set referred_by, do it manually
+      if (refCode) {
+        const { data: referrerProfile } = await admin
+          .from('profiles')
+          .select('id')
+          .eq('referral_code', refCode)
+          .single();
+
+        if (referrerProfile && referrerProfile.id !== userId) {
+          await admin
+            .from('profiles')
+            .update({ referred_by: referrerProfile.id })
+            .eq('id', userId)
+            .is('referred_by', null);
+        }
+      }
     }
 
     // Get the user's email for magic link generation

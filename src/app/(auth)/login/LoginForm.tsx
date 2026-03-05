@@ -8,6 +8,7 @@ export default function LoginForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const nextUrl = searchParams.get('next') || searchParams.get('redirect') || '/'
+  const refCode = searchParams.get('ref') || ''
 
   const [phone, setPhone] = useState('')
   const [code, setCode] = useState('')
@@ -74,7 +75,7 @@ export default function LoginForm() {
       const res = await fetch('/api/auth/verify-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone: fullPhone, code }),
+        body: JSON.stringify({ phone: fullPhone, code, ...(refCode ? { refCode } : {}) }),
       })
 
       const data = await res.json()
@@ -113,6 +114,13 @@ export default function LoginForm() {
 
   return (
     <div className="bg-bg-card border border-border-subtle rounded-xl p-6 glow-border-yellow">
+      {refCode && (
+        <div className="bg-accent-cyan-dim border border-accent-cyan/20 rounded-lg px-3 py-2 text-center mb-4">
+          <p className="text-accent-cyan text-xs">
+            Вы приглашены по реферальной ссылке
+          </p>
+        </div>
+      )}
       <h1 className="font-display text-xl text-text-primary text-center mb-2">
         Вход в аккаунт
       </h1>

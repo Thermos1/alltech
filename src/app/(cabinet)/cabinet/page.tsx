@@ -4,6 +4,7 @@ import { createAdminClient } from '@/lib/supabase/admin';
 import { formatPriceShort } from '@/lib/utils';
 import { getBonusTier, getNextTier, BONUS_TIERS } from '@/lib/constants';
 import { checkCashbackDecay } from '@/lib/cashback-decay';
+import ReferralCopyButton from './ReferralCopyButton';
 
 export const metadata = {
   title: 'Личный кабинет — АЛТЕХ',
@@ -15,8 +16,10 @@ export default async function CabinetPage() {
 
   if (!user) return null;
 
-  // Load profile and recent orders
-  const [profileResult, ordersResult] = await Promise.all([
+  const admin = createAdminClient();
+
+  // Load profile, recent orders, and referral stats
+  const [profileResult, ordersResult, referralStatsResult] = await Promise.all([
     supabase
       .from('profiles')
       .select('full_name, phone, bonus_balance, referral_code, company_name, total_spent')
@@ -28,15 +31,21 @@ export default async function CabinetPage() {
       .eq('user_id', user.id)
       .order('created_at', { ascending: false })
       .limit(3),
+    admin
+      .from('referral_events')
+      .select('bonus_awarded')
+      .eq('referrer_id', user.id),
   ]);
 
   const profile = profileResult.data;
   const recentOrders = ordersResult.data || [];
+  const referralEvents = referralStatsResult.data || [];
+  const totalReferralEarned = referralEvents.reduce((sum, e) => sum + (e.bonus_awarded || 0), 0);
+  const referralCount = referralEvents.length;
 
   // Check cashback decay (3 months without purchase → bonuses expire)
   let decayWarning = '';
   if (profile && profile.bonus_balance > 0) {
-    const admin = createAdminClient();
     const decay = await checkCashbackDecay(admin, user.id);
     if (decay.decayed) {
       decayWarning = `Ваши ${decay.previousBalance} бонусов сгорели — покупок не было ${decay.monthsSinceLastPurchase} мес.`;
@@ -159,17 +168,27 @@ export default async function CabinetPage() {
                 )}
               </div>
 
-              {/* Referral code */}
+              {/* Referral */}
               <div className="rounded-xl bg-bg-card border border-border-subtle p-5">
                 <p className="text-text-muted text-xs uppercase tracking-wider mb-1">
-                  Реферальный код
+                  Реферальная программа
                 </p>
-                <p className="font-display text-xl text-accent-cyan break-all">
-                  {profile?.referral_code || '—'}
-                </p>
+                {totalReferralEarned > 0 && (
+                  <p className="font-display text-2xl text-accent-cyan">
+                    +{formatPriceShort(totalReferralEarned)}
+                  </p>
+                )}
+                {referralCount > 0 && (
+                  <p className="text-text-muted text-xs">
+                    Приглашено: {referralCount} · Заработано: {formatPriceShort(totalReferralEarned)}
+                  </p>
+                )}
                 <p className="text-text-muted text-xs mt-1">
-                  Приведи друга — 500₽ + 0.5% с каждой покупки
+                  500₽ за первую покупку друга + 0.5% с каждой
                 </p>
+                {profile?.referral_code && (
+                  <ReferralCopyButton code={profile.referral_code} />
+                )}
               </div>
             </div>
           </div>
