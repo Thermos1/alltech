@@ -36,7 +36,7 @@ export default async function AdminProductsPage() {
           </p>
           <Link
             href="/admin/products/new"
-            className="rounded-lg px-4 py-2 text-sm font-medium bg-accent-yellow text-bg-primary hover:brightness-110 transition-all"
+            className="rounded-lg px-4 py-2 text-sm font-medium bg-accent-yellow text-text-on-accent hover:brightness-110 transition-all"
           >
             + Добавить товар
           </Link>
@@ -100,7 +100,7 @@ export default async function AdminProductsPage() {
                       <td className="px-4 py-3">
                         <Link
                           href={`/admin/products/${product.id}`}
-                          className="text-text-primary font-medium hover:text-accent-yellow transition-colors"
+                          className="text-text-primary font-medium hover:text-accent-yellow-text transition-colors"
                         >
                           {product.name}
                         </Link>

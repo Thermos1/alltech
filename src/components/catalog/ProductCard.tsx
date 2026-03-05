@@ -120,12 +120,12 @@ export default function ProductCard({ product }: ProductCardProps) {
       onClick={handleCardClick}
       className={cn(
         'group relative flex flex-col rounded-xl border border-border-subtle cursor-pointer',
-        'bg-bg-card overflow-hidden transition-all duration-300',
-        'glow-border-yellow hover:bg-bg-card-hover'
+        'bg-bg-card overflow-hidden transition-all duration-300 shadow-sm',
+        'glow-border-yellow hover:bg-bg-card-hover hover:shadow-md'
       )}
     >
       {/* Image */}
-      <div className="relative aspect-square bg-bg-secondary flex items-center justify-center overflow-hidden">
+      <div className="relative aspect-square bg-transparent flex items-center justify-center overflow-hidden">
         {product.image_url ? (
           <Image
             src={product.image_url}
@@ -203,7 +203,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               'mt-2 w-full rounded-lg py-2.5 text-xs font-semibold transition-all',
               added
                 ? 'bg-green-500 text-white scale-[0.97]'
-                : 'bg-accent-yellow text-bg-primary hover:brightness-110 active:scale-[0.97]',
+                : 'bg-accent-yellow text-text-on-accent hover:brightness-110 active:scale-[0.97]',
               !cheapestVariant && 'opacity-50 cursor-not-allowed'
             )}
           >
@@ -260,7 +260,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                   <span className="text-text-primary font-medium">
                     {variantLabel(v)}
                   </span>
-                  <span className="text-accent-yellow font-semibold">
+                  <span className="text-accent-yellow-text font-semibold">
                     {formatPriceShort(v.price)}
                   </span>
                 </button>

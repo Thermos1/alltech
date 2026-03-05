@@ -166,7 +166,7 @@ export default async function ClientsPage({
                       <td className="px-4 py-3">
                         <Link
                           href={`/admin/clients/${client.id}`}
-                          className="text-text-primary hover:text-accent-yellow transition-colors font-medium"
+                          className="text-text-primary hover:text-accent-yellow-text transition-colors font-medium"
                         >
                           {client.full_name || 'Без имени'}
                         </Link>

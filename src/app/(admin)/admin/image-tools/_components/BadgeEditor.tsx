@@ -6,7 +6,7 @@ import type { BadgeConfig } from '@/lib/card-templates';
 const PRESETS: BadgeConfig[] = [
   { text: 'Хит', type: 'hit' },
   { text: 'Новинка', type: 'new' },
-  { text: 'Скидка', type: 'sale' },
+  { text: 'Акция', type: 'sale' },
 ];
 
 type Props = {

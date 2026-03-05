@@ -3,7 +3,7 @@ export const COMPANY = {
   tagline: "Родом из Якутии",
   description:
     "Официальный дистрибьютор смазочных материалов ROLF, SINTEC, TAKAYAMA, KIXX, RHINOIL, ХИМАВТО",
-  phones: ["+7 (996) 914-28-32", "+7 (914) 274-44-20"],
+  phones: ["+7 (996) 914-28-32"],
   email: "Alltech.dv@gmail.com",
   telegram: "alltech14_ykt",
   instagram: "alltech.14",
@@ -51,11 +51,10 @@ export const OIL_BASE_TYPES = {
 } as const;
 
 export const BONUS_TIERS = [
-  { name: "Старт", min: 0, max: 99_999, percent: 3, color: "text-text-secondary" },
-  { name: "Бронза", min: 100_000, max: 299_999, percent: 5, color: "text-amber-500" },
-  { name: "Серебро", min: 300_000, max: 499_999, percent: 7, color: "text-gray-300" },
-  { name: "Золото", min: 500_000, max: 999_999, percent: 10, color: "text-accent-yellow" },
-  { name: "Платина", min: 1_000_000, max: Infinity, percent: 15, color: "text-accent-cyan" },
+  { name: "Старт", min: 0, max: 499_999, percent: 2, color: "text-text-secondary" },
+  { name: "Серебро", min: 500_000, max: 699_999, percent: 3, color: "text-gray-300" },
+  { name: "Золото", min: 700_000, max: 999_999, percent: 5, color: "text-accent-yellow-text" },
+  { name: "Платина", min: 1_000_000, max: Infinity, percent: 7, color: "text-accent-cyan" },
 ] as const;
 
 export function getBonusTier(totalSpent: number) {

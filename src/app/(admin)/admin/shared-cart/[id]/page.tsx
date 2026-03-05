@@ -9,7 +9,7 @@ export const metadata = {
 };
 
 const statusLabels: Record<string, { label: string; color: string }> = {
-  pending: { label: 'Ожидает', color: 'bg-accent-yellow-dim text-accent-yellow' },
+  pending: { label: 'Ожидает', color: 'bg-accent-yellow-dim text-accent-yellow-text' },
   viewed: { label: 'Просмотрена', color: 'bg-accent-cyan-dim text-accent-cyan' },
   ordered: { label: 'Оформлена', color: 'bg-green-500/15 text-green-400' },
   expired: { label: 'Истекла', color: 'bg-bg-secondary text-text-muted' },
@@ -185,7 +185,7 @@ export default async function SharedCartDetailPage({
               <td colSpan={4} className="px-4 py-3 text-right text-text-muted font-medium">
                 Итого:
               </td>
-              <td className="px-4 py-3 text-right text-accent-yellow font-display text-lg">
+              <td className="px-4 py-3 text-right text-accent-yellow-text font-display text-lg">
                 {formatPriceShort(total)}
               </td>
             </tr>

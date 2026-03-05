@@ -125,7 +125,7 @@ export default function SharedCartBuilder({
             onClick={() => {
               navigator.clipboard.writeText(shareUrl);
             }}
-            className="flex-1 rounded-lg bg-accent-cyan text-bg-primary px-4 py-2.5 text-sm font-medium hover:brightness-110 transition-all"
+            className="flex-1 rounded-lg bg-accent-cyan text-text-on-accent px-4 py-2.5 text-sm font-medium hover:brightness-110 transition-all"
           >
             Скопировать ссылку
           </button>
@@ -177,10 +177,10 @@ export default function SharedCartBuilder({
                       onClick={() => addToCart(product, variant)}
                       className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${
                         inCart
-                          ? 'bg-accent-yellow text-bg-primary'
+                          ? 'bg-accent-yellow text-text-on-accent'
                           : variant.stock === 0
                           ? 'bg-bg-secondary text-text-muted opacity-50 cursor-not-allowed'
-                          : 'bg-bg-secondary text-text-secondary hover:bg-accent-yellow/20 hover:text-accent-yellow'
+                          : 'bg-bg-secondary text-text-secondary hover:bg-accent-yellow/20 hover:text-accent-yellow-text'
                       }`}
                       disabled={variant.stock === 0}
                     >
@@ -245,7 +245,7 @@ export default function SharedCartBuilder({
               <div className="border-t border-border-subtle pt-3 mb-4">
                 <div className="flex justify-between items-center">
                   <span className="text-text-muted text-sm">Итого:</span>
-                  <span className="text-accent-yellow font-display text-lg">{formatPriceShort(total)}</span>
+                  <span className="text-accent-yellow-text font-display text-lg">{formatPriceShort(total)}</span>
                 </div>
               </div>
 
@@ -273,7 +273,7 @@ export default function SharedCartBuilder({
               <button
                 onClick={handleCreate}
                 disabled={creating}
-                className="w-full rounded-lg bg-accent-yellow text-bg-primary px-4 py-2.5 text-sm font-medium hover:brightness-110 transition-all disabled:opacity-50"
+                className="w-full rounded-lg bg-accent-yellow text-text-on-accent px-4 py-2.5 text-sm font-medium hover:brightness-110 transition-all disabled:opacity-50"
               >
                 {creating ? 'Создание...' : 'Создать и получить ссылку'}
               </button>

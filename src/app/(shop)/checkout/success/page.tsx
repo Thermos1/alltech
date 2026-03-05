@@ -34,7 +34,7 @@ export default async function CheckoutSuccessPage({
       </h1>
 
       {orderNumber && (
-        <p className="text-accent-yellow font-display text-lg mb-4">
+        <p className="text-accent-yellow-text font-display text-lg mb-4">
           {orderNumber}
         </p>
       )}
@@ -47,7 +47,7 @@ export default async function CheckoutSuccessPage({
       <div className="flex flex-col sm:flex-row gap-3 justify-center">
         <Link
           href="/cabinet/orders"
-          className="inline-flex items-center justify-center rounded-xl bg-accent-yellow text-bg-primary px-6 py-3 text-sm font-semibold transition-all hover:brightness-110"
+          className="inline-flex items-center justify-center rounded-xl bg-accent-yellow text-text-on-accent px-6 py-3 text-sm font-semibold transition-all hover:brightness-110"
         >
           Мои заказы
         </Link>

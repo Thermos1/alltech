@@ -41,7 +41,7 @@ export default function CartDrawer() {
         </p>
         <Link
           href="/catalog/lubricants"
-          className="inline-flex items-center gap-2 rounded-xl bg-accent-yellow text-bg-primary px-6 py-3 text-sm font-semibold transition-all hover:brightness-110"
+          className="inline-flex items-center gap-2 rounded-xl bg-accent-yellow text-text-on-accent px-6 py-3 text-sm font-semibold transition-all hover:brightness-110"
         >
           <svg
             className="w-4 h-4"
@@ -204,7 +204,7 @@ export default function CartDrawer() {
         </div>
         <div className="border-t border-border-subtle pt-3 flex justify-between">
           <span className="text-text-primary font-medium">Итого</span>
-          <span className="text-lg font-display text-accent-yellow">
+          <span className="text-lg font-display text-accent-yellow-text">
             {formatPriceShort(total)}
           </span>
         </div>
@@ -213,7 +213,7 @@ export default function CartDrawer() {
       {/* Checkout button */}
       <Link
         href="/checkout"
-        className="block w-full rounded-xl bg-accent-yellow text-bg-primary py-3.5 text-center text-base font-semibold transition-all hover:brightness-110 active:scale-[0.98]"
+        className="block w-full rounded-xl bg-accent-yellow text-text-on-accent py-3.5 text-center text-base font-semibold transition-all hover:brightness-110 active:scale-[0.98]"
       >
         Оформить заказ
       </Link>

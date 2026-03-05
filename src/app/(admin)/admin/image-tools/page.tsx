@@ -100,13 +100,13 @@ export default function ImageToolsPage() {
             onClick={() => setActiveTab(tab.id)}
             className={`flex-1 rounded-lg px-4 py-2.5 text-sm font-medium transition-all relative ${
               activeTab === tab.id
-                ? 'bg-bg-card text-accent-yellow shadow-sm'
+                ? 'bg-bg-card text-accent-yellow-text shadow-sm'
                 : 'text-text-secondary hover:text-text-primary'
             }`}
           >
             {tab.label}
             {(tab.id === 'carousel' || tab.id === 'ai-generator') && bufferCount > 0 && (
-              <span className="ml-1.5 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-bold rounded-full bg-accent-cyan text-bg-primary">
+              <span className="ml-1.5 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-bold rounded-full bg-accent-cyan text-text-on-accent">
                 {bufferCount}
               </span>
             )}
@@ -117,7 +117,7 @@ export default function ImageToolsPage() {
       {/* Hint: cleanup done */}
       {cleanedImageBase64 && activeTab === 'cleanup' && (
         <div className="flex items-center gap-3 rounded-lg bg-accent-yellow/10 border border-accent-yellow/20 px-4 py-3">
-          <span className="text-sm text-accent-yellow">
+          <span className="text-sm text-accent-yellow-text">
             Изображение очищено! Переключитесь на «Удаление фона» для продолжения.
           </span>
         </div>
@@ -126,7 +126,7 @@ export default function ImageToolsPage() {
       {/* Hint: bg-remove done */}
       {processedImageBase64 && activeTab === 'bg-remove' && (
         <div className="flex items-center gap-3 rounded-lg bg-accent-yellow/10 border border-accent-yellow/20 px-4 py-3">
-          <span className="text-sm text-accent-yellow">
+          <span className="text-sm text-accent-yellow-text">
             Фото обработано! Переключитесь на вкладку «Карточка» или «Карусель» для создания.
           </span>
         </div>

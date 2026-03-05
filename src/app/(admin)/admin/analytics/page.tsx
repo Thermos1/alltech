@@ -330,13 +330,13 @@ export default async function AnalyticsPage({ searchParams }: PageProps) {
   }));
 
   const abcColors: Record<string, string> = {
-    A: 'text-accent-yellow',
+    A: 'text-accent-yellow-text',
     B: 'text-accent-cyan',
     C: 'text-text-muted',
   };
   const xyzColors: Record<string, string> = {
     X: 'text-green-400',
-    Y: 'text-accent-yellow',
+    Y: 'text-accent-yellow-text',
     Z: 'text-accent-magenta',
   };
 
@@ -377,7 +377,7 @@ export default async function AnalyticsPage({ searchParams }: PageProps) {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="rounded-xl bg-bg-card border border-border-subtle p-5">
           <p className="text-text-muted text-xs uppercase tracking-wider mb-1">Выручка</p>
-          <p className="font-display text-2xl text-accent-yellow">{formatPriceShort(totalRevenue)}</p>
+          <p className="font-display text-2xl text-accent-yellow-text">{formatPriceShort(totalRevenue)}</p>
         </div>
         <div className="rounded-xl bg-bg-card border border-border-subtle p-5">
           <p className="text-text-muted text-xs uppercase tracking-wider mb-1">Заказов</p>
@@ -467,7 +467,7 @@ export default async function AnalyticsPage({ searchParams }: PageProps) {
                   <tr>
                     <th className="p-2" />
                     <th className="p-2 text-green-400 font-medium">X (стаб.)</th>
-                    <th className="p-2 text-accent-yellow font-medium">Y (сезон.)</th>
+                    <th className="p-2 text-accent-yellow-text font-medium">Y (сезон.)</th>
                     <th className="p-2 text-accent-magenta font-medium">Z (хаот.)</th>
                   </tr>
                 </thead>

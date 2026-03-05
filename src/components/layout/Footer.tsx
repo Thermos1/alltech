@@ -8,7 +8,7 @@ export default function Footer() {
           {/* Logo & tagline */}
           <div className="flex flex-col gap-3">
             <Link href="/" className="inline-flex items-center gap-2">
-              <span className="font-display text-xl tracking-wide text-accent-yellow neon-yellow">
+              <span className="font-display text-xl tracking-wide text-accent-yellow-text neon-yellow">
                 АЛТЕХ
               </span>
             </Link>
@@ -58,19 +58,13 @@ export default function Footer() {
             <div className="flex flex-col gap-2 text-sm">
               <a
                 href="tel:+79969142832"
-                className="text-text-muted transition-colors hover:text-accent-yellow"
+                className="text-text-muted transition-colors hover:text-accent-yellow-text"
               >
                 +7 (996) 914-28-32 <span className="text-text-muted/60 text-xs">отдел продаж</span>
               </a>
               <a
-                href="tel:+79142744420"
-                className="text-text-muted transition-colors hover:text-accent-yellow"
-              >
-                +7 (914) 274-44-20 <span className="text-text-muted/60 text-xs">офис</span>
-              </a>
-              <a
                 href="mailto:Alltech.dv@gmail.com"
-                className="text-text-muted transition-colors hover:text-accent-yellow"
+                className="text-text-muted transition-colors hover:text-accent-yellow-text"
               >
                 Alltech.dv@gmail.com
               </a>

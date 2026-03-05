@@ -117,7 +117,7 @@ export default async function ClientDetailPage({
     : 100;
 
   const statusLabels: Record<string, { label: string; color: string }> = {
-    pending: { label: 'Ожидает оплаты', color: 'bg-accent-yellow-dim text-accent-yellow' },
+    pending: { label: 'Ожидает оплаты', color: 'bg-accent-yellow-dim text-accent-yellow-text' },
     paid: { label: 'Оплачен', color: 'bg-accent-cyan-dim text-accent-cyan' },
     processing: { label: 'В обработке', color: 'bg-accent-cyan-dim text-accent-cyan' },
     shipped: { label: 'Отправлен', color: 'bg-blue-500/15 text-blue-400' },
@@ -172,7 +172,7 @@ export default async function ClientDetailPage({
         </div>
         <div className="rounded-xl bg-bg-card border border-border-subtle p-4">
           <p className="text-text-muted text-xs uppercase tracking-wider mb-1">Бонусы</p>
-          <p className="font-display text-xl text-accent-yellow">{client.bonus_balance || 0}</p>
+          <p className="font-display text-xl text-accent-yellow-text">{client.bonus_balance || 0}</p>
         </div>
         <div className="rounded-xl bg-bg-card border border-border-subtle p-4">
           <p className="text-text-muted text-xs uppercase tracking-wider mb-1">Уровень</p>
@@ -199,7 +199,7 @@ export default async function ClientDetailPage({
               key={t.name}
               className={`flex-1 rounded-md py-1 text-center text-[10px] font-medium ${
                 t.name === tier.name
-                  ? 'bg-accent-yellow/20 border border-accent-yellow/40 text-accent-yellow'
+                  ? 'bg-accent-yellow/20 border border-accent-yellow/40 text-accent-yellow-text'
                   : 'bg-bg-secondary text-text-muted'
               }`}
             >
@@ -223,7 +223,7 @@ export default async function ClientDetailPage({
               replacementForecast.status === 'overdue'
                 ? 'bg-accent-magenta/20 text-accent-magenta'
                 : replacementForecast.status === 'soon'
-                ? 'bg-accent-yellow/20 text-accent-yellow'
+                ? 'bg-accent-yellow/20 text-accent-yellow-text'
                 : 'bg-accent-cyan/20 text-accent-cyan'
             }`}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -237,7 +237,7 @@ export default async function ClientDetailPage({
                   replacementForecast.status === 'overdue'
                     ? 'text-accent-magenta'
                     : replacementForecast.status === 'soon'
-                    ? 'text-accent-yellow'
+                    ? 'text-accent-yellow-text'
                     : 'text-text-primary'
                 }`}>
                   {(() => {
@@ -312,7 +312,7 @@ export default async function ClientDetailPage({
                         <td className="px-4 py-3">
                           <Link
                             href={`/admin/orders/${order.id}`}
-                            className="text-text-primary hover:text-accent-yellow transition-colors font-medium"
+                            className="text-text-primary hover:text-accent-yellow-text transition-colors font-medium"
                           >
                             {order.order_number}
                           </Link>

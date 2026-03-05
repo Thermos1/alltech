@@ -116,14 +116,14 @@ export default function MobileNav() {
               className={cn(
                 'relative flex flex-col items-center gap-0.5 px-3 py-1.5 text-[10px] transition-colors',
                 isActive
-                  ? 'text-accent-yellow'
+                  ? 'text-accent-yellow-text'
                   : 'text-text-muted hover:text-text-secondary'
               )}
             >
               <span className="relative">
                 {item.icon}
                 {item.isCart && mounted && itemCount > 0 && (
-                  <span className="absolute -right-1.5 -top-1 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-accent-yellow px-0.5 text-[8px] font-bold text-bg-primary">
+                  <span className="absolute -right-1.5 -top-1 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-accent-yellow px-0.5 text-[8px] font-bold text-text-on-accent">
                     {itemCount}
                   </span>
                 )}
@@ -139,7 +139,7 @@ export default function MobileNav() {
           className={cn(
             'relative flex flex-col items-center gap-0.5 px-3 py-1.5 text-[10px] transition-colors',
             pathname.startsWith('/cabinet') || pathname === '/login'
-              ? 'text-accent-yellow'
+              ? 'text-accent-yellow-text'
               : 'text-text-muted hover:text-text-secondary'
           )}
         >

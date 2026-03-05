@@ -50,7 +50,7 @@ export default function VolumeSelector({
               className={cn(
                 'rounded-full px-4 py-2 text-sm font-medium transition-all',
                 isSelected
-                  ? 'bg-accent-yellow text-bg-primary shadow-[0_0_10px_rgba(255,214,0,0.3)]'
+                  ? 'bg-accent-yellow text-text-on-accent shadow-[0_0_10px_rgba(255,214,0,0.3)]'
                   : 'bg-bg-card text-text-secondary hover:text-text-primary border border-border-subtle'
               )}
             >

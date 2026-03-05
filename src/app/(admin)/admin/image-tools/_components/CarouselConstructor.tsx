@@ -286,7 +286,7 @@ export default function CarouselConstructor({
         <div className="flex gap-3">
           <button
             onClick={downloadBufferSlides}
-            className="text-sm px-4 py-2 rounded-lg bg-accent-cyan text-bg-primary hover:brightness-110 transition-all"
+            className="text-sm px-4 py-2 rounded-lg bg-accent-cyan text-text-on-accent hover:brightness-110 transition-all"
           >
             Скачать буфер ({includedBufferCount} слайдов)
           </button>
@@ -301,7 +301,7 @@ export default function CarouselConstructor({
             onClick={() => setActiveSlide(i)}
             className={`shrink-0 rounded-lg px-4 py-2 text-sm transition-all border ${
               activeSlide === i
-                ? 'border-accent-yellow bg-accent-yellow/10 text-accent-yellow'
+                ? 'border-accent-yellow bg-accent-yellow/10 text-accent-yellow-text'
                 : 'border-border-subtle text-text-secondary hover:border-text-muted'
             }`}
           >
@@ -354,7 +354,7 @@ export default function CarouselConstructor({
           )}
 
           {bgStatus === 'processing' && (
-            <div className="flex items-center gap-2 text-sm text-accent-yellow">
+            <div className="flex items-center gap-2 text-sm text-accent-yellow-text">
               <div className="w-4 h-4 border-2 border-accent-yellow border-t-transparent rounded-full animate-spin" />
               {bgProgress}
             </div>
@@ -493,7 +493,7 @@ export default function CarouselConstructor({
           <button
             onClick={handleAiFill}
             disabled={aiLoading || !productData.name}
-            className="w-full rounded-lg py-2.5 text-sm font-medium bg-accent-cyan text-bg-primary hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
+            className="w-full rounded-lg py-2.5 text-sm font-medium bg-accent-cyan text-text-on-accent hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
           >
             {aiLoading ? (
               <>
@@ -529,7 +529,7 @@ export default function CarouselConstructor({
             <button
               onClick={() => handleGenerate('png')}
               disabled={generating || !productData.name || !productImageBase64}
-              className="w-full rounded-lg py-3 text-sm font-medium bg-accent-yellow text-bg-primary hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
+              className="w-full rounded-lg py-3 text-sm font-medium bg-accent-yellow text-text-on-accent hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
             >
               {generating ? (
                 <>

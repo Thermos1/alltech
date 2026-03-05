@@ -132,12 +132,12 @@ export default function LoadSharedCart({ code }: { code: string }) {
       <div className="border-t border-border-subtle pt-3">
         <div className="flex justify-between items-center mb-4">
           <span className="text-text-muted">Итого:</span>
-          <span className="text-accent-yellow font-display text-xl">{formatPriceShort(total)}</span>
+          <span className="text-accent-yellow-text font-display text-xl">{formatPriceShort(total)}</span>
         </div>
 
         <button
           onClick={handleLoad}
-          className="w-full rounded-lg bg-accent-yellow text-bg-primary px-4 py-3 text-sm font-medium hover:brightness-110 transition-all"
+          className="w-full rounded-lg bg-accent-yellow text-text-on-accent px-4 py-3 text-sm font-medium hover:brightness-110 transition-all"
         >
           Загрузить в корзину и оформить
         </button>

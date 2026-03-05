@@ -79,7 +79,7 @@ export default function RegisterForm() {
           <span className="text-accent-cyan">{email}</span>.
           Перейдите по ссылке в письме для активации аккаунта.
         </p>
-        <Link href="/login" className="text-accent-cyan hover:text-accent-yellow transition-colors text-sm">
+        <Link href="/login" className="text-accent-cyan hover:text-accent-yellow-text transition-colors text-sm">
           Вернуться к входу
         </Link>
       </div>
@@ -130,14 +130,14 @@ export default function RegisterForm() {
 
         {error && <p className="text-accent-magenta text-sm">{error}</p>}
 
-        <button type="submit" disabled={loading} className="w-full bg-accent-yellow text-bg-primary font-semibold rounded-lg py-3 px-6 hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+        <button type="submit" disabled={loading} className="w-full bg-accent-yellow text-text-on-accent font-semibold rounded-lg py-3 px-6 hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
           {loading ? 'Регистрация...' : 'Зарегистрироваться'}
         </button>
       </form>
 
       <p className="text-text-muted text-sm text-center mt-6">
         Уже есть аккаунт?{' '}
-        <Link href="/login" className="text-accent-cyan hover:text-accent-yellow transition-colors">Войти</Link>
+        <Link href="/login" className="text-accent-cyan hover:text-accent-yellow-text transition-colors">Войти</Link>
       </p>
     </div>
   )

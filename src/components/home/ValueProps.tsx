@@ -4,7 +4,7 @@ export default function ValueProps() {
       <div className="mx-auto max-w-[var(--container-max)] px-[var(--container-padding)]">
         <div className="grid grid-cols-2 gap-6 md:grid-cols-4 md:gap-8">
           <div className="flex flex-col">
-            <span className="font-display text-2xl text-accent-yellow md:text-3xl">
+            <span className="font-display text-2xl text-accent-yellow-text md:text-3xl">
               7+
             </span>
             <span className="mt-1 text-sm text-text-primary font-medium">
@@ -28,7 +28,7 @@ export default function ValueProps() {
           </div>
 
           <div className="flex flex-col">
-            <span className="font-display text-2xl text-accent-yellow md:text-3xl">
+            <span className="font-display text-2xl text-accent-yellow-text md:text-3xl">
               0 ₽
             </span>
             <span className="mt-1 text-sm text-text-primary font-medium">

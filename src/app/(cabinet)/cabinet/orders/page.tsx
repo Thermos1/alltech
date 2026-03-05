@@ -7,7 +7,7 @@ export const metadata = {
 };
 
 const statusLabels: Record<string, { label: string; color: string }> = {
-  pending: { label: 'Ожидает оплаты', color: 'bg-accent-yellow-dim text-accent-yellow' },
+  pending: { label: 'Ожидает оплаты', color: 'bg-accent-yellow-dim text-accent-yellow-text' },
   paid: { label: 'Оплачен', color: 'bg-accent-cyan-dim text-accent-cyan' },
   processing: { label: 'В обработке', color: 'bg-accent-cyan-dim text-accent-cyan' },
   shipped: { label: 'Отправлен', color: 'bg-blue-500/15 text-blue-400' },
@@ -37,7 +37,7 @@ export default async function OrdersPage() {
           <p className="text-text-muted text-sm mb-4">Вы ещё ничего не заказывали</p>
           <Link
             href="/catalog/lubricants"
-            className="inline-flex items-center gap-2 rounded-xl bg-accent-yellow text-bg-primary px-6 py-3 text-sm font-semibold transition-all hover:brightness-110"
+            className="inline-flex items-center gap-2 rounded-xl bg-accent-yellow text-text-on-accent px-6 py-3 text-sm font-semibold transition-all hover:brightness-110"
           >
             Перейти в каталог
           </Link>
@@ -75,7 +75,7 @@ export default async function OrdersPage() {
                 <div className="flex items-center justify-between pt-2 border-t border-border-subtle">
                   <div className="flex gap-4 text-xs text-text-muted">
                     {order.discount_amount > 0 && (
-                      <span>Скидка: -{formatPriceShort(order.discount_amount)}</span>
+                      <span>Кэшбэк: -{formatPriceShort(order.discount_amount)}</span>
                     )}
                     {order.bonus_used > 0 && (
                       <span>Бонусы: -{order.bonus_used}</span>

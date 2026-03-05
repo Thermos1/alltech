@@ -1,7 +1,9 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 import { formatPriceShort } from '@/lib/utils';
 import { getBonusTier, getNextTier, BONUS_TIERS } from '@/lib/constants';
+import { checkCashbackDecay } from '@/lib/cashback-decay';
 
 export const metadata = {
   title: 'Личный кабинет — АЛТЕХ',
@@ -31,8 +33,21 @@ export default async function CabinetPage() {
   const profile = profileResult.data;
   const recentOrders = ordersResult.data || [];
 
+  // Check cashback decay (3 months without purchase → bonuses expire)
+  let decayWarning = '';
+  if (profile && profile.bonus_balance > 0) {
+    const admin = createAdminClient();
+    const decay = await checkCashbackDecay(admin, user.id);
+    if (decay.decayed) {
+      decayWarning = `Ваши ${decay.previousBalance} бонусов сгорели — покупок не было ${decay.monthsSinceLastPurchase} мес.`;
+      profile.bonus_balance = 0;
+    } else if (decay.monthsSinceLastPurchase >= 2) {
+      decayWarning = `Бонусы сгорят через ${3 - decay.monthsSinceLastPurchase} мес. без покупок`;
+    }
+  }
+
   const statusLabels: Record<string, { label: string; color: string }> = {
-    pending: { label: 'Ожидает оплаты', color: 'text-accent-yellow' },
+    pending: { label: 'Ожидает оплаты', color: 'text-accent-yellow-text' },
     paid: { label: 'Оплачен', color: 'text-accent-cyan' },
     processing: { label: 'В обработке', color: 'text-accent-cyan' },
     shipped: { label: 'Отправлен', color: 'text-accent-cyan' },
@@ -114,7 +129,7 @@ export default async function CabinetPage() {
                     key={t.name}
                     className={`flex-1 rounded-md py-1.5 text-center text-[10px] font-medium ${
                       t.name === tier.name
-                        ? 'bg-accent-yellow/20 border border-accent-yellow/40 text-accent-yellow'
+                        ? 'bg-accent-yellow/20 border border-accent-yellow/40 text-accent-yellow-text'
                         : 'bg-bg-secondary text-text-muted'
                     }`}
                   >
@@ -131,12 +146,17 @@ export default async function CabinetPage() {
                 <p className="text-text-muted text-xs uppercase tracking-wider mb-1">
                   Бонусный баланс
                 </p>
-                <p className="font-display text-3xl text-accent-yellow">
+                <p className="font-display text-3xl text-accent-yellow-text">
                   {profile?.bonus_balance || 0}
                 </p>
                 <p className="text-text-muted text-xs mt-1">
-                  1 бонус = 1 ₽ скидка
+                  1 бонус = 1 ₽ кэшбэк
                 </p>
+                {decayWarning && (
+                  <p className="text-accent-magenta text-xs mt-2">
+                    {decayWarning}
+                  </p>
+                )}
               </div>
 
               {/* Referral code */}
@@ -148,7 +168,7 @@ export default async function CabinetPage() {
                   {profile?.referral_code || '—'}
                 </p>
                 <p className="text-text-muted text-xs mt-1">
-                  Приведи друга — получи 500 бонусов
+                  Приведи друга — 500₽ + 0.5% с каждой покупки
                 </p>
               </div>
             </div>
@@ -162,7 +182,7 @@ export default async function CabinetPage() {
           <h2 className="text-text-primary font-medium">Последние заказы</h2>
           <Link
             href="/cabinet/orders"
-            className="text-accent-cyan text-sm hover:text-accent-yellow transition-colors"
+            className="text-accent-cyan text-sm hover:text-accent-yellow-text transition-colors"
           >
             Все заказы →
           </Link>
@@ -173,7 +193,7 @@ export default async function CabinetPage() {
             <p className="text-text-muted text-sm">Заказов пока нет</p>
             <Link
               href="/catalog/lubricants"
-              className="text-accent-cyan text-sm hover:text-accent-yellow transition-colors mt-2 inline-block"
+              className="text-accent-cyan text-sm hover:text-accent-yellow-text transition-colors mt-2 inline-block"
             >
               Перейти в каталог
             </Link>

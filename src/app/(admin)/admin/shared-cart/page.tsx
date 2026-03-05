@@ -8,7 +8,7 @@ export const metadata = {
 };
 
 const statusLabels: Record<string, { label: string; color: string }> = {
-  pending: { label: 'Ожидает', color: 'bg-accent-yellow-dim text-accent-yellow' },
+  pending: { label: 'Ожидает', color: 'bg-accent-yellow-dim text-accent-yellow-text' },
   viewed: { label: 'Просмотрена', color: 'bg-accent-cyan-dim text-accent-cyan' },
   ordered: { label: 'Оформлена', color: 'bg-green-500/15 text-green-400' },
   expired: { label: 'Истекла', color: 'bg-bg-secondary text-text-muted' },
@@ -104,7 +104,7 @@ export default async function SharedCartsPage() {
         <h1 className="font-display text-2xl text-text-primary">Корзины</h1>
         <Link
           href="/admin/shared-cart/new"
-          className="rounded-lg bg-accent-yellow text-bg-primary px-4 py-2 text-sm font-medium hover:brightness-110 transition-all"
+          className="rounded-lg bg-accent-yellow text-text-on-accent px-4 py-2 text-sm font-medium hover:brightness-110 transition-all"
         >
           Собрать корзину
         </Link>
@@ -142,7 +142,7 @@ export default async function SharedCartsPage() {
                       <td className="px-4 py-3">
                         <Link
                           href={`/admin/shared-cart/${cart.id}`}
-                          className="text-text-primary hover:text-accent-yellow transition-colors font-mono font-medium"
+                          className="text-text-primary hover:text-accent-yellow-text transition-colors font-mono font-medium"
                         >
                           {cart.code}
                         </Link>

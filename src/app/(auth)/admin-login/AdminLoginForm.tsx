@@ -99,7 +99,7 @@ export default function AdminLoginForm() {
         <button
           type="submit"
           disabled={loading || !email.trim() || !password}
-          className="w-full bg-accent-yellow text-bg-primary font-semibold rounded-lg py-3 px-6 hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full bg-accent-yellow text-text-on-accent font-semibold rounded-lg py-3 px-6 hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading ? 'Вход...' : 'Войти'}
         </button>

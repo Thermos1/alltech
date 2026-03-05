@@ -36,7 +36,7 @@ export default async function PopularProducts() {
           </h2>
           <a
             href="/catalog/lubricants"
-            className="text-accent-yellow text-sm hover:underline"
+            className="text-accent-yellow-text text-sm hover:underline"
           >
             Все товары &rarr;
           </a>

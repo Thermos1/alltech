@@ -23,7 +23,7 @@ export default function CategoryTabs({
           className={cn(
             'shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-colors whitespace-nowrap',
             !activeSlug
-              ? 'bg-accent-yellow text-bg-primary'
+              ? 'bg-accent-yellow text-text-on-accent'
               : 'bg-bg-card text-text-secondary hover:text-text-primary'
           )}
         >
@@ -37,7 +37,7 @@ export default function CategoryTabs({
             className={cn(
               'shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-colors whitespace-nowrap',
               activeSlug === category.slug
-                ? 'bg-accent-yellow text-bg-primary'
+                ? 'bg-accent-yellow text-text-on-accent'
                 : 'bg-bg-card text-text-secondary hover:text-text-primary'
             )}
           >

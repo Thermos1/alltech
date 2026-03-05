@@ -166,7 +166,7 @@ export default function ImageUpload({
         )}
         {uploading && (
           <div className="absolute inset-0 bg-bg-primary/80 flex items-center justify-center">
-            <p className="text-accent-yellow text-sm animate-pulse">Загрузка...</p>
+            <p className="text-accent-yellow-text text-sm animate-pulse">Загрузка...</p>
           </div>
         )}
       </div>

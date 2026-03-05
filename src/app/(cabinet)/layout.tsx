@@ -26,7 +26,7 @@ export default async function CabinetLayout({
       {/* Header */}
       <header className="sticky top-0 z-50 border-b border-border-subtle bg-bg-primary/80 backdrop-blur-xl">
         <div className="mx-auto flex h-14 max-w-[var(--container-max)] items-center justify-between px-[var(--container-padding)]">
-          <Link href="/" className="font-display text-xl text-accent-yellow neon-yellow">
+          <Link href="/" className="font-display text-xl text-accent-yellow-text neon-yellow">
             АЛТЕХ
           </Link>
           <Link

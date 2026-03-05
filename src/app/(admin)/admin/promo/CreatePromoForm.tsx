@@ -42,12 +42,12 @@ export default function CreatePromoForm() {
 
     const value = Number(discountValue);
     if (!value || value <= 0) {
-      setError('Введите значение скидки');
+      setError('Введите значение');
       return;
     }
 
     if (discountType === 'percent' && value > 100) {
-      setError('Процент скидки не может быть больше 100');
+      setError('Процент не может быть больше 100');
       return;
     }
 
@@ -86,7 +86,7 @@ export default function CreatePromoForm() {
     return (
       <button
         onClick={() => setOpen(true)}
-        className="rounded-lg px-4 py-2 text-sm font-medium bg-accent-yellow text-bg-primary hover:brightness-110 transition-all"
+        className="rounded-lg px-4 py-2 text-sm font-medium bg-accent-yellow text-text-on-accent hover:brightness-110 transition-all"
       >
         + Создать промокод
       </button>
@@ -122,7 +122,7 @@ export default function CreatePromoForm() {
 
           {/* Discount type */}
           <div>
-            <label className="block text-text-muted text-xs mb-1">Тип скидки</label>
+            <label className="block text-text-muted text-xs mb-1">Тип промокода</label>
             <select
               value={discountType}
               onChange={(e) => setDiscountType(e.target.value as 'percent' | 'fixed')}
@@ -205,7 +205,7 @@ export default function CreatePromoForm() {
         <button
           type="submit"
           disabled={saving}
-          className="rounded-lg px-4 py-2 text-sm font-medium bg-accent-yellow text-bg-primary hover:brightness-110 transition-all disabled:opacity-50"
+          className="rounded-lg px-4 py-2 text-sm font-medium bg-accent-yellow text-text-on-accent hover:brightness-110 transition-all disabled:opacity-50"
         >
           {saving ? 'Создание...' : 'Создать промокод'}
         </button>

@@ -132,7 +132,7 @@ export default function SettingsPage() {
             disabled={saving}
             className={cn(
               'rounded-xl py-3 px-8 text-sm font-semibold transition-all',
-              'bg-accent-yellow text-bg-primary hover:brightness-110',
+              'bg-accent-yellow text-text-on-accent hover:brightness-110',
               'disabled:opacity-50 disabled:cursor-not-allowed'
             )}
           >

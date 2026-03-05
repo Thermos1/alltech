@@ -118,7 +118,7 @@ export default async function ProductPage({ params }: PageProps) {
             {/* Badges */}
             <div className="flex flex-wrap gap-2">
               {baseTypeLabel && (
-                <span className="rounded-md bg-accent-yellow-dim text-accent-yellow text-xs font-medium px-3 py-1">
+                <span className="rounded-md bg-accent-yellow-dim text-accent-yellow-text text-xs font-medium px-3 py-1">
                   {baseTypeLabel}
                 </span>
               )}

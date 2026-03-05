@@ -113,7 +113,7 @@ export default async function OrderDetailPage({
                     <div
                       className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
                         isCurrent
-                          ? 'bg-accent-cyan text-bg-primary'
+                          ? 'bg-accent-cyan text-text-on-accent'
                           : isDone
                           ? 'bg-accent-cyan/30 text-accent-cyan'
                           : 'bg-bg-secondary text-text-muted'
@@ -165,14 +165,14 @@ export default async function OrderDetailPage({
         </div>
         {order.discount_amount > 0 && (
           <div className="flex justify-between text-sm">
-            <span className="text-text-secondary">Скидка</span>
+            <span className="text-text-secondary">Кэшбэк</span>
             <span className="text-accent-cyan">-{formatPriceShort(order.discount_amount)}</span>
           </div>
         )}
         {order.bonus_used > 0 && (
           <div className="flex justify-between text-sm">
             <span className="text-text-secondary">Бонусы</span>
-            <span className="text-accent-yellow">-{formatPriceShort(order.bonus_used)}</span>
+            <span className="text-accent-yellow-text">-{formatPriceShort(order.bonus_used)}</span>
           </div>
         )}
         <div className="flex justify-between text-sm">
@@ -181,7 +181,7 @@ export default async function OrderDetailPage({
         </div>
         <div className="border-t border-border-subtle pt-2 flex justify-between">
           <span className="text-text-primary font-medium">Итого</span>
-          <span className="text-lg font-display text-accent-yellow">
+          <span className="text-lg font-display text-accent-yellow-text">
             {formatPriceShort(order.total)}
           </span>
         </div>

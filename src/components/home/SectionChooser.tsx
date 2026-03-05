@@ -17,7 +17,7 @@ export default function SectionChooser() {
                 height="32"
                 viewBox="0 0 24 24"
                 fill="none"
-                className="text-accent-yellow md:h-10 md:w-10"
+                className="text-accent-yellow-text md:h-10 md:w-10"
               >
                 <path
                   d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0L12 2.69z"
@@ -36,7 +36,7 @@ export default function SectionChooser() {
             </div>
 
             <div>
-              <h3 className="font-display text-lg text-text-primary transition-colors group-hover:text-accent-yellow md:text-xl">
+              <h3 className="font-display text-lg text-text-primary transition-colors group-hover:text-accent-yellow-text md:text-xl">
                 Смазочные материалы
               </h3>
               <p className="mt-1.5 text-sm text-text-muted">
@@ -44,7 +44,7 @@ export default function SectionChooser() {
               </p>
             </div>
 
-            <span className="inline-flex items-center gap-1 text-xs text-accent-yellow opacity-0 transition-opacity group-hover:opacity-100">
+            <span className="inline-flex items-center gap-1 text-xs text-accent-yellow-text opacity-0 transition-opacity group-hover:opacity-100">
               Перейти
               <svg
                 width="14"

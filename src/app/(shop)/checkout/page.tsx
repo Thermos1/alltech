@@ -1,5 +1,7 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
+import { checkCashbackDecay } from '@/lib/cashback-decay';
 import CheckoutForm from './CheckoutForm';
 
 export const metadata = {
@@ -20,6 +22,15 @@ export default async function CheckoutPage() {
     .select('full_name, phone, bonus_balance, company_name')
     .eq('id', user.id)
     .single();
+
+  // Check cashback decay before showing checkout
+  if (profile && profile.bonus_balance > 0) {
+    const admin = createAdminClient();
+    const decay = await checkCashbackDecay(admin, user.id);
+    if (decay.decayed) {
+      profile.bonus_balance = 0;
+    }
+  }
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-6 md:py-10">

@@ -280,7 +280,7 @@ export default function BackgroundRemover({ initialCleanedImage, onProcessed }: 
               ) : isProcessing ? (
                 <div className="text-center">
                   <div className="w-8 h-8 border-2 border-accent-yellow border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-                  <p className="text-accent-yellow text-sm animate-pulse">{bgProgress}</p>
+                  <p className="text-accent-yellow-text text-sm animate-pulse">{bgProgress}</p>
                 </div>
               ) : bgStatus === 'error' ? (
                 <p className="text-accent-magenta text-sm">{bgProgress}</p>
@@ -294,12 +294,12 @@ export default function BackgroundRemover({ initialCleanedImage, onProcessed }: 
       {originalUrl && (
         <div className="flex flex-wrap gap-3">
           {processedUrl && (
-            <button onClick={downloadPng} className="rounded-lg px-5 py-2.5 text-sm font-medium bg-accent-cyan text-bg-primary hover:brightness-110 transition-all">
+            <button onClick={downloadPng} className="rounded-lg px-5 py-2.5 text-sm font-medium bg-accent-cyan text-text-on-accent hover:brightness-110 transition-all">
               Скачать PNG
             </button>
           )}
           {(processedUrl || recognized) && (
-            <button onClick={createProduct} className="rounded-lg px-5 py-2.5 text-sm font-medium bg-accent-yellow text-bg-primary hover:brightness-110 transition-all">
+            <button onClick={createProduct} className="rounded-lg px-5 py-2.5 text-sm font-medium bg-accent-yellow text-text-on-accent hover:brightness-110 transition-all">
               Создать товар
             </button>
           )}
@@ -327,7 +327,7 @@ export default function BackgroundRemover({ initialCleanedImage, onProcessed }: 
           <div className="flex items-center gap-2 mb-4">
             <h2 className="text-text-primary font-medium">Распознанные характеристики</h2>
             {recognizeStatus === 'loading' && (
-              <span className="text-xs text-accent-yellow animate-pulse">Анализирую...</span>
+              <span className="text-xs text-accent-yellow-text animate-pulse">Анализирую...</span>
             )}
             {recognizeStatus === 'done' && (
               <span className="text-xs text-green-400">AI</span>

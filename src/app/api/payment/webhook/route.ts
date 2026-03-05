@@ -126,6 +126,7 @@ async function handlePaymentSucceeded(admin: ReturnType<typeof createAdminClient
       .update({
         bonus_balance: userProfile.bonus_balance + bonusToAward,
         total_spent: newTotalSpent,
+        last_purchase_at: new Date().toISOString(),
       })
       .eq('id', order.user_id);
   }
@@ -186,32 +187,42 @@ async function handlePaymentSucceeded(admin: ReturnType<typeof createAdminClient
     });
   }
 
-  // Check referral bonus (first purchase by referred user, no self-referral)
+  // Referral bonuses (no self-referral)
   if (userProfile?.referred_by && userProfile.referred_by !== order.user_id) {
-    const { count: existingReferralCount } = await admin
-      .from('referral_events')
-      .select('id', { count: 'exact', head: true })
-      .eq('referred_id', order.user_id);
+    const { data: referrer } = await admin
+      .from('profiles')
+      .select('bonus_balance')
+      .eq('id', userProfile.referred_by)
+      .single();
 
-    if (existingReferralCount === 0) {
-      const referralBonus = 500;
-      const { data: referrer } = await admin
-        .from('profiles')
-        .select('bonus_balance')
-        .eq('id', userProfile.referred_by)
-        .single();
+    if (referrer) {
+      // First purchase: one-time 500₽ bonus
+      const { count: existingReferralCount } = await admin
+        .from('referral_events')
+        .select('id', { count: 'exact', head: true })
+        .eq('referred_id', order.user_id);
 
-      if (referrer) {
+      let totalReferralBonus = 0;
+
+      if (existingReferralCount === 0) {
+        totalReferralBonus += 500;
+      }
+
+      // Recurring: 0.5% from every purchase
+      const recurringBonus = Math.floor(Number(order.total) * 0.5 / 100);
+      totalReferralBonus += recurringBonus;
+
+      if (totalReferralBonus > 0) {
         await admin
           .from('profiles')
-          .update({ bonus_balance: referrer.bonus_balance + referralBonus })
+          .update({ bonus_balance: referrer.bonus_balance + totalReferralBonus })
           .eq('id', userProfile.referred_by);
 
         await admin.from('referral_events').insert({
           referrer_id: userProfile.referred_by,
           referred_id: userProfile.id,
           order_id: order.id,
-          bonus_awarded: referralBonus,
+          bonus_awarded: totalReferralBonus,
         });
       }
     }

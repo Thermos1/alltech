@@ -45,7 +45,7 @@ export default function ElementToggle({ enabled, onChange }: Props) {
               type="checkbox"
               checked={enabled.includes(el)}
               onChange={() => toggle(el)}
-              className="rounded border-border-subtle bg-bg-secondary text-accent-yellow focus:ring-accent-yellow/30 w-4 h-4"
+              className="rounded border-border-subtle bg-bg-secondary text-accent-yellow-text focus:ring-accent-yellow/30 w-4 h-4"
             />
             <span className="text-sm text-text-secondary">{ELEMENT_LABELS[el]}</span>
           </label>

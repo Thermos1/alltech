@@ -8,7 +8,7 @@ export const metadata = {
 };
 
 const statusLabels: Record<string, { label: string; color: string }> = {
-  pending: { label: 'Ожидает оплаты', color: 'bg-accent-yellow-dim text-accent-yellow' },
+  pending: { label: 'Ожидает оплаты', color: 'bg-accent-yellow-dim text-accent-yellow-text' },
   paid: { label: 'Оплачен', color: 'bg-accent-cyan-dim text-accent-cyan' },
   processing: { label: 'В обработке', color: 'bg-accent-cyan-dim text-accent-cyan' },
   shipped: { label: 'Отправлен', color: 'bg-blue-500/15 text-blue-400' },
@@ -252,10 +252,10 @@ export default async function AdminDashboardPage() {
 
   const stats = isAdmin
     ? [
-        { label: 'Выручка', value: formatPriceShort(revenue), accent: 'text-accent-yellow' },
+        { label: 'Выручка', value: formatPriceShort(revenue), accent: 'text-accent-yellow-text' },
         { label: 'Заказов', value: totalOrders.toString(), accent: 'text-text-primary' },
         { label: 'Оплачено', value: paidOrdersCount.toString(), accent: 'text-accent-cyan' },
-        { label: 'Средний чек', value: formatPriceShort(avgCheck), accent: 'text-accent-yellow' },
+        { label: 'Средний чек', value: formatPriceShort(avgCheck), accent: 'text-accent-yellow-text' },
         { label: 'Товаров', value: productCount.toString(), accent: 'text-text-primary' },
         { label: 'Клиентов', value: clientCount.toString(), accent: 'text-accent-cyan' },
         { label: 'Брендов', value: brandCount.toString(), accent: 'text-text-primary' },
@@ -263,7 +263,7 @@ export default async function AdminDashboardPage() {
     : [
         { label: 'Заказы клиентов', value: totalOrders.toString(), accent: 'text-text-primary' },
         { label: 'Оплачено', value: paidOrdersCount.toString(), accent: 'text-accent-cyan' },
-        { label: 'За месяц', value: formatPriceShort(commissionThisMonth), accent: 'text-accent-yellow' },
+        { label: 'За месяц', value: formatPriceShort(commissionThisMonth), accent: 'text-accent-yellow-text' },
         { label: 'Всего заработано', value: formatPriceShort(commissionAllTime), accent: 'text-accent-cyan' },
       ];
 
@@ -308,7 +308,7 @@ export default async function AdminDashboardPage() {
                 {lowStockCount > 0 && (
                   <div className="flex items-center gap-2">
                     <span className="inline-block w-2 h-2 rounded-full bg-accent-yellow" />
-                    <span className="text-accent-yellow text-sm font-medium">{lowStockCount} мало</span>
+                    <span className="text-accent-yellow-text text-sm font-medium">{lowStockCount} мало</span>
                   </div>
                 )}
               </div>
@@ -381,7 +381,7 @@ export default async function AdminDashboardPage() {
                 className="block rounded-xl bg-accent-yellow/10 border border-accent-yellow/30 p-4 hover:bg-accent-yellow/15 transition-colors"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-accent-yellow/20 flex items-center justify-center text-accent-yellow shrink-0">
+                  <div className="w-8 h-8 rounded-lg bg-accent-yellow/20 flex items-center justify-center text-accent-yellow-text shrink-0">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
                       <circle cx="9" cy="7" r="4" />
@@ -390,7 +390,7 @@ export default async function AdminDashboardPage() {
                     </svg>
                   </div>
                   <div>
-                    <p className="text-accent-yellow text-sm font-medium">
+                    <p className="text-accent-yellow-text text-sm font-medium">
                       {unassignedCount} {unassignedCount === 1 ? 'клиент' : unassignedCount < 5 ? 'клиента' : 'клиентов'} без менеджера
                     </p>
                     <p className="text-text-muted text-xs">Назначьте менеджера для обработки заказов</p>
@@ -415,7 +415,7 @@ export default async function AdminDashboardPage() {
                     <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
                       client.status === 'overdue'
                         ? 'bg-accent-magenta/20 text-accent-magenta'
-                        : 'bg-accent-yellow/20 text-accent-yellow'
+                        : 'bg-accent-yellow/20 text-accent-yellow-text'
                     }`}>
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <circle cx="12" cy="12" r="10" />
@@ -437,7 +437,7 @@ export default async function AdminDashboardPage() {
                           Просрочено на {absDays} {dayWord}
                         </p>
                       ) : (
-                        <p className="text-xs font-medium text-accent-yellow">
+                        <p className="text-xs font-medium text-accent-yellow-text">
                           Через {absDays} {dayWord}
                         </p>
                       );
@@ -456,7 +456,7 @@ export default async function AdminDashboardPage() {
           <h2 className="text-text-primary font-medium text-lg">Последние заказы</h2>
           <Link
             href="/admin/orders"
-            className="text-accent-cyan text-sm hover:text-accent-yellow transition-colors"
+            className="text-accent-cyan text-sm hover:text-accent-yellow-text transition-colors"
           >
             Все заказы
           </Link>
@@ -492,7 +492,7 @@ export default async function AdminDashboardPage() {
                         <td className="px-4 py-3">
                           <Link
                             href={`/admin/orders/${order.id}`}
-                            className="text-text-primary hover:text-accent-yellow transition-colors font-medium"
+                            className="text-text-primary hover:text-accent-yellow-text transition-colors font-medium"
                           >
                             {order.order_number}
                           </Link>

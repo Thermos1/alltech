@@ -150,7 +150,7 @@ export default function LoginForm() {
           <button
             type="submit"
             disabled={loading || !phone.trim()}
-            className="w-full bg-accent-yellow text-bg-primary font-semibold rounded-lg py-3 px-6 hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-accent-yellow text-text-on-accent font-semibold rounded-lg py-3 px-6 hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? 'Отправка...' : 'Получить код'}
           </button>
@@ -162,7 +162,7 @@ export default function LoginForm() {
             <button
               type="button"
               onClick={() => { setStep('phone'); setCode(''); setError(null); setDevCode(null) }}
-              className="text-accent-cyan text-xs hover:text-accent-yellow transition-colors"
+              className="text-accent-cyan text-xs hover:text-accent-yellow-text transition-colors"
             >
               Изменить
             </button>
@@ -201,7 +201,7 @@ export default function LoginForm() {
           <button
             type="submit"
             disabled={loading || code.length < 4}
-            className="w-full bg-accent-yellow text-bg-primary font-semibold rounded-lg py-3 px-6 hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-accent-yellow text-text-on-accent font-semibold rounded-lg py-3 px-6 hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? 'Проверка...' : 'Войти'}
           </button>

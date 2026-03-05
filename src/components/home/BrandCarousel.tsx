@@ -25,7 +25,7 @@ export default function BrandCarousel() {
               <Link
                 key={brand.slug}
                 href={`/catalog/lubricants?brand=${brand.slug}`}
-                className="flex-shrink-0 snap-start rounded-lg border border-border-subtle bg-bg-card px-4 py-2.5 text-sm font-medium transition-all duration-200 hover:border-accent-yellow hover:text-accent-yellow text-text-secondary md:px-5 md:py-3 md:text-base"
+                className="flex-shrink-0 snap-start rounded-lg border border-border-subtle bg-bg-card px-4 py-2.5 text-sm font-medium transition-all duration-200 hover:border-accent-yellow hover:text-accent-yellow-text text-text-secondary md:px-5 md:py-3 md:text-base"
               >
                 {brand.name}
               </Link>

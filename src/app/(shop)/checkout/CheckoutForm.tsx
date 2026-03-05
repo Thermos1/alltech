@@ -159,7 +159,7 @@ export default function CheckoutForm({ profile }: CheckoutFormProps) {
         <p className="text-text-secondary mb-4">Корзина пуста</p>
         <a
           href="/catalog/lubricants"
-          className="text-accent-cyan hover:text-accent-yellow transition-colors"
+          className="text-accent-cyan hover:text-accent-yellow-text transition-colors"
         >
           Перейти в каталог
         </a>
@@ -252,7 +252,7 @@ export default function CheckoutForm({ profile }: CheckoutFormProps) {
 
       {/* Promo & Bonuses */}
       <div className="rounded-xl bg-bg-card border border-border-subtle p-4 space-y-4">
-        <h2 className="text-text-primary font-medium">Скидки</h2>
+        <h2 className="text-text-primary font-medium">Кэшбэк</h2>
 
         {/* Promo code */}
         <div>
@@ -267,7 +267,7 @@ export default function CheckoutForm({ profile }: CheckoutFormProps) {
                 setPromoDiscount(0);
                 setPromoError('');
               }}
-              placeholder="WELCOME10"
+              placeholder="Введите промокод"
               disabled={promoApplied}
               className={cn(inputClass, 'flex-1')}
             />
@@ -291,7 +291,7 @@ export default function CheckoutForm({ profile }: CheckoutFormProps) {
           {promoError && <p className="text-accent-magenta text-xs mt-1">{promoError}</p>}
           {promoApplied && (
             <p className="text-accent-cyan text-xs mt-1">
-              Скидка: -{formatPriceShort(promoDiscount)}
+              Кэшбэк: -{formatPriceShort(promoDiscount)}
             </p>
           )}
         </div>
@@ -323,7 +323,7 @@ export default function CheckoutForm({ profile }: CheckoutFormProps) {
               </button>
             </div>
             {bonusEnabled && (
-              <p className="text-accent-yellow text-xs mt-1">
+              <p className="text-accent-yellow-text text-xs mt-1">
                 Списание: -{formatPriceShort(useBonuses)}
               </p>
             )}
@@ -346,7 +346,7 @@ export default function CheckoutForm({ profile }: CheckoutFormProps) {
         {useBonuses > 0 && (
           <div className="flex justify-between text-sm">
             <span className="text-text-secondary">Бонусы</span>
-            <span className="text-accent-yellow">-{formatPriceShort(useBonuses)}</span>
+            <span className="text-accent-yellow-text">-{formatPriceShort(useBonuses)}</span>
           </div>
         )}
         <div className="flex justify-between text-sm">
@@ -355,7 +355,7 @@ export default function CheckoutForm({ profile }: CheckoutFormProps) {
         </div>
         <div className="border-t border-border-subtle pt-2 flex justify-between items-center">
           <span className="text-text-primary font-medium">Итого</span>
-          <span className="text-xl font-display text-accent-yellow">
+          <span className="text-xl font-display text-accent-yellow-text">
             {formatPriceShort(total)}
           </span>
         </div>
@@ -374,7 +374,7 @@ export default function CheckoutForm({ profile }: CheckoutFormProps) {
         disabled={loading}
         className={cn(
           'w-full rounded-xl py-4 text-base font-semibold transition-all',
-          'bg-accent-yellow text-bg-primary hover:brightness-110',
+          'bg-accent-yellow text-text-on-accent hover:brightness-110',
           'active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed'
         )}
       >

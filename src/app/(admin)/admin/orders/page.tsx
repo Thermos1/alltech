@@ -8,7 +8,7 @@ export const metadata = {
 };
 
 const statusLabels: Record<string, { label: string; color: string }> = {
-  pending: { label: 'Ожидает оплаты', color: 'bg-accent-yellow-dim text-accent-yellow' },
+  pending: { label: 'Ожидает оплаты', color: 'bg-accent-yellow-dim text-accent-yellow-text' },
   paid: { label: 'Оплачен', color: 'bg-accent-cyan-dim text-accent-cyan' },
   processing: { label: 'В обработке', color: 'bg-accent-cyan-dim text-accent-cyan' },
   shipped: { label: 'Отправлен', color: 'bg-blue-500/15 text-blue-400' },
@@ -97,7 +97,7 @@ export default async function AdminOrdersPage() {
                       <td className="px-4 py-3">
                         <Link
                           href={`/admin/orders/${order.id}`}
-                          className="text-text-primary hover:text-accent-yellow transition-colors font-medium"
+                          className="text-text-primary hover:text-accent-yellow-text transition-colors font-medium"
                         >
                           {order.order_number}
                         </Link>

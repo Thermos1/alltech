@@ -438,7 +438,7 @@ export default function AiGenerator({ slideBuffer, onAddToBuffer }: Props) {
           <button
             onClick={handleCreatePlan}
             disabled={!prompt.trim()}
-            className="w-full rounded-xl py-4 text-base font-semibold bg-accent-yellow text-bg-primary hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
+            className="w-full rounded-xl py-4 text-base font-semibold bg-accent-yellow text-text-on-accent hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
           >
             Создать план с AI
           </button>
@@ -629,7 +629,7 @@ export default function AiGenerator({ slideBuffer, onAddToBuffer }: Props) {
             <button
               onClick={() => handleGenerate('png')}
               disabled={editableSlides.length === 0}
-              className="w-full rounded-xl py-4 text-base font-semibold bg-accent-yellow text-bg-primary hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
+              className="w-full rounded-xl py-4 text-base font-semibold bg-accent-yellow text-text-on-accent hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
             >
               Сгенерировать {editableSlides.length} слайдов
             </button>
@@ -704,7 +704,7 @@ export default function AiGenerator({ slideBuffer, onAddToBuffer }: Props) {
           <div className="flex gap-3 flex-wrap">
             <button
               onClick={downloadAllSlides}
-              className="px-5 py-2.5 rounded-lg bg-accent-yellow text-bg-primary font-semibold text-sm hover:brightness-110 transition"
+              className="px-5 py-2.5 rounded-lg bg-accent-yellow text-text-on-accent font-semibold text-sm hover:brightness-110 transition"
             >
               Скачать все PNG
             </button>

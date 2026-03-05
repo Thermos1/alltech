@@ -197,7 +197,7 @@ export default function CardConstructor({ initialImage, initialData, onCardGener
         )}
 
         {bgStatus === 'processing' && (
-          <div className="flex items-center gap-2 text-sm text-accent-yellow">
+          <div className="flex items-center gap-2 text-sm text-accent-yellow-text">
             <div className="w-4 h-4 border-2 border-accent-yellow border-t-transparent rounded-full animate-spin" />
             {bgProgress}
           </div>
@@ -341,7 +341,7 @@ export default function CardConstructor({ initialImage, initialData, onCardGener
 
         <button onClick={handleGenerate}
           disabled={generating || !productData.name || !productImageBase64}
-          className="w-full rounded-lg py-3 text-sm font-medium bg-accent-yellow text-bg-primary hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
+          className="w-full rounded-lg py-3 text-sm font-medium bg-accent-yellow text-text-on-accent hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
         >
           {generating ? (
             <><div className="w-4 h-4 border-2 border-bg-primary border-t-transparent rounded-full animate-spin" /> Генерирую...</>

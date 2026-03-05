@@ -49,7 +49,7 @@ export default function RepeatOrderButton({
       className={`w-full rounded-xl py-3 text-sm font-semibold transition-all active:scale-[0.98] ${
         added
           ? 'bg-green-500 text-white'
-          : 'bg-accent-yellow text-bg-primary hover:brightness-110'
+          : 'bg-accent-yellow text-text-on-accent hover:brightness-110'
       }`}
     >
       {added ? (

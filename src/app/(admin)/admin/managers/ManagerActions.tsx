@@ -138,7 +138,7 @@ function CreateManagerForm() {
           className={`rounded-lg px-4 py-2 text-sm font-medium transition-all whitespace-nowrap ${
             done
               ? 'bg-green-500 text-white'
-              : 'bg-accent-yellow text-bg-primary hover:brightness-110'
+              : 'bg-accent-yellow text-text-on-accent hover:brightness-110'
           } disabled:opacity-50`}
         >
           {done ? 'Создан!' : loading ? '...' : 'Создать менеджера'}
@@ -246,7 +246,7 @@ function PromoteForm({ customers }: { customers: { id: string; label: string }[]
             className={`rounded-lg px-4 py-2 text-sm font-medium transition-all whitespace-nowrap ${
               done
                 ? 'bg-green-500 text-white'
-                : 'bg-accent-yellow text-bg-primary hover:brightness-110'
+                : 'bg-accent-yellow text-text-on-accent hover:brightness-110'
             } disabled:opacity-50`}
           >
             {done ? 'Назначен!' : loading ? '...' : 'Назначить менеджером'}
@@ -389,7 +389,7 @@ function CommissionEditor({ managerId, currentRate }: { managerId: string; curre
           className={`rounded-md px-2 py-1 text-[10px] font-medium transition-all ${
             saved
               ? 'bg-green-500 text-white'
-              : 'bg-accent-cyan text-bg-primary hover:brightness-110'
+              : 'bg-accent-cyan text-text-on-accent hover:brightness-110'
           } disabled:opacity-50`}
         >
           {saved ? '!' : saving ? '..' : 'OK'}

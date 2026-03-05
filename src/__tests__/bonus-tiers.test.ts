@@ -2,8 +2,8 @@ import { describe, it, expect } from 'vitest';
 import { getBonusTier, getNextTier, BONUS_TIERS } from '@/lib/constants';
 
 describe('BONUS_TIERS', () => {
-  it('has 5 tiers', () => {
-    expect(BONUS_TIERS).toHaveLength(5);
+  it('has 4 tiers', () => {
+    expect(BONUS_TIERS).toHaveLength(4);
   });
 
   it('tiers cover full range without gaps', () => {
@@ -26,31 +26,26 @@ describe('BONUS_TIERS', () => {
 describe('getBonusTier', () => {
   it('returns Старт for 0', () => {
     expect(getBonusTier(0).name).toBe('Старт');
-    expect(getBonusTier(0).percent).toBe(3);
+    expect(getBonusTier(0).percent).toBe(2);
   });
 
-  it('returns Старт for 99_999', () => {
-    expect(getBonusTier(99_999).name).toBe('Старт');
+  it('returns Старт for 499_999', () => {
+    expect(getBonusTier(499_999).name).toBe('Старт');
   });
 
-  it('returns Бронза for 100_000', () => {
-    expect(getBonusTier(100_000).name).toBe('Бронза');
-    expect(getBonusTier(100_000).percent).toBe(5);
+  it('returns Серебро for 500_000', () => {
+    expect(getBonusTier(500_000).name).toBe('Серебро');
+    expect(getBonusTier(500_000).percent).toBe(3);
   });
 
-  it('returns Серебро for 300_000', () => {
-    expect(getBonusTier(300_000).name).toBe('Серебро');
-    expect(getBonusTier(300_000).percent).toBe(7);
-  });
-
-  it('returns Золото for 500_000', () => {
-    expect(getBonusTier(500_000).name).toBe('Золото');
-    expect(getBonusTier(500_000).percent).toBe(10);
+  it('returns Золото for 700_000', () => {
+    expect(getBonusTier(700_000).name).toBe('Золото');
+    expect(getBonusTier(700_000).percent).toBe(5);
   });
 
   it('returns Платина for 1_000_000', () => {
     expect(getBonusTier(1_000_000).name).toBe('Платина');
-    expect(getBonusTier(1_000_000).percent).toBe(15);
+    expect(getBonusTier(1_000_000).percent).toBe(7);
   });
 
   it('returns Платина for very large amounts', () => {
@@ -63,16 +58,22 @@ describe('getBonusTier', () => {
 });
 
 describe('getNextTier', () => {
-  it('returns Бронза when at Старт', () => {
+  it('returns Серебро when at Старт', () => {
     const next = getNextTier(0);
     expect(next).not.toBeNull();
-    expect(next!.name).toBe('Бронза');
+    expect(next!.name).toBe('Серебро');
   });
 
-  it('returns Серебро when at Бронза', () => {
-    const next = getNextTier(150_000);
+  it('returns Золото when at Серебро', () => {
+    const next = getNextTier(550_000);
     expect(next).not.toBeNull();
-    expect(next!.name).toBe('Серебро');
+    expect(next!.name).toBe('Золото');
+  });
+
+  it('returns Платина when at Золото', () => {
+    const next = getNextTier(800_000);
+    expect(next).not.toBeNull();
+    expect(next!.name).toBe('Платина');
   });
 
   it('returns null when at Платина (max tier)', () => {
@@ -80,8 +81,8 @@ describe('getNextTier', () => {
   });
 
   it('returns correct tier at boundary', () => {
-    const next = getNextTier(99_999);
-    expect(next!.name).toBe('Бронза');
-    expect(next!.min).toBe(100_000);
+    const next = getNextTier(499_999);
+    expect(next!.name).toBe('Серебро');
+    expect(next!.min).toBe(500_000);
   });
 });

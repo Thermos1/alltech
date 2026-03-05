@@ -109,7 +109,7 @@ export default async function CommissionsPage() {
         <h1 className="font-display text-2xl text-text-primary">Комиссии</h1>
         <div className="text-right">
           <p className="text-text-muted text-xs uppercase tracking-wider">Всего заработано</p>
-          <p className="font-display text-xl text-accent-yellow">{formatPriceShort(grandTotal)}</p>
+          <p className="font-display text-xl text-accent-yellow-text">{formatPriceShort(grandTotal)}</p>
         </div>
       </div>
 
@@ -124,7 +124,7 @@ export default async function CommissionsPage() {
             {/* Month header */}
             <div className="flex items-center justify-between">
               <h2 className="text-text-primary font-medium">{month.label}</h2>
-              <span className="text-accent-yellow font-medium text-sm">
+              <span className="text-accent-yellow-text font-medium text-sm">
                 {formatPriceShort(month.total)}
               </span>
             </div>
@@ -166,7 +166,7 @@ export default async function CommissionsPage() {
                         <td className="px-4 py-3 text-center text-text-muted">
                           {Number(entry.rate)}%
                         </td>
-                        <td className="px-4 py-3 text-right font-medium text-accent-yellow whitespace-nowrap">
+                        <td className="px-4 py-3 text-right font-medium text-accent-yellow-text whitespace-nowrap">
                           +{formatPriceShort(Number(entry.amount))}
                         </td>
                       </tr>

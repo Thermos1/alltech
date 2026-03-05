@@ -76,7 +76,7 @@ export default function StatusChangeForm({
         <button
           type="submit"
           disabled={loading || status === currentStatus}
-          className="shrink-0 rounded-lg bg-accent-yellow text-bg-primary px-5 py-2.5 text-sm font-semibold transition-all hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed"
+          className="shrink-0 rounded-lg bg-accent-yellow text-text-on-accent px-5 py-2.5 text-sm font-semibold transition-all hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed"
         >
           {loading ? 'Сохранение...' : 'Сохранить'}
         </button>

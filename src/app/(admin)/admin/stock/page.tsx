@@ -109,7 +109,7 @@ export default async function StockPage({
             <span className="text-accent-magenta font-medium">{outOfStock} нет в наличии</span>
           )}
           {lowStock > 0 && (
-            <span className="text-accent-yellow font-medium">{lowStock} мало</span>
+            <span className="text-accent-yellow-text font-medium">{lowStock} мало</span>
           )}
         </div>
       </div>

@@ -211,7 +211,7 @@ function CategoryCard({ category, allCategories }: { category: Category; allCate
               className={`rounded-md px-3 py-1 text-xs font-medium transition-all ${
                 saved
                   ? 'bg-green-500 text-white'
-                  : 'bg-accent-cyan text-bg-primary hover:brightness-110'
+                  : 'bg-accent-cyan text-text-on-accent hover:brightness-110'
               } disabled:opacity-50`}
             >
               {saved ? 'Сохранено!' : saving ? '...' : 'Сохранить'}
@@ -283,7 +283,7 @@ function AddCategoryForm({ allCategories }: { allCategories: Category[] }) {
     return (
       <button
         onClick={() => setOpen(true)}
-        className="w-full rounded-lg border border-dashed border-border-subtle py-2 text-sm text-text-muted hover:text-accent-yellow hover:border-accent-yellow transition-colors"
+        className="w-full rounded-lg border border-dashed border-border-subtle py-2 text-sm text-text-muted hover:text-accent-yellow-text hover:border-accent-yellow transition-colors"
       >
         + Добавить категорию
       </button>
@@ -346,7 +346,7 @@ function AddCategoryForm({ allCategories }: { allCategories: Category[] }) {
         <button
           onClick={handleAdd}
           disabled={loading || !form.name.trim()}
-          className="rounded-lg px-4 py-1.5 text-sm font-medium bg-accent-yellow text-bg-primary hover:brightness-110 transition-all disabled:opacity-50"
+          className="rounded-lg px-4 py-1.5 text-sm font-medium bg-accent-yellow text-text-on-accent hover:brightness-110 transition-all disabled:opacity-50"
         >
           {loading ? '...' : 'Добавить'}
         </button>

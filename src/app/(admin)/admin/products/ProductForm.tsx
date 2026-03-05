@@ -394,7 +394,7 @@ export default function ProductForm({ product, brands, categories }: ProductForm
           className={`rounded-lg px-6 py-2.5 text-sm font-medium transition-all ${
             saved && !hasChanges(form, serverData)
               ? 'bg-green-500 text-white'
-              : 'bg-accent-yellow text-bg-primary hover:brightness-110'
+              : 'bg-accent-yellow text-text-on-accent hover:brightness-110'
           } disabled:opacity-50`}
         >
           {saved && !hasChanges(form, serverData)

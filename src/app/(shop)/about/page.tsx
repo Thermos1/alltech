@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 function StatusBadge({ status }: { status: 'live' | 'next' }) {
   if (status === 'live') {
     return (
-      <span className="inline-flex items-center gap-1 rounded-full bg-accent-yellow/15 px-2.5 py-0.5 text-xs font-medium text-accent-yellow">
+      <span className="inline-flex items-center gap-1 rounded-full bg-accent-yellow/15 px-2.5 py-0.5 text-xs font-medium text-accent-yellow-text">
         <span className="h-1.5 w-1.5 rounded-full bg-accent-yellow" />
         Работает
       </span>
@@ -55,7 +55,7 @@ export default function AboutPage() {
 
         <div className="grid gap-4 sm:grid-cols-3">
           <div className="rounded-xl border border-accent-yellow/20 bg-accent-yellow/5 p-5">
-            <p className="font-display text-2xl text-accent-yellow mb-1">1 клик</p>
+            <p className="font-display text-2xl text-accent-yellow-text mb-1">1 клик</p>
             <p className="text-xs text-text-primary font-medium">Повтор заказа</p>
             <p className="text-[11px] text-text-muted mt-1">Клиент повторяет прошлый заказ за 10 секунд вместо 10 минут</p>
           </div>
@@ -86,7 +86,7 @@ export default function AboutPage() {
         <div className="grid gap-5 md:grid-cols-2">
           <div className="rounded-xl border border-border-subtle bg-bg-card p-6">
             <div className="flex items-center gap-3 mb-4">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent-yellow/10 text-accent-yellow">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent-yellow/10 text-accent-yellow-text">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                 </svg>
@@ -95,15 +95,15 @@ export default function AboutPage() {
             </div>
             <div className="space-y-3 text-xs text-text-secondary leading-relaxed">
               <p>
-                <span className="text-accent-yellow font-medium">Тиерная лояльность:</span> кэшбэк растёт с покупками — от 3% (Старт) до 15% (Платина).
+                <span className="text-accent-yellow-text font-medium">Тиерная лояльность:</span> кэшбэк растёт с покупками — от 3% (Старт) до 15% (Платина).
                 Клиент на уровне Золото (10%) не уйдёт к конкуренту, который даёт 5%.
               </p>
               <p>
-                <span className="text-accent-yellow font-medium">Повтор заказа:</span> одна кнопка восстанавливает корзину из прошлого заказа.
+                <span className="text-accent-yellow-text font-medium">Повтор заказа:</span> одна кнопка восстанавливает корзину из прошлого заказа.
                 Флит-менеджер, который каждый месяц берёт одно и то же — делает это за 10 секунд.
               </p>
               <p>
-                <span className="text-accent-yellow font-medium">Бонусы, а не скидки:</span> бонусы нужно потратить — клиент возвращается.
+                <span className="text-accent-yellow-text font-medium">Бонусы, а не скидки:</span> бонусы нужно потратить — клиент возвращается.
                 Скидка работает один раз и снижает маржу. Бонус удерживает.
               </p>
             </div>
@@ -240,7 +240,7 @@ export default function AboutPage() {
             },
           ].map((item) => (
             <div key={item.decision} className="rounded-xl border border-border-subtle bg-bg-card p-5">
-              <h3 className="text-sm font-semibold text-accent-yellow mb-2">{item.decision}</h3>
+              <h3 className="text-sm font-semibold text-accent-yellow-text mb-2">{item.decision}</h3>
               <p className="text-xs text-text-primary leading-relaxed mb-2">{item.why}</p>
               <p className="text-[11px] text-text-muted leading-relaxed">
                 <span className="text-accent-magenta font-medium">Альтернатива:</span> {item.alternative}
@@ -317,32 +317,32 @@ export default function AboutPage() {
           {/* Buyer */}
           <div className="rounded-xl border border-accent-yellow/20 bg-accent-yellow/5 p-5 md:p-6">
             <div className="flex items-center gap-3 mb-4">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent-yellow/15 text-accent-yellow font-display text-lg">1</div>
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent-yellow/15 text-accent-yellow-text font-display text-lg">1</div>
               <div>
-                <h3 className="text-sm font-semibold text-accent-yellow">Сценарий: Покупатель</h3>
+                <h3 className="text-sm font-semibold text-accent-yellow-text">Сценарий: Покупатель</h3>
                 <p className="text-[11px] text-text-muted">Весь путь от каталога до личного кабинета</p>
               </div>
             </div>
             <div className="space-y-3 text-xs text-text-secondary leading-relaxed">
               <div className="flex gap-3">
-                <span className="text-accent-yellow font-bold shrink-0">1.</span>
-                <p>Откройте <Link href="/catalog/lubricants" className="text-accent-cyan hover:text-accent-yellow transition-colors">каталог</Link>. Выберите категорию «Моторные масла». Нажмите на карточку — откроется попап с вариантами. Попробуйте розлив: двигайте ползунок объёма.</p>
+                <span className="text-accent-yellow-text font-bold shrink-0">1.</span>
+                <p>Откройте <Link href="/catalog/lubricants" className="text-accent-cyan hover:text-accent-yellow-text transition-colors">каталог</Link>. Выберите категорию «Моторные масла». Нажмите на карточку — откроется попап с вариантами. Попробуйте розлив: двигайте ползунок объёма.</p>
               </div>
               <div className="flex gap-3">
-                <span className="text-accent-yellow font-bold shrink-0">2.</span>
-                <p>Добавьте 2-3 товара в <Link href="/cart" className="text-accent-cyan hover:text-accent-yellow transition-colors">корзину</Link>. Измените количество, удалите позицию. Нажмите «Оформить».</p>
+                <span className="text-accent-yellow-text font-bold shrink-0">2.</span>
+                <p>Добавьте 2-3 товара в <Link href="/cart" className="text-accent-cyan hover:text-accent-yellow-text transition-colors">корзину</Link>. Измените количество, удалите позицию. Нажмите «Оформить».</p>
               </div>
               <div className="flex gap-3">
-                <span className="text-accent-yellow font-bold shrink-0">3.</span>
-                <p>Нажмите <Link href="/login" className="text-accent-cyan hover:text-accent-yellow transition-colors">Войти</Link>. Введите <span className="text-text-primary font-medium">свой номер телефона</span> — на него придёт SMS-код от отправителя OOO_Alteh. Вход за 15 секунд.</p>
+                <span className="text-accent-yellow-text font-bold shrink-0">3.</span>
+                <p>Нажмите <Link href="/login" className="text-accent-cyan hover:text-accent-yellow-text transition-colors">Войти</Link>. Введите <span className="text-text-primary font-medium">свой номер телефона</span> — на него придёт SMS-код от отправителя OOO_Alteh. Вход за 15 секунд.</p>
               </div>
               <div className="flex gap-3">
-                <span className="text-accent-yellow font-bold shrink-0">4.</span>
+                <span className="text-accent-yellow-text font-bold shrink-0">4.</span>
                 <p>Заполните форму заказа. Попробуйте промокод <span className="font-mono text-text-primary">ALTECH10</span>. Оплатите через ЮKassa — банковская карта, СБП или SberPay.</p>
               </div>
               <div className="flex gap-3">
-                <span className="text-accent-yellow font-bold shrink-0">5.</span>
-                <p>Зайдите в <Link href="/cabinet" className="text-accent-cyan hover:text-accent-yellow transition-colors">личный кабинет</Link>. Обратите внимание: бонусный уровень, прогресс-бар, реферальный код. Откройте заказ — кнопка «Повторить заказ».</p>
+                <span className="text-accent-yellow-text font-bold shrink-0">5.</span>
+                <p>Зайдите в <Link href="/cabinet" className="text-accent-cyan hover:text-accent-yellow-text transition-colors">личный кабинет</Link>. Обратите внимание: бонусный уровень, прогресс-бар, реферальный код. Откройте заказ — кнопка «Повторить заказ».</p>
               </div>
             </div>
             <p className="text-[10px] text-text-muted mt-4 border-t border-accent-yellow/10 pt-3">
@@ -362,7 +362,7 @@ export default function AboutPage() {
             <div className="space-y-3 text-xs text-text-secondary leading-relaxed">
               <div className="flex gap-3">
                 <span className="text-accent-cyan font-bold shrink-0">1.</span>
-                <p>Войдите через <Link href="/admin-login" className="text-accent-cyan hover:text-accent-yellow transition-colors">/admin-login</Link>: <span className="font-mono text-text-primary">manager@altech-store.ru</span> / <span className="font-mono text-text-primary">manager2025</span> или <span className="font-mono text-text-primary">hello@alltech.ru</span> / <span className="font-mono text-text-primary">manager26</span></p>
+                <p>Войдите через <Link href="/admin-login" className="text-accent-cyan hover:text-accent-yellow-text transition-colors">/admin-login</Link>: <span className="font-mono text-text-primary">manager@altech-store.ru</span> / <span className="font-mono text-text-primary">manager2025</span> или <span className="font-mono text-text-primary">hello@alltech.ru</span> / <span className="font-mono text-text-primary">manager26</span></p>
               </div>
               <div className="flex gap-3">
                 <span className="text-accent-cyan font-bold shrink-0">2.</span>
@@ -370,15 +370,15 @@ export default function AboutPage() {
               </div>
               <div className="flex gap-3">
                 <span className="text-accent-cyan font-bold shrink-0">3.</span>
-                <p>Откройте <Link href="/admin/clients" className="text-accent-cyan hover:text-accent-yellow transition-colors">«Мои клиенты»</Link> — используйте поиск по имени/телефону, фильтр по статусу. В карточке клиента: заметки, прогноз замены масла, WhatsApp.</p>
+                <p>Откройте <Link href="/admin/clients" className="text-accent-cyan hover:text-accent-yellow-text transition-colors">«Мои клиенты»</Link> — используйте поиск по имени/телефону, фильтр по статусу. В карточке клиента: заметки, прогноз замены масла, WhatsApp.</p>
               </div>
               <div className="flex gap-3">
                 <span className="text-accent-cyan font-bold shrink-0">4.</span>
-                <p>Откройте <Link href="/admin/shared-cart" className="text-accent-cyan hover:text-accent-yellow transition-colors">«Корзины»</Link> → «Собрать корзину». Найдите товары, добавьте, нажмите «Создать». Скопируйте ссылку или отправьте через WhatsApp.</p>
+                <p>Откройте <Link href="/admin/shared-cart" className="text-accent-cyan hover:text-accent-yellow-text transition-colors">«Корзины»</Link> → «Собрать корзину». Найдите товары, добавьте, нажмите «Создать». Скопируйте ссылку или отправьте через WhatsApp.</p>
               </div>
               <div className="flex gap-3">
                 <span className="text-accent-cyan font-bold shrink-0">5.</span>
-                <p>Откройте <Link href="/admin/commissions" className="text-accent-cyan hover:text-accent-yellow transition-colors">«Комиссии»</Link> — разбивка по месяцам: за какой заказ, какая сумма, какой процент. Прозрачно для бухгалтерии.</p>
+                <p>Откройте <Link href="/admin/commissions" className="text-accent-cyan hover:text-accent-yellow-text transition-colors">«Комиссии»</Link> — разбивка по месяцам: за какой заказ, какая сумма, какой процент. Прозрачно для бухгалтерии.</p>
               </div>
             </div>
             <p className="text-[10px] text-text-muted mt-4 border-t border-accent-cyan/10 pt-3">
@@ -398,7 +398,7 @@ export default function AboutPage() {
             <div className="space-y-3 text-xs text-text-secondary leading-relaxed">
               <div className="flex gap-3">
                 <span className="text-accent-magenta font-bold shrink-0">1.</span>
-                <p>Войдите через <Link href="/admin-login" className="text-accent-cyan hover:text-accent-yellow transition-colors">/admin-login</Link>: <span className="font-mono text-text-primary">admin@altech-store.ru</span> / <span className="font-mono text-text-primary">admin2025</span></p>
+                <p>Войдите через <Link href="/admin-login" className="text-accent-cyan hover:text-accent-yellow-text transition-colors">/admin-login</Link>: <span className="font-mono text-text-primary">admin@altech-store.ru</span> / <span className="font-mono text-text-primary">admin2025</span></p>
               </div>
               <div className="flex gap-3">
                 <span className="text-accent-magenta font-bold shrink-0">2.</span>
@@ -406,19 +406,19 @@ export default function AboutPage() {
               </div>
               <div className="flex gap-3">
                 <span className="text-accent-magenta font-bold shrink-0">3.</span>
-                <p>Откройте <Link href="/admin/clients" className="text-accent-cyan hover:text-accent-yellow transition-colors">«Клиенты»</Link> — поиск, фильтр по менеджеру/статусу, назначение менеджера. <Link href="/admin/orders" className="text-accent-cyan hover:text-accent-yellow transition-colors">Заказ</Link> — смена статуса (оплачен → в обработке → отправлен).</p>
+                <p>Откройте <Link href="/admin/clients" className="text-accent-cyan hover:text-accent-yellow-text transition-colors">«Клиенты»</Link> — поиск, фильтр по менеджеру/статусу, назначение менеджера. <Link href="/admin/orders" className="text-accent-cyan hover:text-accent-yellow-text transition-colors">Заказ</Link> — смена статуса (оплачен → в обработке → отправлен).</p>
               </div>
               <div className="flex gap-3">
                 <span className="text-accent-magenta font-bold shrink-0">4.</span>
-                <p>Откройте <Link href="/admin/stock" className="text-accent-cyan hover:text-accent-yellow transition-colors">«Склад»</Link> — все позиции с цветокодом остатков. <Link href="/admin/analytics" className="text-accent-cyan hover:text-accent-yellow transition-colors">«Аналитика»</Link> — выручка по месяцам, топ товаров, топ клиентов, менеджеры по выручке.</p>
+                <p>Откройте <Link href="/admin/stock" className="text-accent-cyan hover:text-accent-yellow-text transition-colors">«Склад»</Link> — все позиции с цветокодом остатков. <Link href="/admin/analytics" className="text-accent-cyan hover:text-accent-yellow-text transition-colors">«Аналитика»</Link> — выручка по месяцам, топ товаров, топ клиентов, менеджеры по выручке.</p>
               </div>
               <div className="flex gap-3">
                 <span className="text-accent-magenta font-bold shrink-0">5.</span>
-                <p><Link href="/admin/managers" className="text-accent-cyan hover:text-accent-yellow transition-colors">«Менеджеры»</Link> — создать нового или назначить из клиентов. <Link href="/admin/activity" className="text-accent-cyan hover:text-accent-yellow transition-colors">«Журнал»</Link> — полный аудит действий в системе.</p>
+                <p><Link href="/admin/managers" className="text-accent-cyan hover:text-accent-yellow-text transition-colors">«Менеджеры»</Link> — создать нового или назначить из клиентов. <Link href="/admin/activity" className="text-accent-cyan hover:text-accent-yellow-text transition-colors">«Журнал»</Link> — полный аудит действий в системе.</p>
               </div>
               <div className="flex gap-3">
                 <span className="text-accent-magenta font-bold shrink-0">6.</span>
-                <p>Откройте <Link href="/admin/image-tools" className="text-accent-cyan hover:text-accent-yellow transition-colors">«AI-инструменты»</Link> — генератор карточек для маркетплейсов: AI создаёт план слайдов, 4 стиля, 6 платформ. Удаление фона с фото, очистка от водяных знаков.</p>
+                <p>Откройте <Link href="/admin/image-tools" className="text-accent-cyan hover:text-accent-yellow-text transition-colors">«AI-инструменты»</Link> — генератор карточек для маркетплейсов: AI создаёт план слайдов, 4 стиля, 6 платформ. Удаление фона с фото, очистка от водяных знаков.</p>
               </div>
             </div>
             <p className="text-[10px] text-text-muted mt-4 border-t border-accent-magenta/10 pt-3">
@@ -438,14 +438,14 @@ export default function AboutPage() {
         <div className="grid gap-3 md:grid-cols-3">
           <div className="rounded-xl border border-accent-yellow/20 bg-accent-yellow/5 p-5">
             <div className="flex items-center gap-2 mb-3">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-accent-yellow"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
-              <h3 className="text-sm font-semibold text-accent-yellow">Покупатель</h3>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-accent-yellow-text"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
+              <h3 className="text-sm font-semibold text-accent-yellow-text">Покупатель</h3>
             </div>
             <p className="text-xs text-text-secondary mb-2">Телефон: <span className="text-text-primary">ваш номер</span></p>
             <p className="text-[11px] text-text-muted">Реальная SMS от OOO_Alteh. Аккаунт создаётся автоматически.</p>
             <div className="mt-3 flex gap-3 text-[11px]">
-              <Link href="/login" className="text-accent-cyan hover:text-accent-yellow transition-colors">Вход →</Link>
-              <Link href="/cabinet" className="text-accent-cyan hover:text-accent-yellow transition-colors">Кабинет →</Link>
+              <Link href="/login" className="text-accent-cyan hover:text-accent-yellow-text transition-colors">Вход →</Link>
+              <Link href="/cabinet" className="text-accent-cyan hover:text-accent-yellow-text transition-colors">Кабинет →</Link>
             </div>
           </div>
 
@@ -458,8 +458,8 @@ export default function AboutPage() {
             <p className="text-xs text-text-secondary mb-2"><span className="font-mono text-text-primary select-all">hello@alltech.ru</span> / <span className="font-mono text-text-primary select-all">manager26</span></p>
             <p className="text-[11px] text-text-muted">CRM: клиенты, заказы, корзины, комиссия, прогноз замены, заметки</p>
             <div className="mt-3 flex gap-3 text-[11px]">
-              <Link href="/admin-login" className="text-accent-cyan hover:text-accent-yellow transition-colors">Вход →</Link>
-              <Link href="/admin" className="text-accent-cyan hover:text-accent-yellow transition-colors">Панель →</Link>
+              <Link href="/admin-login" className="text-accent-cyan hover:text-accent-yellow-text transition-colors">Вход →</Link>
+              <Link href="/admin" className="text-accent-cyan hover:text-accent-yellow-text transition-colors">Панель →</Link>
             </div>
           </div>
 
@@ -472,8 +472,8 @@ export default function AboutPage() {
             <p className="text-xs text-text-secondary mb-2">Пароль: <span className="font-mono text-text-primary select-all">admin2025</span></p>
             <p className="text-[11px] text-text-muted">Полный доступ: заказы, клиенты, менеджеры, корзины, склад, аналитика, журнал</p>
             <div className="mt-3 flex gap-3 text-[11px]">
-              <Link href="/admin-login" className="text-accent-cyan hover:text-accent-yellow transition-colors">Вход →</Link>
-              <Link href="/admin" className="text-accent-cyan hover:text-accent-yellow transition-colors">Панель →</Link>
+              <Link href="/admin-login" className="text-accent-cyan hover:text-accent-yellow-text transition-colors">Вход →</Link>
+              <Link href="/admin" className="text-accent-cyan hover:text-accent-yellow-text transition-colors">Панель →</Link>
             </div>
           </div>
         </div>
@@ -496,7 +496,7 @@ export default function AboutPage() {
               title: 'Маркировка «Честный знак»',
               impact: 'Обязательно с 2025',
               desc: 'Обязательная маркировка моторных масел стартовала в 2025. Интеграция DataMatrix-кодов в чеки ЮKassa и складской учёт — гарантия легальности каждой единицы товара.',
-              accent: 'text-accent-yellow',
+              accent: 'text-accent-yellow-text',
               bg: 'bg-accent-yellow/10 border-accent-yellow/20',
             },
             {
@@ -574,16 +574,16 @@ export default function AboutPage() {
 
         <div className="grid gap-4 md:grid-cols-2">
           <div className="rounded-xl border border-border-subtle bg-bg-card p-5">
-            <h3 className="text-sm font-semibold text-accent-yellow mb-3">Импортозамещение</h3>
+            <h3 className="text-sm font-semibold text-accent-yellow-text mb-3">Импортозамещение</h3>
             <div className="space-y-2 text-xs text-text-secondary leading-relaxed">
               <p>Shell, Castrol, Mobil официально ушли с рынка. Вакуум заполняют российские производители: <span className="text-text-primary font-medium">Лукойл, Sintec, Rolf, Роснефть</span> — ТОП-5 по продажам.</p>
               <p>Корейские поставки (KIXX, GS Caltex) выросли на <span className="text-accent-cyan font-medium">+54 млн $</span> в 2024. АЛТЕХ работает с лидерами обоих направлений.</p>
-              <p>Доля синтетики выросла с 30% до ~60% — это <span className="text-accent-yellow font-medium">сдвиг в премиум</span>, выше маржа, выше средний чек.</p>
+              <p>Доля синтетики выросла с 30% до ~60% — это <span className="text-accent-yellow-text font-medium">сдвиг в премиум</span>, выше маржа, выше средний чек.</p>
             </div>
           </div>
 
           <div className="rounded-xl border border-border-subtle bg-bg-card p-5">
-            <h3 className="text-sm font-semibold text-accent-yellow mb-3">Экономика дистрибьютора</h3>
+            <h3 className="text-sm font-semibold text-accent-yellow-text mb-3">Экономика дистрибьютора</h3>
             <div className="space-y-2 text-xs text-text-secondary leading-relaxed">
               <p><span className="text-text-primary font-medium">Средний B2B-чек:</span> 150 000 — 300 000 руб. (автопарки, СТО, субдистрибьюторы). Мелкий опт — от 50 000 руб.</p>
               <p><span className="text-text-primary font-medium">Маржинальность:</span> оптовая наценка 10-15%, мелкооптовая 20-30%, розничная до 50%. Премиальные бренды +3-5 п.п.</p>
@@ -623,13 +623,13 @@ export default function AboutPage() {
               <p className="text-[10px] text-text-muted">рост с 29% за год (Коммерсант)</p>
             </div>
             <div className="text-center">
-              <p className="font-display text-2xl text-accent-yellow">03.2025</p>
+              <p className="font-display text-2xl text-accent-yellow-text">03.2025</p>
               <p className="text-xs text-text-secondary mt-1">обязательная маркировка</p>
               <p className="text-[10px] text-text-muted">&laquo;Честный знак&raquo; (Logirus)</p>
             </div>
           </div>
           <p className="text-xs text-text-secondary leading-relaxed mt-4">
-            <span className="text-accent-yellow font-medium">Преимущество АЛТЕХ:</span> прямые договоры с производителями (Rolf, Sintec, KIXX, RhinOIL) —
+            <span className="text-accent-yellow-text font-medium">Преимущество АЛТЕХ:</span> прямые договоры с производителями (Rolf, Sintec, KIXX, RhinOIL) —
             гарантия оригинальности каждой единицы. Специализированный магазин с прозрачной цепочкой поставок
             vs маркетплейс, где 43% товара — подделки.
           </p>
@@ -653,19 +653,19 @@ export default function AboutPage() {
               <tbody className="text-text-secondary">
                 <tr className="border-b border-border-subtle/50">
                   <td className="px-4 py-2.5 text-text-primary font-medium">Exist.ru</td>
-                  <td className="px-4 py-2.5 text-right text-accent-yellow font-medium">~50 млрд &#8381;</td>
+                  <td className="px-4 py-2.5 text-right text-accent-yellow-text font-medium">~50 млрд &#8381;</td>
                   <td className="px-4 py-2.5">Автозапчасти</td>
                   <td className="px-4 py-2.5">Масла — одна из сотен категорий, нет CRM для ГСМ</td>
                 </tr>
                 <tr className="border-b border-border-subtle/50">
                   <td className="px-4 py-2.5 text-text-primary font-medium">Autodoc.ru</td>
-                  <td className="px-4 py-2.5 text-right text-accent-yellow font-medium">~28 млрд &#8381;</td>
+                  <td className="px-4 py-2.5 text-right text-accent-yellow-text font-medium">~28 млрд &#8381;</td>
                   <td className="px-4 py-2.5">Автозапчасти</td>
                   <td className="px-4 py-2.5">6 млн пользователей, но без специализации на ГСМ</td>
                 </tr>
                 <tr className="border-b border-border-subtle/50">
                   <td className="px-4 py-2.5 text-text-primary font-medium">Emex.ru</td>
-                  <td className="px-4 py-2.5 text-right text-accent-yellow font-medium">~17 млрд &#8381;</td>
+                  <td className="px-4 py-2.5 text-right text-accent-yellow-text font-medium">~17 млрд &#8381;</td>
                   <td className="px-4 py-2.5">Маркетплейс</td>
                   <td className="px-4 py-2.5">Оценка Forbes $360 млн, но нет фокуса на масла</td>
                 </tr>
@@ -702,7 +702,7 @@ export default function AboutPage() {
             </div>
           </div>
           <div className="rounded-xl border border-accent-yellow/20 bg-accent-yellow/5 p-5">
-            <h3 className="text-sm font-semibold text-accent-yellow mb-3">Наше преимущество</h3>
+            <h3 className="text-sm font-semibold text-accent-yellow-text mb-3">Наше преимущество</h3>
             <div className="space-y-2 text-xs text-text-secondary leading-relaxed">
               <p><span className="text-text-primary font-medium">Гарантия оригинала:</span> прямые договоры с Rolf, Sintec, KIXX, RhinOIL. Прозрачная цепочка: производитель &rarr; наш склад &rarr; клиент.</p>
               <p><span className="text-text-primary font-medium">CRM для ГСМ:</span> прогноз замены масла, корзина менеджера через WhatsApp, тиерные бонусы — ни у одного конкурента этого нет.</p>
@@ -772,7 +772,7 @@ export default function AboutPage() {
 
           {/* Federal: from Novosibirsk hub */}
           <div>
-            <h3 className="text-xs font-semibold text-accent-yellow uppercase tracking-wider mb-3">Контур 2: РФ (из хаба Новосибирск)</h3>
+            <h3 className="text-xs font-semibold text-accent-yellow-text uppercase tracking-wider mb-3">Контур 2: РФ (из хаба Новосибирск)</h3>
             <div className="overflow-x-auto">
               <table className="w-full text-xs border-collapse">
                 <thead>
@@ -822,7 +822,7 @@ export default function AboutPage() {
 
         {/* Hub economics */}
         <div className="rounded-xl border border-accent-yellow/20 bg-accent-yellow/5 p-5 mb-6">
-          <h3 className="text-sm font-semibold text-accent-yellow mb-3">Экономика хаба: Новосибирск vs Барнаул</h3>
+          <h3 className="text-sm font-semibold text-accent-yellow-text mb-3">Экономика хаба: Новосибирск vs Барнаул</h3>
           <div className="grid gap-4 sm:grid-cols-3">
             <div>
               <p className="text-[10px] text-text-muted uppercase tracking-wider mb-1">Аренда склада</p>
@@ -836,7 +836,7 @@ export default function AboutPage() {
               <p className="text-[10px] text-text-muted uppercase tracking-wider mb-1">Завоз от производителя</p>
               <p className="text-xs text-text-secondary leading-relaxed">
                 Москва &rarr; Новосибирск: <span className="text-text-primary font-medium">13-30 &#8381;/кг</span>, 3-5 дн.
-                Москва &rarr; Якутск: 35-69 &#8381;/кг, 12-20 дн. Экономия на завозе: <span className="text-accent-yellow font-medium">до ×2,5</span>.
+                Москва &rarr; Якутск: 35-69 &#8381;/кг, 12-20 дн. Экономия на завозе: <span className="text-accent-yellow-text font-medium">до ×2,5</span>.
               </p>
             </div>
             <div>
@@ -856,7 +856,7 @@ export default function AboutPage() {
             <p className="text-xs text-text-secondary leading-relaxed">Канистры до 30 кг. Бесплатное API для расчёта стоимости в корзине. 38 000+ ПВЗ по России.</p>
           </div>
           <div className="rounded-xl border border-accent-yellow/20 bg-accent-yellow/5 p-4">
-            <h3 className="text-sm font-semibold text-accent-yellow mb-2">ТК Энергия</h3>
+            <h3 className="text-sm font-semibold text-accent-yellow-text mb-2">ТК Энергия</h3>
             <p className="text-xs text-text-secondary leading-relaxed">Бочки и крупный опт (20-200+ кг). 410 городов. Надёжный партнёр, уже работаем.</p>
           </div>
           <div className="rounded-xl border border-border-subtle bg-bg-card p-4">
@@ -884,26 +884,26 @@ export default function AboutPage() {
           </p>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             <div>
-              <h3 className="text-sm font-semibold text-accent-yellow mb-2">Два контура доставки</h3>
+              <h3 className="text-sm font-semibold text-accent-yellow-text mb-2">Два контура доставки</h3>
               <p className="text-xs text-text-secondary leading-relaxed">
                 Якутск &rarr; Якутия (ТК Энергия, 2-5 дн.). Новосибирск &rarr; вся РФ (СДЭК, Фастранс, СТЕИЛ, 2-10 дн.).
                 Завоз от производителя в Новосибирск в 2,5 раза дешевле, чем в Якутск.
               </p>
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-accent-yellow mb-2">Мультирегиональность</h3>
+              <h3 className="text-sm font-semibold text-accent-yellow-text mb-2">Мультирегиональность</h3>
               <p className="text-xs text-text-secondary leading-relaxed">
                 Дополнительные склады, региональные ценовые матрицы, локальные каталоги — без изменения ядра платформы.
               </p>
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-accent-yellow mb-2">Каналы продаж</h3>
+              <h3 className="text-sm font-semibold text-accent-yellow-text mb-2">Каналы продаж</h3>
               <p className="text-xs text-text-secondary leading-relaxed">
                 Сайт, WhatsApp, Telegram, голосовой AI — все каналы через один API и одну БД.
               </p>
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-accent-yellow mb-2">Тиражируемая платформа</h3>
+              <h3 className="text-sm font-semibold text-accent-yellow-text mb-2">Тиражируемая платформа</h3>
               <p className="text-xs text-text-secondary leading-relaxed">
                 Архитектура позволяет развернуть копию для другого дистрибьютора за дни, не месяцы. Каталог, бонусы, CRM — настраиваются, не переписываются.
               </p>
@@ -927,7 +927,7 @@ export default function AboutPage() {
             { value: '6 дней', label: 'разработка', sub: '~84 часа (по 14 ч/день)' },
           ].map((m) => (
             <div key={m.label} className="rounded-xl border border-border-subtle bg-bg-card p-4 text-center">
-              <p className="font-display text-xl text-accent-yellow">{m.value}</p>
+              <p className="font-display text-xl text-accent-yellow-text">{m.value}</p>
               <p className="text-xs text-text-primary mt-0.5">{m.label}</p>
               <p className="text-[10px] text-text-muted">{m.sub}</p>
             </div>
@@ -936,7 +936,7 @@ export default function AboutPage() {
 
         {/* How this was built */}
         <div className="rounded-xl border border-accent-yellow/20 bg-accent-yellow/5 p-5 mb-6">
-          <h3 className="text-sm font-semibold text-accent-yellow mb-3">Как это было сделано за 6 дней</h3>
+          <h3 className="text-sm font-semibold text-accent-yellow-text mb-3">Как это было сделано за 6 дней</h3>
           <div className="grid gap-4 sm:grid-cols-3">
             <div>
               <p className="text-[10px] text-text-muted uppercase tracking-wider mb-1">Разработчик знает отрасль</p>
@@ -1004,14 +1004,14 @@ export default function AboutPage() {
       <div className="border-t border-border-subtle mt-4 pt-6 pb-2 flex flex-col sm:flex-row items-center justify-center gap-x-4 gap-y-1 text-[10px] text-text-muted">
         <span>
           Built by{' '}
-          <a href="https://techdab.net" target="_blank" rel="noopener noreferrer" className="text-text-secondary hover:text-accent-yellow transition-colors">
+          <a href="https://techdab.net" target="_blank" rel="noopener noreferrer" className="text-text-secondary hover:text-accent-yellow-text transition-colors">
             techdab.net
           </a>
         </span>
         <span className="hidden sm:inline">&middot;</span>
         <span>
           Powered by{' '}
-          <a href="https://sipmind.net" target="_blank" rel="noopener noreferrer" className="text-text-secondary hover:text-accent-yellow transition-colors">
+          <a href="https://sipmind.net" target="_blank" rel="noopener noreferrer" className="text-text-secondary hover:text-accent-yellow-text transition-colors">
             sipmind.net
           </a>
         </span>

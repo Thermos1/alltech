@@ -28,7 +28,7 @@ export default function Header() {
         <div className="flex items-center gap-4">
           <Link href="/" className="flex items-center">
             <Image
-              src="/images/logo-white-full.png"
+              src="/images/logo-dark.png"
               alt="АЛТЕХ"
               width={160}
               height={48}
@@ -38,7 +38,7 @@ export default function Header() {
           </Link>
           <a
             href="tel:+79969142832"
-            className="hidden lg:flex items-center gap-1.5 text-sm text-text-secondary hover:text-accent-yellow transition-colors"
+            className="hidden lg:flex items-center gap-1.5 text-sm text-text-secondary hover:text-accent-yellow-text transition-colors"
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z" />
@@ -74,7 +74,7 @@ export default function Header() {
                   {isStaff && (
                     <Link
                       href="/admin"
-                      className="flex h-10 items-center gap-1.5 rounded-lg px-3 text-sm font-medium text-accent-yellow transition-colors hover:bg-bg-card"
+                      className="flex h-10 items-center gap-1.5 rounded-lg px-3 text-sm font-medium text-accent-yellow-text transition-colors hover:bg-bg-card"
                       title="Панель управления"
                     >
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -110,7 +110,7 @@ export default function Header() {
               ) : (
                 <Link
                   href="/login"
-                  className="rounded-lg bg-accent-yellow px-4 py-2 text-sm font-semibold text-bg-primary transition-all hover:brightness-110"
+                  className="rounded-lg bg-accent-yellow px-4 py-2 text-sm font-semibold text-text-on-accent transition-all hover:brightness-110"
                 >
                   Войти
                 </Link>
@@ -189,7 +189,7 @@ export default function Header() {
               <path d="M16 10a4 4 0 01-8 0" />
             </svg>
             {mounted && itemCount > 0 && (
-              <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-accent-yellow px-1 text-[11px] font-bold text-bg-primary shadow-lg">
+              <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-accent-yellow px-1 text-[11px] font-bold text-text-on-accent shadow-lg">
                 {itemCount}
               </span>
             )}
@@ -255,7 +255,7 @@ export default function Header() {
                       <Link
                         href="/admin"
                         onClick={() => setMenuOpen(false)}
-                        className="rounded-lg px-3 py-2.5 text-sm text-accent-yellow transition-colors hover:bg-bg-card"
+                        className="rounded-lg px-3 py-2.5 text-sm text-accent-yellow-text transition-colors hover:bg-bg-card"
                       >
                         Панель управления
                       </Link>
@@ -281,7 +281,7 @@ export default function Header() {
                   <Link
                     href="/login"
                     onClick={() => setMenuOpen(false)}
-                    className="rounded-lg px-3 py-2.5 text-sm text-accent-yellow transition-colors hover:bg-bg-card hover:text-accent-yellow"
+                    className="rounded-lg px-3 py-2.5 text-sm text-accent-yellow-text transition-colors hover:bg-bg-card hover:text-accent-yellow-text"
                   >
                     Войти
                   </Link>
@@ -300,7 +300,7 @@ export default function Header() {
             <div className="border-t border-border-subtle mt-1 pt-2">
               <a
                 href="tel:+79969142832"
-                className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm text-accent-yellow"
+                className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm text-accent-yellow-text"
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z" />

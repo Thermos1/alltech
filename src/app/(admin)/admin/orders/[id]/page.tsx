@@ -11,7 +11,7 @@ export const metadata = {
 };
 
 const statusLabels: Record<string, { label: string; color: string }> = {
-  pending: { label: 'Ожидает оплаты', color: 'bg-accent-yellow-dim text-accent-yellow' },
+  pending: { label: 'Ожидает оплаты', color: 'bg-accent-yellow-dim text-accent-yellow-text' },
   paid: { label: 'Оплачен', color: 'bg-accent-cyan-dim text-accent-cyan' },
   processing: { label: 'В обработке', color: 'bg-accent-cyan-dim text-accent-cyan' },
   shipped: { label: 'Отправлен', color: 'bg-blue-500/15 text-blue-400' },
@@ -21,8 +21,8 @@ const statusLabels: Record<string, { label: string; color: string }> = {
 };
 
 const paymentStatusLabels: Record<string, { label: string; color: string }> = {
-  pending: { label: 'Ожидает', color: 'text-accent-yellow' },
-  waiting_for_capture: { label: 'Ожидает подтверждения', color: 'text-accent-yellow' },
+  pending: { label: 'Ожидает', color: 'text-accent-yellow-text' },
+  waiting_for_capture: { label: 'Ожидает подтверждения', color: 'text-accent-yellow-text' },
   succeeded: { label: 'Оплачен', color: 'text-green-400' },
   cancelled: { label: 'Отменён', color: 'text-accent-magenta' },
 };
@@ -175,14 +175,14 @@ export default async function AdminOrderDetailPage({
             </div>
             {order.discount_amount > 0 && (
               <div className="flex justify-between text-sm">
-                <span className="text-text-secondary">Скидка</span>
+                <span className="text-text-secondary">Кэшбэк</span>
                 <span className="text-accent-cyan">-{formatPriceShort(order.discount_amount)}</span>
               </div>
             )}
             {order.bonus_used > 0 && (
               <div className="flex justify-between text-sm">
                 <span className="text-text-secondary">Бонусы</span>
-                <span className="text-accent-yellow">-{formatPriceShort(order.bonus_used)}</span>
+                <span className="text-accent-yellow-text">-{formatPriceShort(order.bonus_used)}</span>
               </div>
             )}
             <div className="flex justify-between text-sm">
@@ -193,7 +193,7 @@ export default async function AdminOrderDetailPage({
             </div>
             <div className="border-t border-border-subtle pt-2 flex justify-between">
               <span className="text-text-primary font-medium">Итого</span>
-              <span className="text-lg font-display text-accent-yellow">
+              <span className="text-lg font-display text-accent-yellow-text">
                 {formatPriceShort(order.total)}
               </span>
             </div>
@@ -249,7 +249,7 @@ export default async function AdminOrderDetailPage({
             <div className="text-sm space-y-2">
               <Link
                 href={`/admin/clients/${order.user_id}`}
-                className="text-text-primary hover:text-accent-yellow transition-colors font-medium block"
+                className="text-text-primary hover:text-accent-yellow-text transition-colors font-medium block"
               >
                 {clientProfile?.full_name || 'Без имени'}
               </Link>

@@ -1,33 +1,35 @@
 @import "tailwindcss";
 
 :root {
-  /* Backgrounds */
-  --bg-primary: #0A0A0F;
-  --bg-secondary: #12121A;
-  --bg-card: #1A1A25;
-  --bg-card-hover: #222233;
+  /* Backgrounds — white theme */
+  --bg-primary: #FFFFFF;
+  --bg-secondary: #F5F5F7;
+  --bg-card: #FFFFFF;
+  --bg-card-hover: #F0F0F5;
 
-  /* Accents */
+  /* Accents — bright for backgrounds, dark variants for text */
   --accent-yellow: #FFD600;
-  --accent-yellow-dim: rgba(255, 214, 0, 0.15);
-  --accent-cyan: #00E5FF;
-  --accent-cyan-dim: rgba(0, 229, 255, 0.15);
-  --accent-magenta: #FF2D78;
-  --accent-magenta-dim: rgba(255, 45, 120, 0.15);
+  --accent-yellow-text: #9E7C00;
+  --accent-yellow-dim: rgba(255, 214, 0, 0.10);
+  --accent-cyan: #007A8A;
+  --accent-cyan-dim: rgba(0, 122, 138, 0.08);
+  --accent-magenta: #C4204F;
+  --accent-magenta-dim: rgba(196, 32, 79, 0.08);
 
-  /* Text */
-  --text-primary: #F0F0F5;
-  --text-secondary: #A0A0BE;
-  --text-muted: #7878A0;
+  /* Text — dark on white */
+  --text-primary: #1A1A2E;
+  --text-secondary: #4A4A6A;
+  --text-muted: #8888A8;
+  --text-on-accent: #1A1A2E;
 
   /* Borders */
-  --border-subtle: rgba(255, 255, 255, 0.06);
-  --border-accent: rgba(255, 214, 0, 0.3);
+  --border-subtle: rgba(0, 0, 0, 0.10);
+  --border-accent: rgba(255, 214, 0, 0.30);
 
-  /* Glows */
-  --glow-yellow: 0 0 10px rgba(255, 214, 0, 0.4), 0 0 40px rgba(255, 214, 0, 0.15);
-  --glow-cyan: 0 0 10px rgba(0, 229, 255, 0.4), 0 0 40px rgba(0, 229, 255, 0.15);
-  --glow-magenta: 0 0 10px rgba(255, 45, 120, 0.4), 0 0 40px rgba(255, 45, 120, 0.15);
+  /* Shadows (replaces neon glows) */
+  --glow-yellow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --glow-cyan: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --glow-magenta: 0 2px 8px rgba(0, 0, 0, 0.06);
 
   /* Fonts */
   --font-display: var(--font-dela-gothic), 'Arial Black', sans-serif;
@@ -44,6 +46,7 @@
   --color-bg-card: var(--bg-card);
   --color-bg-card-hover: var(--bg-card-hover);
   --color-accent-yellow: var(--accent-yellow);
+  --color-accent-yellow-text: var(--accent-yellow-text);
   --color-accent-yellow-dim: var(--accent-yellow-dim);
   --color-accent-cyan: var(--accent-cyan);
   --color-accent-cyan-dim: var(--accent-cyan-dim);
@@ -52,6 +55,7 @@
   --color-text-primary: var(--text-primary);
   --color-text-secondary: var(--text-secondary);
   --color-text-muted: var(--text-muted);
+  --color-text-on-accent: var(--text-on-accent);
   --color-border-subtle: var(--border-subtle);
   --color-border-accent: var(--border-accent);
   --font-display: var(--font-display);
@@ -75,48 +79,34 @@ body {
   background: var(--bg-secondary);
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--text-muted);
+  background: #CCCCDD;
   border-radius: 3px;
 }
 
-/* Neon text glow utility */
+/* Neon text glow — disabled for white theme */
 .neon-yellow {
-  text-shadow: 0 0 7px rgba(255, 214, 0, 0.6), 0 0 20px rgba(255, 214, 0, 0.3), 0 0 40px rgba(255, 214, 0, 0.15);
+  text-shadow: none;
 }
 .neon-cyan {
-  text-shadow: 0 0 7px rgba(0, 229, 255, 0.6), 0 0 20px rgba(0, 229, 255, 0.3), 0 0 40px rgba(0, 229, 255, 0.15);
+  text-shadow: none;
 }
 
-/* Neon border glow on hover */
+/* Subtle shadow on hover (replaces neon glow) */
 .glow-border-yellow {
   transition: box-shadow 0.3s ease;
 }
 .glow-border-yellow:hover {
-  box-shadow: var(--glow-yellow);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
-/* Scan line overlay effect */
+/* Scan line overlay — disabled for white theme */
 .scan-lines::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    rgba(0, 0, 0, 0.03) 2px,
-    rgba(0, 0, 0, 0.03) 4px
-  );
-  z-index: 1;
+  display: none;
 }
 
-/* Grid pattern background */
+/* Grid pattern — disabled for white theme */
 .grid-pattern {
-  background-image:
-    linear-gradient(rgba(255, 214, 0, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 214, 0, 0.03) 1px, transparent 1px);
-  background-size: 60px 60px;
+  background-image: none;
 }
 
 /* Hide scrollbar but keep scrollable */

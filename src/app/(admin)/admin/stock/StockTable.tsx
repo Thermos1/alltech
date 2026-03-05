@@ -23,7 +23,7 @@ function StockCell({ item }: { item: StockItem }) {
     displayQty === 0
       ? 'text-accent-magenta bg-accent-magenta-dim'
       : displayQty < 5
-      ? 'text-accent-yellow bg-accent-yellow-dim'
+      ? 'text-accent-yellow-text bg-accent-yellow-dim'
       : 'text-green-400 bg-green-500/15';
 
   async function handleSave() {

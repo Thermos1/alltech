@@ -138,7 +138,7 @@ export default function ImageCleaner({ onCleaned }: Props) {
       {/* Model size notice */}
       {!isSessionLoaded() && status !== 'idle' && (
         <div className="flex items-center gap-3 rounded-lg bg-accent-yellow/10 border border-accent-yellow/20 px-4 py-3">
-          <span className="text-sm text-accent-yellow">
+          <span className="text-sm text-accent-yellow-text">
             Первая загрузка модели ~200 МБ. После загрузки она кэшируется в браузере.
           </span>
         </div>
@@ -266,7 +266,7 @@ export default function ImageCleaner({ onCleaned }: Props) {
           <div className="flex items-center gap-3">
             <button
               onClick={handleInpaint}
-              className="px-6 py-2.5 rounded-lg bg-accent-yellow text-bg-primary font-semibold text-sm hover:brightness-110 transition"
+              className="px-6 py-2.5 rounded-lg bg-accent-yellow text-text-on-accent font-semibold text-sm hover:brightness-110 transition"
             >
               Очистить изображение
             </button>
@@ -304,7 +304,7 @@ export default function ImageCleaner({ onCleaned }: Props) {
                   handleReset();
                 }
               }}
-              className="px-4 py-2 rounded-lg bg-accent-yellow text-bg-primary font-semibold text-sm hover:brightness-110 transition"
+              className="px-4 py-2 rounded-lg bg-accent-yellow text-text-on-accent font-semibold text-sm hover:brightness-110 transition"
             >
               Попробовать снова
             </button>
@@ -347,7 +347,7 @@ export default function ImageCleaner({ onCleaned }: Props) {
             {onCleaned && (
               <button
                 onClick={handleUse}
-                className="px-6 py-2.5 rounded-lg bg-accent-yellow text-bg-primary font-semibold text-sm hover:brightness-110 transition"
+                className="px-6 py-2.5 rounded-lg bg-accent-yellow text-text-on-accent font-semibold text-sm hover:brightness-110 transition"
               >
                 Использовать
               </button>

@@ -54,7 +54,7 @@ export default async function PromoPage() {
             <thead>
               <tr className="border-b border-border-subtle text-text-muted text-xs uppercase tracking-wider">
                 <th className="text-left px-4 py-3 font-medium">Код</th>
-                <th className="text-left px-4 py-3 font-medium">Скидка</th>
+                <th className="text-left px-4 py-3 font-medium">Значение</th>
                 <th className="text-left px-4 py-3 font-medium">Мин. сумма</th>
                 <th className="text-center px-4 py-3 font-medium">Использовано</th>
                 <th className="text-left px-4 py-3 font-medium">Срок</th>

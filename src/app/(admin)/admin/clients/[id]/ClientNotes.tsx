@@ -65,7 +65,7 @@ export default function ClientNotes({ clientId }: { clientId: string }) {
         <button
           onClick={handleSubmit}
           disabled={!content.trim() || saving}
-          className="self-end rounded-lg bg-accent-yellow text-bg-primary px-4 py-2 text-sm font-medium hover:brightness-110 transition-all disabled:opacity-50 whitespace-nowrap"
+          className="self-end rounded-lg bg-accent-yellow text-text-on-accent px-4 py-2 text-sm font-medium hover:brightness-110 transition-all disabled:opacity-50 whitespace-nowrap"
         >
           {saving ? '...' : 'Добавить'}
         </button>
