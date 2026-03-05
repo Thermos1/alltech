@@ -52,9 +52,8 @@ export const OIL_BASE_TYPES = {
 
 export const BONUS_TIERS = [
   { name: "Старт", min: 0, max: 499_999, percent: 2, color: "text-text-secondary" },
-  { name: "Серебро", min: 500_000, max: 699_999, percent: 3, color: "text-gray-300" },
-  { name: "Золото", min: 700_000, max: 999_999, percent: 5, color: "text-accent-yellow-text" },
-  { name: "Платина", min: 1_000_000, max: Infinity, percent: 7, color: "text-accent-cyan" },
+  { name: "Серебро", min: 500_000, max: 999_999, percent: 3, color: "text-gray-300" },
+  { name: "Золото", min: 1_000_000, max: Infinity, percent: 5, color: "text-accent-yellow-text" },
 ] as const;
 
 export function getBonusTier(totalSpent: number) {

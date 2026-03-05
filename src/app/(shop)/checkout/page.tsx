@@ -19,7 +19,7 @@ export default async function CheckoutPage() {
   // Load user profile
   const { data: profile } = await supabase
     .from('profiles')
-    .select('full_name, phone, bonus_balance, company_name')
+    .select('full_name, phone, bonus_balance, company_name, delivery_address')
     .eq('id', user.id)
     .single();
 
@@ -38,7 +38,7 @@ export default async function CheckoutPage() {
         Оформление заказа
       </h1>
       <CheckoutForm
-        profile={profile as { full_name: string; phone: string; bonus_balance: number; company_name: string } | null}
+        profile={profile as { full_name: string; phone: string; bonus_balance: number; company_name: string; delivery_address: string | null } | null}
       />
     </div>
   );

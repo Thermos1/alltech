@@ -191,6 +191,10 @@ export async function POST(request: NextRequest) {
       if (!profile.full_name && data.contactName) {
         updates.full_name = data.contactName;
       }
+      // Save delivery address for next checkout
+      if (data.deliveryAddress) {
+        updates.delivery_address = data.deliveryAddress;
+      }
       if (Object.keys(updates).length > 0) {
         await admin
           .from('profiles')

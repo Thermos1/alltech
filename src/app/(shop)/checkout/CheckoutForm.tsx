@@ -12,6 +12,7 @@ interface CheckoutFormProps {
     phone: string;
     bonus_balance: number;
     company_name: string;
+    delivery_address?: string | null;
   } | null;
 }
 
@@ -25,7 +26,7 @@ export default function CheckoutForm({ profile }: CheckoutFormProps) {
 
   const [contactName, setContactName] = useState(profile?.full_name || '');
   const [contactPhone, setContactPhone] = useState(profile?.phone || '');
-  const [deliveryAddress, setDeliveryAddress] = useState('');
+  const [deliveryAddress, setDeliveryAddress] = useState(profile?.delivery_address || '');
   const [deliveryNotes, setDeliveryNotes] = useState('');
   const [promoCode, setPromoCode] = useState('');
   const [promoDiscount, setPromoDiscount] = useState(0);

@@ -2,8 +2,8 @@ import { describe, it, expect } from 'vitest';
 import { getBonusTier, getNextTier, BONUS_TIERS } from '@/lib/constants';
 
 describe('BONUS_TIERS', () => {
-  it('has 4 tiers', () => {
-    expect(BONUS_TIERS).toHaveLength(4);
+  it('has 3 tiers', () => {
+    expect(BONUS_TIERS).toHaveLength(3);
   });
 
   it('tiers cover full range without gaps', () => {
@@ -38,18 +38,17 @@ describe('getBonusTier', () => {
     expect(getBonusTier(500_000).percent).toBe(3);
   });
 
-  it('returns Золото for 700_000', () => {
-    expect(getBonusTier(700_000).name).toBe('Золото');
-    expect(getBonusTier(700_000).percent).toBe(5);
+  it('returns Серебро for 999_999', () => {
+    expect(getBonusTier(999_999).name).toBe('Серебро');
   });
 
-  it('returns Платина for 1_000_000', () => {
-    expect(getBonusTier(1_000_000).name).toBe('Платина');
-    expect(getBonusTier(1_000_000).percent).toBe(7);
+  it('returns Золото for 1_000_000', () => {
+    expect(getBonusTier(1_000_000).name).toBe('Золото');
+    expect(getBonusTier(1_000_000).percent).toBe(5);
   });
 
-  it('returns Платина for very large amounts', () => {
-    expect(getBonusTier(99_999_999).name).toBe('Платина');
+  it('returns Золото for very large amounts', () => {
+    expect(getBonusTier(99_999_999).name).toBe('Золото');
   });
 
   it('returns Старт for negative (fallback)', () => {
@@ -70,13 +69,7 @@ describe('getNextTier', () => {
     expect(next!.name).toBe('Золото');
   });
 
-  it('returns Платина when at Золото', () => {
-    const next = getNextTier(800_000);
-    expect(next).not.toBeNull();
-    expect(next!.name).toBe('Платина');
-  });
-
-  it('returns null when at Платина (max tier)', () => {
+  it('returns null when at Золото (max tier)', () => {
     expect(getNextTier(2_000_000)).toBeNull();
   });
 
