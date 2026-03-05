@@ -13,7 +13,7 @@ const brands = [
 
 export default function BrandCarousel() {
   return (
-    <section className="bg-bg-primary py-6 md:py-10">
+    <section className="bg-bg-primary py-4 md:py-6">
       <div className="mx-auto max-w-[var(--container-max)] px-[var(--container-padding)]">
         <h2 className="font-display text-xs uppercase tracking-wider text-text-muted mb-4">
           Наши бренды

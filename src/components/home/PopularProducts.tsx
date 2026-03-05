@@ -28,7 +28,7 @@ export default async function PopularProducts() {
   if (productsWithPrices.length === 0) return null;
 
   return (
-    <section className="bg-bg-primary py-8 md:py-12">
+    <section className="bg-bg-primary py-5 md:py-8">
       <div className="mx-auto max-w-[var(--container-max)] px-[var(--container-padding)]">
         <div className="flex items-center justify-between mb-6">
           <h2 className="font-display text-xl md:text-2xl text-text-primary">

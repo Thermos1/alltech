@@ -208,8 +208,8 @@ async function handlePaymentSucceeded(admin: ReturnType<typeof createAdminClient
         totalReferralBonus += 500;
       }
 
-      // Recurring: 0.5% from every purchase
-      const recurringBonus = Math.floor(Number(order.total) * 0.5 / 100);
+      // Recurring: 1% from every purchase
+      const recurringBonus = Math.floor(Number(order.total) * 1 / 100);
       totalReferralBonus += recurringBonus;
 
       if (totalReferralBonus > 0) {

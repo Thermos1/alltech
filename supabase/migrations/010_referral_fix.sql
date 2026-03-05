@@ -1,5 +1,6 @@
 -- Fix: handle_new_user() now resolves referral_code → referred_by
 -- Previously, referral_code from auth metadata was ignored
+-- CRITICAL: SET search_path = public is required because GoAuth sets search_path to 'auth'
 
 CREATE OR REPLACE FUNCTION handle_new_user()
 RETURNS TRIGGER AS $$
@@ -13,11 +14,11 @@ BEGIN
   -- Resolve referral code to referrer profile ID
   IF ref_code IS NOT NULL AND ref_code != '' THEN
     SELECT id INTO referrer_id
-    FROM profiles
+    FROM public.profiles
     WHERE referral_code = ref_code;
   END IF;
 
-  INSERT INTO profiles (id, phone, full_name, referral_code, referred_by)
+  INSERT INTO public.profiles (id, phone, full_name, referral_code, referred_by)
   VALUES (
     NEW.id,
     NEW.phone,
@@ -27,4 +28,4 @@ BEGIN
   );
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;

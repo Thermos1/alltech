@@ -184,7 +184,7 @@ export default async function CabinetPage() {
                   </p>
                 )}
                 <p className="text-text-muted text-xs mt-1">
-                  500₽ за первую покупку друга + 0.5% с каждой
+                  500₽ за первую покупку друга + 1% с каждой покупки пожизненно
                 </p>
                 {profile?.referral_code && (
                   <ReferralCopyButton code={profile.referral_code} />

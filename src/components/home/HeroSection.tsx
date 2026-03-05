@@ -3,8 +3,7 @@ import Link from 'next/link';
 export default function HeroSection() {
   return (
     <section className="relative overflow-hidden bg-bg-primary">
-      {/* Background effects */}
-      <div className="grid-pattern scan-lines absolute inset-0" />
+      {/* Background effects (disabled for white theme) */}
 
       {/* Subtle radial gradient overlay */}
       <div
@@ -15,7 +14,7 @@ export default function HeroSection() {
         }}
       />
 
-      <div className="relative z-10 mx-auto max-w-[var(--container-max)] px-[var(--container-padding)] py-8 md:py-12 lg:py-16">
+      <div className="relative z-10 mx-auto max-w-[var(--container-max)] px-[var(--container-padding)] py-6 md:py-8 lg:py-10">
         <div className="flex flex-col items-center text-center md:items-start md:text-left md:max-w-2xl">
           {/* Heading */}
           <h1 className="font-display text-3xl leading-tight sm:text-4xl md:text-5xl lg:text-6xl">
@@ -36,7 +35,7 @@ export default function HeroSection() {
           {/* CTA button */}
           <Link
             href="/catalog/lubricants"
-            className="mt-8 inline-flex items-center gap-2 rounded-lg bg-accent-yellow px-6 py-3 font-display text-sm font-bold uppercase tracking-wider text-text-on-accent transition-all duration-300 hover:shadow-[0_0_20px_rgba(255,214,0,0.4)] hover:scale-105 md:mt-10 md:px-8 md:py-3.5 md:text-base"
+            className="mt-6 inline-flex items-center gap-2 rounded-lg bg-accent-yellow px-6 py-3 font-display text-sm font-bold uppercase tracking-wider text-text-on-accent transition-all duration-300 hover:shadow-[0_0_20px_rgba(255,214,0,0.4)] hover:scale-105 md:mt-8 md:px-8 md:py-3.5 md:text-base"
           >
             Перейти в каталог
             <svg

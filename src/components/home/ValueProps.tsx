@@ -1,6 +1,6 @@
 export default function ValueProps() {
   return (
-    <section className="bg-bg-secondary py-10 md:py-14">
+    <section className="bg-bg-secondary py-6 md:py-8">
       <div className="mx-auto max-w-[var(--container-max)] px-[var(--container-padding)]">
         <div className="grid grid-cols-2 gap-6 md:grid-cols-4 md:gap-8">
           <div className="flex flex-col">
