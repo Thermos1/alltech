@@ -6,18 +6,19 @@
 ## Статус проекта
 
 **Фаза**: Production — полнофункциональный e-commerce
-**Дата**: 2026-03-05
+**Дата**: 2026-03-06
 
 ### Что сделано
 
 #### Core E-commerce
 - [x] Next.js 15 + TypeScript + Tailwind v4 (App Router, standalone output)
 - [x] Supabase проект (tylxmgxmsyegqcdfyxsp, eu-central-1)
-- [x] Каталог: 10 брендов, 12 категорий, 47 товаров, 73 варианта с реальными PNG в Supabase Storage
+- [x] Каталог: 11 брендов, 12 категорий, 58 товаров, ~124 варианта с реальными PNG в Supabase Storage
 - [x] Карточка товара: изображения, варианты (объём/ед./цена), спеки (API, ACEA, тип базы), add to cart
+- [x] **Homepage = каталог**: популярные (слайдер) → полный каталог lubricants + filters с табами категорий и фильтром по бренду
 - [x] Корзина: Zustand v5 с persist middleware, localStorage, SSR hydration guard
 - [x] Checkout: валидация форм (Zod), промокоды, бонусы, создание заказа
-- [x] ЮKassa payment: реальный API (POST /v3/payments), **production магазин** (Shop ID 1291070), webhook
+- [x] ЮKassa payment: реальный API (POST /v3/payments), **production магазин** (Shop ID 1289971), webhook, НДС 22%
 - [x] Управление заказами: номера (ALT-YYYY-XXXX), статусы, история
 
 #### Auth & Users
@@ -86,9 +87,14 @@
 - [x] Slide Buffer: карточки → буфер → доступны в карусели
 - [x] Универсальная модель: ProductSpec[] для любой ниши, кастомные цвета, слайдер размера фото
 
+#### UI/UX
+- [x] Header: жёлтый (#FFD600) с чёрным лого (logo-all-black.png)
+- [x] MobileNav: серый (#F5F5F7) bottom bar
+- [x] Homepage: каталог-first (без Hero) — популярные слайдер → каталог с фильтрами → ValueProps
+
 #### Тесты
-- [x] 610+ unit tests (Vitest), 44 suites, 100% API route coverage (34 routes)
-- [x] E2E тесты: 4 спеки (Playwright) — auth, catalog, pages, cart-checkout
+- [x] 620 unit tests (Vitest), 46 suites, 100% API route coverage (34 routes)
+- [x] 48 E2E tests (Playwright) — production тесты на altehspec.ru
 
 #### Инфраструктура
 - [x] Docker standalone build, Coolify на PS.KZ VPS
@@ -148,11 +154,12 @@
 
 | Параметр | Значение |
 |----------|---------|
-| Shop ID | `1291070` |
-| Secret Key (test) | `test_9KJK8Wkb2V5yh4xEMvgLWi11zYWzigzlalwgudJlIIE` |
+| Shop ID (production) | `1289971` |
+| Secret Key | `live_xlQW1PhJR087v2yHuBybkZTEiUilzFovny2JVjjmC5g` |
+| Shop ID (test, старый) | `1291070` |
 | Webhook URL | `https://altehspec.ru/api/payment/webhook` |
-| Events | payment.succeeded, payment.waiting_for_capture, payment.canceled, refund.succeeded |
-| Mode | **Production** — подключена и работает |
+| Events | payment.succeeded, payment.waiting_for_capture, payment.canceled, payment_method.active, refund.succeeded |
+| Mode | **PRODUCTION** (live_ ключ, боевые платежи, НДС 22% vat_code:7) |
 
 ### Рег.ру (Domain)
 
@@ -226,7 +233,7 @@
 
 ```
 NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY
-YOOKASSA_SHOP_ID=1291070, YOOKASSA_SECRET_KEY=test_9KJK8...
+YOOKASSA_SHOP_ID=1289971, YOOKASSA_SECRET_KEY=live_xlQW1...
 SMS_RU_API_KEY=7FF81873-...
 SIPMIND_API_SECRET=altech-sipmind-secret-2026
 ANTHROPIC_API_KEY=... (для AI-распознавания характеристик товаров в /admin/image-tools)
@@ -246,4 +253,12 @@ NEXT_PUBLIC_APP_URL=https://altehspec.ru
 
 ---
 
-*Последнее обновление: 2026-03-05*
+## Связанные проекты
+
+| Проект | URL | Описание |
+|--------|-----|----------|
+| **online-trade** | https://trade.techdab.net | White-label клон для B2B-дистрибьюторов |
+| **MakeMove** | https://makemove.net | Standalone SaaS — Image Tools из АЛТЕХ |
+| **SIPmind** | https://sipmind.net | AI voice agent platform |
+
+*Последнее обновление: 2026-03-06*

@@ -35,7 +35,7 @@ curl -X POST -H "Authorization: Bearer 3|Q0uWpHphaUL6GBFRAeVkc8E6TpbNrMPbmbDIyIu
 | Frontend | Next.js 15, React, TypeScript, Tailwind CSS v4 |
 | UI/анимации | Framer Motion, CSS neon effects |
 | Backend/БД | Supabase (Auth, PostgreSQL, Storage, RLS) |
-| Платежи | ЮKassa (production, Shop ID 1291070) |
+| Платежи | ЮKassa (production, Shop ID 1289971, НДС 22%) |
 | Стейт | Zustand (корзина с localStorage persist) |
 | Валидация | Zod |
 | Шрифты | Dela Gothic One (display, cyrillic), Golos Text (body, cyrillic) |
@@ -105,6 +105,10 @@ Hook: `src/hooks/useCart.ts`.
 Продукт имеет варианты (product_variants) — объём/упаковка с ценой.
 URL: `/catalog/{section}`, `/catalog/{section}/{category}`, `/product/{slug}`.
 
+**Homepage = каталог**: главная страница рендерит полный каталог обоих секций с CategoryTabs и BrandFilter.
+Порядок: PopularProducts (слайдер) → CatalogSection lubricants → CatalogSection filters → ValueProps.
+CatalogSection — серверный компонент в `page.tsx`, переиспользует FilterableProductGrid и CategoryTabs.
+
 ### Изображения товаров
 
 Реальные иконки продуктов в `docs/Иконки финал/` — организованы по брендам.
@@ -122,8 +126,8 @@ TODO: загрузить в Supabase Storage и привязать к product.im
 
 ## Тесты
 
-- **610+ unit tests** (Vitest), **44 suites**, 100% API route coverage (34 routes)
-- **E2E тесты**: 4 спеки (Playwright) — auth, catalog, pages, cart-checkout
+- **620 unit tests** (Vitest), **46 suites**, 100% API route coverage (34 routes)
+- **48 E2E tests** (Playwright) — production тесты на altehspec.ru
 - Запуск unit: `npx vitest run`
 - Запуск E2E: `npx playwright test` (требует запущенный сервер или E2E_BASE_URL)
 - Тесты мокают Supabase — никакой зависимости от реальной БД
