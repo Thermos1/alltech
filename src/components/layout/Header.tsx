@@ -22,13 +22,13 @@ export default function Header() {
   }, []);
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-bg-primary/80 backdrop-blur-xl border-b border-border-subtle">
+    <header className="sticky top-0 z-50 w-full bg-[#FFD600] backdrop-blur-xl border-b border-[rgba(0,0,0,0.1)]">
       <div className="mx-auto flex h-14 max-w-[var(--container-max)] items-center justify-between px-[var(--container-padding)] md:h-16">
         {/* Logo + phone */}
         <div className="flex items-center gap-4">
           <Link href="/" className="flex items-center">
             <Image
-              src="/images/logo-dark.png"
+              src="/images/logo-black.png"
               alt="АЛТЕХ"
               width={160}
               height={48}
@@ -74,7 +74,7 @@ export default function Header() {
                   {isStaff && (
                     <Link
                       href="/admin"
-                      className="flex h-10 items-center gap-1.5 rounded-lg px-3 text-sm font-medium text-accent-yellow-text transition-colors hover:bg-bg-card"
+                      className="flex h-10 items-center gap-1.5 rounded-lg px-3 text-sm font-medium text-text-primary transition-colors hover:bg-white/50"
                       title="Панель управления"
                     >
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -85,7 +85,7 @@ export default function Header() {
                   )}
                   <Link
                     href="/cabinet"
-                    className="flex h-10 w-10 items-center justify-center rounded-lg transition-colors hover:bg-bg-card"
+                    className="flex h-10 w-10 items-center justify-center rounded-lg transition-colors hover:bg-white/50"
                     aria-label="Кабинет"
                     title="Личный кабинет"
                   >
@@ -96,7 +96,7 @@ export default function Header() {
                   </Link>
                   <button
                     onClick={signOut}
-                    className="flex h-10 w-10 items-center justify-center rounded-lg transition-colors hover:bg-bg-card"
+                    className="flex h-10 w-10 items-center justify-center rounded-lg transition-colors hover:bg-white/50"
                     aria-label="Выйти"
                     title="Выйти"
                   >
@@ -110,7 +110,7 @@ export default function Header() {
               ) : (
                 <Link
                   href="/login"
-                  className="rounded-lg bg-accent-yellow px-4 py-2 text-sm font-semibold text-text-on-accent transition-all hover:brightness-110"
+                  className="rounded-lg bg-text-primary px-4 py-2 text-sm font-semibold text-white transition-all hover:bg-text-secondary"
                 >
                   Войти
                 </Link>
@@ -138,7 +138,7 @@ export default function Header() {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Поиск..."
                 autoFocus
-                className="w-32 sm:w-48 bg-bg-secondary border border-border-subtle rounded-lg px-3 py-1.5 text-sm text-text-primary placeholder:text-text-muted focus:border-accent-yellow focus:outline-none"
+                className="w-32 sm:w-48 bg-white border border-[rgba(0,0,0,0.15)] rounded-lg px-3 py-1.5 text-sm text-text-primary placeholder:text-text-muted focus:border-text-primary focus:outline-none"
                 onBlur={() => {
                   if (!searchQuery.trim()) setSearchOpen(false);
                 }}
@@ -156,7 +156,7 @@ export default function Header() {
                 setSearchOpen(true);
                 setTimeout(() => searchInputRef.current?.focus(), 50);
               }}
-              className="flex h-10 w-10 items-center justify-center rounded-lg transition-colors hover:bg-bg-card"
+              className="flex h-10 w-10 items-center justify-center rounded-lg transition-colors hover:bg-white/50"
               aria-label="Поиск"
               title="Поиск по каталогу"
             >
@@ -170,7 +170,7 @@ export default function Header() {
           {/* Cart */}
           <Link
             href="/cart"
-            className="relative flex h-10 w-10 items-center justify-center rounded-lg transition-colors hover:bg-bg-card"
+            className="relative flex h-10 w-10 items-center justify-center rounded-lg transition-colors hover:bg-white/50"
             aria-label="Корзина"
           >
             <svg
@@ -189,7 +189,7 @@ export default function Header() {
               <path d="M16 10a4 4 0 01-8 0" />
             </svg>
             {mounted && itemCount > 0 && (
-              <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-accent-yellow px-1 text-[11px] font-bold text-text-on-accent shadow-lg">
+              <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-text-primary px-1 text-[11px] font-bold text-white shadow-lg">
                 {itemCount}
               </span>
             )}
@@ -230,19 +230,19 @@ export default function Header() {
 
       {/* Mobile dropdown menu */}
       {menuOpen && (
-        <nav className="border-t border-border-subtle bg-bg-primary/95 backdrop-blur-xl md:hidden">
+        <nav className="border-t border-[rgba(0,0,0,0.1)] bg-[#FFD600]/95 backdrop-blur-xl md:hidden">
           <div className="mx-auto flex max-w-[var(--container-max)] flex-col gap-1 px-[var(--container-padding)] py-3">
             <Link
               href="/catalog/lubricants"
               onClick={() => setMenuOpen(false)}
-              className="rounded-lg px-3 py-2.5 text-sm text-text-secondary transition-colors hover:bg-bg-card hover:text-text-primary"
+              className="rounded-lg px-3 py-2.5 text-sm text-text-primary transition-colors hover:bg-white/50"
             >
               Смазочные материалы
             </Link>
             <Link
               href="/catalog/filters"
               onClick={() => setMenuOpen(false)}
-              className="rounded-lg px-3 py-2.5 text-sm text-text-secondary transition-colors hover:bg-bg-card hover:text-text-primary"
+              className="rounded-lg px-3 py-2.5 text-sm text-text-primary transition-colors hover:bg-white/50"
             >
               Фильтрующие элементы
             </Link>
@@ -255,7 +255,7 @@ export default function Header() {
                       <Link
                         href="/admin"
                         onClick={() => setMenuOpen(false)}
-                        className="rounded-lg px-3 py-2.5 text-sm text-accent-yellow-text transition-colors hover:bg-bg-card"
+                        className="rounded-lg px-3 py-2.5 text-sm text-text-primary font-medium transition-colors hover:bg-white/50"
                       >
                         Панель управления
                       </Link>
@@ -263,7 +263,7 @@ export default function Header() {
                     <Link
                       href="/cabinet"
                       onClick={() => setMenuOpen(false)}
-                      className="rounded-lg px-3 py-2.5 text-sm text-text-secondary transition-colors hover:bg-bg-card hover:text-text-primary"
+                      className="rounded-lg px-3 py-2.5 text-sm text-text-primary transition-colors hover:bg-white/50"
                     >
                       Личный кабинет
                     </Link>
@@ -272,7 +272,7 @@ export default function Header() {
                         setMenuOpen(false)
                         signOut()
                       }}
-                      className="rounded-lg px-3 py-2.5 text-left text-sm text-text-muted transition-colors hover:bg-bg-card hover:text-accent-magenta"
+                      className="rounded-lg px-3 py-2.5 text-left text-sm text-text-primary/70 transition-colors hover:bg-white/50 hover:text-accent-magenta"
                     >
                       Выйти
                     </button>
@@ -281,7 +281,7 @@ export default function Header() {
                   <Link
                     href="/login"
                     onClick={() => setMenuOpen(false)}
-                    className="rounded-lg px-3 py-2.5 text-sm text-accent-yellow-text transition-colors hover:bg-bg-card hover:text-accent-yellow-text"
+                    className="rounded-lg px-3 py-2.5 text-sm text-text-primary font-medium transition-colors hover:bg-white/50"
                   >
                     Войти
                   </Link>
@@ -292,15 +292,15 @@ export default function Header() {
             <Link
               href="/cart"
               onClick={() => setMenuOpen(false)}
-              className="rounded-lg px-3 py-2.5 text-sm text-text-secondary transition-colors hover:bg-bg-card hover:text-text-primary"
+              className="rounded-lg px-3 py-2.5 text-sm text-text-primary transition-colors hover:bg-white/50"
             >
               Корзина {mounted && itemCount > 0 && `(${itemCount})`}
             </Link>
 
-            <div className="border-t border-border-subtle mt-1 pt-2">
+            <div className="border-t border-[rgba(0,0,0,0.1)] mt-1 pt-2">
               <a
                 href="tel:+79969142832"
-                className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm text-accent-yellow-text"
+                className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm text-text-primary font-medium"
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z" />

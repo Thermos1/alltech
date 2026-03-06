@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
-import ProductGrid from '@/components/catalog/ProductGrid';
+import ProductCard from '@/components/catalog/ProductCard';
 
 export default async function PopularProducts() {
   const supabase = await createClient();
@@ -28,9 +28,9 @@ export default async function PopularProducts() {
   if (productsWithPrices.length === 0) return null;
 
   return (
-    <section className="bg-bg-primary py-5 md:py-8">
+    <section className="bg-bg-primary pt-4 pb-2 md:pt-6 md:pb-4">
       <div className="mx-auto max-w-[var(--container-max)] px-[var(--container-padding)]">
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-4">
           <h2 className="font-display text-xl md:text-2xl text-text-primary">
             Популярные товары
           </h2>
@@ -42,7 +42,13 @@ export default async function PopularProducts() {
           </a>
         </div>
 
-        <ProductGrid products={productsWithPrices} />
+        <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory no-scrollbar pb-2">
+          {productsWithPrices.map((product) => (
+            <div key={product.id} className="flex-shrink-0 snap-start w-[200px] sm:w-[240px]">
+              <ProductCard product={product} />
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );
