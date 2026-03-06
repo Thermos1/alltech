@@ -29,6 +29,7 @@ interface ProductCardProps {
     brands?: { name: string; slug: string } | null;
     product_variants?: Variant[];
   };
+  className?: string;
 }
 
 function isBulk(volume: string) {
@@ -40,7 +41,7 @@ function variantLabel(v: Variant): string {
   return `${v.volume} ${v.unit}`;
 }
 
-export default function ProductCard({ product }: ProductCardProps) {
+export default function ProductCard({ product, className }: ProductCardProps) {
   const router = useRouter();
   const addItem = useCartStore((s) => s.addItem);
   const [added, setAdded] = useState(false);
@@ -121,7 +122,8 @@ export default function ProductCard({ product }: ProductCardProps) {
       className={cn(
         'group relative flex flex-col rounded-xl border border-border-subtle cursor-pointer',
         'bg-bg-card overflow-hidden transition-all duration-300 shadow-sm',
-        'glow-border-yellow hover:bg-bg-card-hover hover:shadow-md'
+        'glow-border-yellow hover:bg-bg-card-hover hover:shadow-md',
+        className
       )}
     >
       {/* Image */}

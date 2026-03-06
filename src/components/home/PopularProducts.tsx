@@ -42,10 +42,10 @@ export default async function PopularProducts() {
           </a>
         </div>
 
-        <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory no-scrollbar pb-2">
+        <div className="flex items-stretch gap-3 overflow-x-auto snap-x snap-mandatory no-scrollbar pb-2">
           {productsWithPrices.map((product) => (
             <div key={product.id} className="flex-shrink-0 snap-start w-[200px] sm:w-[240px]">
-              <ProductCard product={product} />
+              <ProductCard product={product} className="h-full" />
             </div>
           ))}
         </div>
