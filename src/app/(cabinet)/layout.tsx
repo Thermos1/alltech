@@ -29,7 +29,7 @@ export default async function CabinetLayout({
         <div className="mx-auto flex h-14 max-w-[var(--container-max)] items-center justify-between px-[var(--container-padding)]">
           <Link href="/" className="flex items-center">
             <Image
-              src="/images/logo-black.png"
+              src="/images/logo-white.png"
               alt="АЛТЕХ"
               width={120}
               height={36}
