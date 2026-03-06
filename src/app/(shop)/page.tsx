@@ -1,7 +1,6 @@
 import { Suspense } from 'react';
 import { createClient } from '@/lib/supabase/server';
 import { SECTIONS } from '@/lib/constants';
-import BrandCarousel from '@/components/home/BrandCarousel';
 import PopularProducts from '@/components/home/PopularProducts';
 import ValueProps from '@/components/home/ValueProps';
 import CategoryTabs from '@/components/catalog/CategoryTabs';
@@ -76,7 +75,6 @@ export default function HomePage() {
       }>
         <PopularProducts />
       </Suspense>
-      <BrandCarousel />
       <Suspense fallback={
         <div className="py-12 flex justify-center">
           <div className="w-6 h-6 border-2 border-accent-yellow border-t-transparent rounded-full animate-spin" />
